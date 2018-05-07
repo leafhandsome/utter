@@ -64,7 +64,11 @@ export default new Router({
       path: '/forbid',
       component: resolve => require(['../page/Forbid'], resolve),
       name: '禁止访问'
-    }
+    },
+    {
+      path: '/personal',
+      component: resolve => require(['../components/Personal'], resolve)
+    },
     // {
     //   path:'/index',
     //   component: resolve => require(['../page/Index'],resolve)
