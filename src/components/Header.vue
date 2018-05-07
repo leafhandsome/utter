@@ -4,7 +4,6 @@
   <img @click='change' v-if='utstyle == "white"' class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
   <img @click='change' v-else class='logo' src="../assets/images/utter/logow.png" alt="UTTER">
 
-
   <div class="middleTab clearfix" v-if='type'>
     <div class="pull-left" :class='{"active":tab == 1}' @click='changeTab(1)'>
       <div class="tab">首页</div>
@@ -15,7 +14,7 @@
     <div class="pull-left" :class='{"active":tab == 3}' @click='changeTab(3,"idea")'>
       <div class="tab">想法</div>
     </div>
-    <div class="pull-left" :class='{"active":tab == 4}' @click='changeTab(4)'>
+    <div class="pull-left" :class='{"active":tab == 4}' @click='changeTab(4,"publish")'>
       <div class="tab">出版</div>
     </div>
     <div class="pull-left" :class='{"active":tab == 5}' @click='changeTab(5)'>
@@ -79,7 +78,7 @@ export default {
   props: ['type','activeTab'],
   methods: {
     changeTab(tab,url){
-      // this.tab = tab;
+      //this.tab = tab;
       if(url)
       window.open('#/'+url+'?tab='+tab)
     },
