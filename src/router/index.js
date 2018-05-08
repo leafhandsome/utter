@@ -69,7 +69,11 @@ export default new Router({
       path: '/editor',
       component: resolve => require(['../page/Editor'], resolve),
       name: '编辑器'
-    }
+    },
+    {
+      path: '/personal',
+      component: resolve => require(['../components/Personal'], resolve)
+    },
     // {
     //   path:'/index',
     //   component: resolve => require(['../page/Index'],resolve)

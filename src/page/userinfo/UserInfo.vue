@@ -241,7 +241,6 @@
         text-align: center;
         margin-top: 78px;
         font-size: 20px;
-        font-weight: bold;
         span {
             width: 35px;
             height: 1px;
@@ -267,6 +266,7 @@
         }
         strong {
             font-size: 36px;
+            font-weight: normal;
         }
     }
 </style>
