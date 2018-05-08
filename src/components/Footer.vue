@@ -5,6 +5,7 @@
     <a href="#">服务协议</a>
     <a href="#">联系我们</a>
     <a href="#">侵权投诉</a>
+    <a href="#" @click='tourl("/editor")'>编辑器入口</a>
   </div>
 </div>
 </template>
