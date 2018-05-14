@@ -6,6 +6,7 @@
     <img @click='change' v-else class='logo' src="../assets/images/utter/logow.png" alt="UTTER">
 
     <div class="toolsView clearfix">
+      <input type='file' id='file' ref='file' @change='changeImg' style='width:0;height:0;position:fixed;top:-2000px;'>
 
       <div class="icon pull-left"
         @click.self='handleTool(i.key)'
@@ -13,22 +14,21 @@
         v-for='i in toolsList'>
 
         <div class="fontsizeTools" v-if='activeTools == "fontsize" && i.key == "fontsize"'>
-          <div class="item" v-for='i in 21'>{{7 + i}}</div>
+          <div class="item" @click='fontsizeHandle(7 + i)' v-for='i in 21'>{{7 + i}}</div>
         </div>
 
         <div class="fontfamilyTools" v-if='activeTools == "fontfamily" && i.key == "fontfamily"'>
-          <div class="item" v-for='i in 10'>圆体-简体 字体样式</div>
+          <div class="item" v-for='i in 10' @click='fontfamilyHandle(i)'>圆体-简体 字体样式</div>
         </div>
 
         <div class="forecolorTools" v-if='activeTools == "forecolor" && i.key == "forecolor"'>
-          <div class="item" v-for='i in colorList'>
+          <div class="item" v-for='i in colorList' @click='forecolorHandle(i)'>
             <div class="color" :style='{"background-color":i}'></div>
           </div>
         </div>
-
         
         <div class="fontsizeTools" v-if='activeTools == "lineheight" && i.key == "lineheight"'>
-          <div class="item" v-for='i in 21'>{{7 + i}}</div>
+          <div class="item" v-for='i in 21' @click='lineheightHandle(7 + i)'>{{7 + i}}</div>
         </div>
 
         <div class="fontsizeTools" v-if='activeTools == "rowspacing" && i.key == "rowspacing"'>
@@ -36,7 +36,8 @@
         </div>
 
         <div class="linkTools" v-if='activeTools == "link" && i.key == "link"'>
-          <input placeholder='输入超链接地址…  '>
+          <input placeholder='请输入内容…' v-model='linkObj.textValue'>
+          <input placeholder='输入超链接地址…' v-model='linkObj.url' @keydown.enter='linkHandle'>
         </div>
 
         <div class="draftTools" v-if='activeTools == "draft" && i.key == "draft"'>
@@ -58,11 +59,19 @@
       <div class="back pull-left" :class='{b:utstyle == "white",w:utstyle != "white"}'></div>
     </div>
   </div>
+
+  <div class="middleView">
+    <div id="container"></div>
+  </div>
   
 </div>
 </template>
 
 <script>
+import '../../static/ue/ueditor.config.js';
+import '../../static/ue/ueditor.all.min.js';
+import '../../static/ue/lang/zh-cn/zh-cn.js';
+
 export default {
   data() {
     return {
@@ -170,14 +179,113 @@ export default {
         '#019E95',
         '#898989'
       ],
-      height:0
+      height:0,
+      editor:null,
+      linkObj:{
+        url:'',
+        textValue:'',
+        target:'_blank'
+      }
     }
   },
   methods: {
+    linkHandle(){
+      console.log(this.linkObj);
+      this.editor.execCommand( 'link',this.linkObj);
+
+      this.linkObj = {
+        url:'',
+        textValue:'',
+        target:'_blank' 
+      };
+
+      this.activeTools = '';
+    },
+    lineheightHandle(data){
+      console.log(data);
+      this.editor.execCommand( 'lineheight', data / 10);
+    },
+    fontsizeHandle(data){
+      console.log(data);
+      this.activeTools = '';
+      this.editor.execCommand( 'fontsize', data+'px' );
+    },
+    fontfamilyHandle(data){
+      console.log(data);
+      this.activeTools = '';
+      this.editor.execCommand( 'fontfamily', '微软雅黑' );
+    },
+    forecolorHandle(data){
+      console.log(data);
+      this.activeTools = '';
+      this.editor.execCommand( 'forecolor', data );
+    },
+    getFileUrl(file) {
+      //获取文件临时路径
+      var url;  
+      // debugger
+      if (navigator.userAgent.indexOf("MSIE")>=1) { // IE  
+          url = file.value;  
+      } else if(navigator.userAgent.indexOf("Firefox")>0) { // Firefox  
+          url = window.URL.createObjectURL(file);  
+      } else if(navigator.userAgent.indexOf("Chrome")>0) { // Chrome  
+          url = window.URL.createObjectURL(file);  
+      }  else{
+          url = window.URL.createObjectURL(file);  
+      }
+      return url;  
+    },
+    changeImg(e){
+      //图片change回调
+      var file = e.target.files[0];
+      var _this = this;
+      // debugger
+      try{
+
+        if(file.type.indexOf('image') >= 0){
+          //是图片文件
+          if((file.size / 1024 / 1024) < 5){
+            //图片小于5M
+            var url = this.getFileUrl(file);
+            if(url){
+              var img = new Image();
+              img.src = url;
+              img.onload = function(){
+                _this.editor.focus();
+                _this.editor.execCommand('inserthtml','<p><img style="width:100px;height:100px;" src="'+url+'"></p>' );
+              }
+            }
+            this.$refs.file.value = '';
+          }else{
+            tools.toastWarn('图片大于5M,请更换一张');
+          }
+        }else{
+          tools.toastWarn('请选择图片文件');
+        }
+
+      }catch(e){
+        tools.toastWarn('请选择图片文件');
+      }
+    },
     handleTool(key){
       this.activeTools = this.activeTools == key ? '' : key;
+      console.log(key);
 
-      console.log(key)
+      switch(key){
+        case 'italic':this.editor.execCommand( 'italic' );
+        break;
+        case 'underline':this.editor.execCommand( 'underline' );
+        break;
+        case 'justifyl': this.editor.execCommand( 'justify', 'left' );
+        break;
+        case 'justifym': this.editor.execCommand( 'justify', 'center' );
+        break;
+        case 'justifyr': this.editor.execCommand( 'justify', 'right' );
+        break;
+        case 'insertimage':this.$refs.file.click();
+        break;
+      }
+
     },
     change() {
       this.$store.commit('changeStyle')
@@ -186,6 +294,35 @@ export default {
       tools.router.push({
         path: url
       })
+    },
+    initUeditor(){
+      this.editor = UE.getEditor('container',{
+        toolbars:[],
+        focus:true,
+        initialFrameWidth:984,
+        initialFrameHeight:734,
+        autoHeightEnabled:false,
+        enableAutoSave:true,
+        saveInterval:5000,
+        wordCount:false,
+        elementPathEnabled:false
+      });
+      var editor = this.editor;
+      this.editor.ready(function(){
+        console.log('ue finish')
+        editor.setContent('阿萨德撒从自行车撒初三');
+      });
+      return
+      
+
+      setInterval( () => {
+        let data = editor.execCommand( "getlocaldata");
+        console.log(data);
+
+        // editor.setContent(data);
+
+        // editor.getContent();
+      },5000)
     }
   },
   watch:{
@@ -200,6 +337,8 @@ export default {
     window.onresize = function(){
       _this.height = window.innerHeight;
     }
+
+    this.initUeditor();
   }
 }
 </script>
@@ -314,6 +453,7 @@ export default {
   }
   // 字号工具
   .fontsizeTools{
+    z-index: 10000;
     @include tool;
     width: 56px;
     transition: all .3s ease;
@@ -333,6 +473,7 @@ export default {
 
   // 字体工具
   .fontfamilyTools{
+    z-index: 10000;
     @include tool;
     width: 172px;
     color: #AEAEAE;
@@ -353,6 +494,7 @@ export default {
 
   // 字体颜色
   .forecolorTools{
+    z-index: 10000;
     @include tool;
     width: 56px;
     transition: all .3s ease;
@@ -374,6 +516,7 @@ export default {
   }
 
   .linkTools{
+    z-index: 10000;
     border: 1px solid #E6E6E6;
     position: absolute;
     top: 54px;
@@ -390,6 +533,7 @@ export default {
   }
 
   .draftTools{
+    z-index: 10000;
     width: 286px;
     height: 286px;
     overflow-y: auto;
@@ -416,6 +560,7 @@ export default {
   }
 
   .ideaTools{
+    z-index: 10000;
     width: 343px;
     height: 343px;
     overflow-y: auto;
@@ -434,6 +579,16 @@ export default {
       &:hover{
         color: #000;
       }
+    }
+  }
+
+  .middleView{
+    #container{
+      max-width: 1000px;
+      height: 750px;
+      overflow: hidden;
+      margin: 60px auto 0;
+      padding-bottom: 16px;
     }
   }
 

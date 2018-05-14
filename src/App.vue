@@ -88,4 +88,16 @@ body{
 .pull-right{
   float: right;
 }
+
+.edui-editor.edui-default{
+  border: none !important;
+}
+.edit.black .edui-default .edui-editor-iframeholder {
+  color: #fff !important;
+  background-color:#000;  
+}
+
+.edit.black .edui-default .edui-editor-iframeholder .view{
+  color: #fff !important;
+}
 </style>
