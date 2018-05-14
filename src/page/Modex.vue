@@ -32,11 +32,11 @@
             <img src="../assets/images/module/m3.png" class='m3'>
           </div>
 
-          <div class="line">
+          <!-- <div class="line">
             <img src="../assets/images/module/m4.png" class='m4'>
             <img src="../assets/images/module/m5.png" class='m5'>
             <img src="../assets/images/module/m6.png" class='m6'>
-          </div>
+          </div> -->
 
         </div>
       </div>
@@ -234,7 +234,7 @@ export default {
 
         .moduleSelect{
           width: 1040px;
-          height: 374px;
+          height: 200px;
           position: relative;
           margin: 70px auto 0;
           .line{

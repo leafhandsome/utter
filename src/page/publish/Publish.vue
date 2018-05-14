@@ -145,6 +145,7 @@
         mounted() {
             var _this = this;
             this.$store.state.useType = 'publish';
+            this.$store.state.utstyle = 'white';
             this.$store.state.showFooter = false;
             this.tabIndex = this.$route.query && this.$route.query.index || 0;
             let arr = []

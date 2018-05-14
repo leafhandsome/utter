@@ -55,6 +55,7 @@
         mounted() {
             var _this = this;
             this.$store.state.useType = 'bookinfo';
+            this.$store.state.utstyle = 'white';
             this.$store.state.showFooter = false;
 
         },
