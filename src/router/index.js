@@ -66,6 +66,11 @@ export default new Router({
       name: '禁止访问'
     },
     {
+      path: '/editor',
+      component: resolve => require(['../page/Editor'], resolve),
+      name: '编辑器'
+    },
+    {
       path: '/personal',
       component: resolve => require(['../components/Personal'], resolve)
     },
