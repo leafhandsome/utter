@@ -17,7 +17,7 @@
       <div class="pull-left" :class='{"active":tab == 4}' @click='changeTab(4,"publish")'>
         <div class="tab">出版</div>
       </div>
-      <div class="pull-left" :class='{"active":tab == 5}' @click='changeTab(5)'>
+      <div class="pull-left" :class='{"active":tab == 5}' @click='changeTab(5,"userinfo")'>
         <div class="tab">用户名</div>
       </div>
     </div>

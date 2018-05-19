@@ -45,7 +45,7 @@
         </div>
 
         <div class="ideaTools" v-if='activeTools == "idea" && i.key == "idea"'>
-          <div class="item" v-for='i in 5'>不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕</div>
+          <div class="item" v-for='i in 5' @click='ideaHandle'>不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕</div>
         </div>
         
 
@@ -189,6 +189,10 @@ export default {
     }
   },
   methods: {
+    ideaHandle(){
+      this.editor.setContent('<p>new text</p>', true);
+      this.activeTools = '';
+    },
     linkHandle(){
       console.log(this.linkObj);
       this.editor.execCommand( 'link',this.linkObj);
