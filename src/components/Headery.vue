@@ -6,21 +6,31 @@
 
 
     <div class="middleTab clearfix">
-      <div class="pull-left" :class='{"active":tab == 1}' @click='changeTab(1)'>
+      <router-link to="/whitecol/modex">
+      <div class="pull-left" >
         <div class="tab">首页</div>
       </div>
-      <div class="pull-left" :class='{"active":tab == 2}' @click='changeTab(2,"myarticle")'>
+      </router-link>
+      <router-link to="/whitecol/myarticle">
+      <div class="pull-left" >
         <div class="tab">文章</div>
       </div>
-      <div class="pull-left" :class='{"active":tab == 3}' @click='changeTab(3,"idea")'>
+      </router-link>
+      <router-link to="/whitecol/idea">
+      <div class="pull-left"  @click='changeTab(3,"idea")'>
         <div class="tab">想法</div>
       </div>
-      <div class="pull-left" :class='{"active":tab == 4}' @click='changeTab(4)'>
+      </router-link>
+      <router-link to="/whitecol/publish">
+      <div class="pull-left"  @click='changeTab(4,"publish")'>
         <div class="tab">出版</div>
       </div>
-      <div class="pull-left" :class='{"active":tab == 5}' @click='changeTab(5)'>
+      </router-link>
+      <router-link to="/whitecol/userinfo">
+      <div class="pull-left"  @click='changeTab(5,"userinfo")'>
         <div class="tab">用户名</div>
       </div>
+      </router-link>
     </div>
 
 
@@ -63,11 +73,15 @@
       }
     },
     props: ['type', 'activeTab'],
+    created(){
+        console.log(this.$route.params)
+    },
     methods: {
       changeTab(tab, url) {
-        // this.tab = tab;
+        this.tab = tab;
         if (url)
-          window.open('#/' + url)
+          // window.open('#/' + url)
+          this.$router.push('/whitecol/'+url)
       },
       change() {
         this.$store.commit('changeStyle')
@@ -93,7 +107,7 @@
 <style scoped lang='scss'>
   @import "../assets/scss/tool.scss";
   .header {
-    height: 100vh;
+    // height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
@@ -120,13 +134,11 @@
           }
 
           &.active {
-            .tab {
-
               color: #fff;
               font-weight: bold;
               border-right: 1px solid #fff;
               @include trans;
-            }
+            
           }
         }
       }

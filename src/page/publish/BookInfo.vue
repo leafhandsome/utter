@@ -27,8 +27,11 @@
                 <div class="book__time">出版日期：2017.09.26 无修订</div>
             </div>
             <div class="book__btn">
-                <button class="book__trybtn">试读</button>
-                <button class="book__collectbtn">收藏</button>
+                <router-link to="/read">
+                <a href="javaScript" class="book__trybtn">试读</a>
+                </router-link>
+                <a href="javaScript" class="book__collectbtn">收藏</a>
+               
                 <br>
                 <button class="book__addbtn">加入书单</button>
                 <br>
@@ -143,6 +146,12 @@
                 }
             }
         },
+        created(){
+            setTimeout(() => {
+                  document.querySelector('.el-tree').style.background=this.$route.query.type=='white'?'white':"#1b1b1b";
+      
+            }, 50);   
+              },       
         methods: {
             tourl(url, query) {
                 tools.router.push({ path: url, query: query })
@@ -248,7 +257,7 @@
         float: right;
         text-align: center;
         line-height: 52px;
-        font-weight: bold;
+        // font-weight: bold;
         overflow: hidden;
     }
 
@@ -272,6 +281,7 @@
         border: 1px solid #000000;
         margin-top: 14px;
         overflow: hidden;
+        cursor: pointer;
     }
 
     .show {

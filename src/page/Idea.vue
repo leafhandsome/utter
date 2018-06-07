@@ -7,10 +7,10 @@
 
     <div class="leftCate pull-left" :style='height'>
       <div class="cateList">
-        <div class="cate active">
+        <div :class="cateTab==0? 'cate active':'cate'" @click='catefun(0)'>
           想法
         </div>
-        <div class="cate">
+        <div :class="cateTab==1? 'cate active':'cate'" @click='catefun(1)'>
           灵感
         </div>
 
@@ -26,15 +26,20 @@
         </el-tooltip>
 
         <div class="itemTools">
-          <div class="tools">
-            <el-tooltip effect="dark" content="公开" placement="bottom">
-              <img src="../assets/images/article/open.png" alt="公开">
-            </el-tooltip>
+          <div class="tools" @click='openfun(1)'>
+            <!-- <el-tooltip effect="dark" content="公开" placement="bottom"> -->
+              <img v-show='showopen' src="../assets/images/article/open-c.png" alt="公开">
+              <img v-show='(!showopen||opentab==1)&&$route.query.type=="white"'  src="../assets/images/article/open.png" alt="公开">
+              <img v-show='(!showopen||opentab==1)&&$route.query.type=="black"'  src="../assets/images/article/open-w.png" alt="公开">
+              
+            <!-- </el-tooltip> -->
           </div>
-          <div class="tools">
-            <el-tooltip effect="dark" content="保密" placement="bottom">
-              <img src="../assets/images/article/close.png" alt="保密">
-            </el-tooltip>
+          <div class="tools"  @click='closefun(2)'>
+            <!-- <el-tooltip effect="dark" content="保密" placement="bottom"> -->
+               <img  v-show='showclose' src="../assets/images/article/close-c.png" alt="保密">
+              <img  v-show='(!showclose||opentab==2)&&$route.query.type=="white"'  src="../assets/images/article/close.png" alt="保密">
+              <img  v-show='(!showclose||opentab==2)&&$route.query.type=="black"'  src="../assets/images/article/close-w.png" alt="保密">
+            <!-- </el-tooltip> -->
           </div>
 
         </div>
@@ -72,12 +77,12 @@
 
           <div class="itemTools">
             <div class="tools">
-              <el-tooltip effect="dark" content="编辑" placement="bottom">
+              <el-tooltip effect="dark" content="编辑" placement="right-end">
                 <img src="../assets/images/article/edit.png" alt="编辑">
               </el-tooltip>
             </div>
             <div class="tools">
-              <el-tooltip effect="dark" content="删除" placement="bottom">
+              <el-tooltip effect="dark" content="删除" placement="right-end">
                 <img src="../assets/images/article/del.png" alt="删除">
               </el-tooltip>
             </div>
@@ -155,10 +160,31 @@ export default {
       },
       height2:{
         height:'0px'
-      }
+      },
+      cateTab:0,
+      showclose:true,
+      showopen:false,
+      opentab:1,
     }
   },
+  created(){
+  },
   methods:{
+    //是否公开
+    openfun(value){
+      this.showopen=false;
+      this.showclose=true;
+      this.opentab=value;
+    },
+    closefun(value){
+      this.showclose=false;
+       this.showopen=true;
+      this.opentab=value;
+    },
+    //切换想法
+    catefun(value){
+        this.cateTab=value;
+    },
     bold(){
        this.editor.execCommand( 'bold' );
     },
@@ -264,10 +290,6 @@ export default {
           .itemTools{
             display: block;
           }
-        }
-
-        .leftSide{
-          color: #000;
         }
 
         .rightSide{

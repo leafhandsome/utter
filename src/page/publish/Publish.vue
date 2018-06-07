@@ -1,15 +1,16 @@
 <template lang="html">
-    <div class="publish">
+    <div class='container'>
+    <div class="publish" v-show='!showboks&&!showapply'>
         <div class="tab">
-            <div class="tab__item" :class="{'tab__item--active':tabIndex==0}" @click="changeTab(0)">作品</div>
-            <div class="tab__item" :class="{'tab__item--active':tabIndex==1}" @click="changeTab(1)">已购</div>
-            <div class="tab__item" :class="{'tab__item--active':tabIndex==2}" @click="changeTab(2)">收藏</div>
+            <a href='javaScript:;' class="tab__item" :class="{'tab__item--active':tabIndex==0}" @click="changeTab(0)">作品</a>
+            <a href='javaScript:;' class="tab__item" :class="{'tab__item--active':tabIndex==1}" @click="changeTab(1)">已购</a>
+            <a href='javaScript:;' class="tab__item" :class="{'tab__item--active':tabIndex==2}" @click="changeTab(2)">收藏</a>
         </div>
         <div class="mywriting" v-show="tabIndex==0">
-            <div class="mywriting__btn" v-if="isApplyBtn">
+            <div class="mywriting__btn" v-if="isApplyBtn=true" @click='setshowtab'>
                 申请独立出版
             </div>
-            <div class="list">
+            <div class="list clearfix">
                 <div class="list__item" v-for="(item,idx) in mywritingBooks" @click="toBookInfo">
                     <div class="list__img">
                         <img src="" alt="">
@@ -116,8 +117,13 @@
             </div>
         </div>
     </div>
+    <bookinfo v-show='showboks'></bookinfo>
+    <apply v-show='showapply'></apply>
+    </div>
 </template>
 <script>
+import bookinfo from './BookInfo'
+import apply from './Apply'
     export default {
 
         data() {
@@ -126,20 +132,29 @@
                 isApplyBtn: false,
                 mywritingBooks: [],
                 purchasedBooks: [],
-                collectionBooks: []
-
+                collectionBooks: [],
+                showboks:false,
+                showapply:false,    
             }
         },
+        created(){
+            this.showboks=this.$route.query.other=='books'?true:false
+        },
         methods: {
+            setshowtab(){
+                this.showapply=true;
+
+            },
             tourl(url, query) {
                 tools.router.push({ path: url, query: query })
             },
             changeTab(idx) {
                 this.tabIndex = idx;
-                this.tourl('/publish', { tab: 4, index: idx });
+                // this.tourl('/publish', { tab: 4, index: idx });
             },
             toBookInfo() {
-                this.tourl('/bookinfo', {});
+                this.showboks=true;
+                 window.scrollTo(0, 0);
             }
         },
         mounted() {
@@ -157,7 +172,8 @@
             this.collectionBooks = arr
         },
         components: {
-
+             bookinfo,
+             apply   
         }
     }
 </script>
@@ -187,7 +203,7 @@
 
     .tab__item--active {
         color: #000;
-        font-weight: bold;
+        font-weight: 700;
     }
 
     .mywriting {}
@@ -195,7 +211,7 @@
     .mywriting__btn {
         width: 304px;
         height: 58px;
-        line-height: 50px;
+        line-height: 58px;
         background: #000;
         color: #ffffff;
         text-align: center;

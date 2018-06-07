@@ -5,7 +5,7 @@
     <img @click='change' v-else class='logo' src="../assets/images/utter/logow.png" alt="UTTER">
 
     <div class="middleTab clearfix" v-if='type'>
-      <div class="pull-left" :class='{"active":tab == 1}' @click='changeTab(1)'>
+      <div class="pull-left" :class='{"active":tab == 1}' @click='changeTab(1,"modey")'>
         <div class="tab">首页</div>
       </div>
       <div class="pull-left" :class='{"active":tab == 2}' @click='changeTab(2,"myarticle")'>
@@ -44,25 +44,25 @@
     <template v-else>
       <div class="rightTools pull-right">
 
-        <div class="item">
-          <img v-if='utstyle == "white"' src="../assets/images/utter/search.png" alt="搜索">
-          <img v-else src="../assets/images/utter/searchw.png" alt="搜索">
+        <div class="item" @mouseenter="styleimg.showimg1=false" @mouseleave='styleimg.showimg1=true'>
+          <img v-show="styleimg.showimg1" src="../assets/images/utter/search.png" alt="搜索">
+          <img v-show="!styleimg.showimg1" src="../assets/images/utter/searchw.png" alt="搜索">
         </div>
-        <div class="item">
-          <img v-if='utstyle == "white"' src="../assets/images/utter/create.png" alt="创作">
-          <img v-else src="../assets/images/utter/createw.png" alt="创作">
+        <div class="item"  @mouseenter="styleimg.showimg2=false" @mouseleave='styleimg.showimg2=true'>
+          <img v-show="styleimg.showimg2" src="../assets/images/utter/create.png" alt="创作">
+          <img v-show="!styleimg.showimg2" src="../assets/images/utter/createw.png" alt="创作">
         </div>
-        <div class="item">
-          <img v-if='utstyle == "white"' src="../assets/images/utter/music.png" alt="音乐">
-          <img v-else src="../assets/images/utter/musicw.png" alt="音乐">
+        <div class="item"  @mouseenter="styleimg.showimg3=false" @mouseleave='styleimg.showimg3=true'>
+          <img v-show="styleimg.showimg3" src="../assets/images/utter/music.png" alt="音乐">
+          <img v-show="!styleimg.showimg3" src="../assets/images/utter/musicw.png" alt="音乐">
         </div>
-        <div class="item">
-          <img v-if='utstyle == "white"' src="../assets/images/utter/msg.png" alt="消息">
-          <img v-else src="../assets/images/utter/msgw.png" alt="消息">
+        <div class="item"  @mouseenter="styleimg.showimg4=false" @mouseleave='styleimg.showimg4=true'>
+          <img v-show="styleimg.showimg4" src="../assets/images/utter/msg.png" alt="消息">
+          <img v-show="!styleimg.showimg4" src="../assets/images/utter/msgw.png" alt="消息">
         </div>
-        <div class="item">
-          <img v-if='utstyle == "white"' src="../assets/images/utter/user.png" @click='tourl("/login")' alt="个人中心">
-          <img v-else src="../assets/images/utter/userw.png" @click='tourl("/login")' alt="个人中心">
+        <div class="item"  @mouseenter="styleimg.showimg5=false" @mouseleave='styleimg.showimg5=true'>
+          <img v-show="styleimg.showimg5" src="../assets/images/utter/user.png" @click='tourl("/login")' alt="个人中心">
+          <img v-show="!styleimg.showimg5" src="../assets/images/utter/userw.png" @click='tourl("/login")' alt="个人中心">
         </div>
       </div>
     </template>
@@ -74,150 +74,169 @@
 </template>
 
 <script>
-  import personal from './Personal'
-  export default {
-    data() {
-      return {
-        utstyle: 'white',
-        tab: 1,
-        showPersonal:false
+import personal from "./Personal";
+export default {
+  data() {
+    return {
+      utstyle: "white",
+      tab: 1,
+      showPersonal: false,
+      styleimg: {
+        showimg1: true,
+        showimg2: true,
+        showimg3: true,
+        showimg4: true,
+        showimg5: true,
       }
+    };
+  },
+  props: ["type", "activeTab"],
+  created(){
+     
+  },
+  created(){
+     
+  },
+  methods: {
+    changeTab(tab, url) {
+      this.tab = tab;
+      if (url)
+        // window.open('#/' + url + '?tab=' + tab)
+        this.$router.push(url + "?tab=" + tab);
     },
-    props: ['type', 'activeTab'],
-    methods: {
-      changeTab(tab, url) {
-        //this.tab = tab;
-        if (url)
-          window.open('#/' + url + '?tab=' + tab)
-      },
-      change() {
-        this.$store.commit('changeStyle')
-      },
-      tourl(url) {
-        tools.router.push({
-          path: url
-        });
-      }
+    change() {
+      this.$store.commit("changeStyle");
     },
-    watch: {
-      '$store.state.utstyle': function (val) {
-        this.utstyle = val;
-      }
-    },
-    components: {
-      personal
+    tourl(url) {
+      tools.router.push({
+        path: url
+      });
     }
+  },
+  activeted(){
+     console.log(this.tab)
+      this.tab=1
+  },
+  watch: {
+    "$store.state.utstyle": function(val) {
+      this.utstyle = val;
+    }
+  },
+  components: {
+    personal
   }
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang='scss'>
-  @import "../assets/scss/tool.scss";
-  .header {
-    height: 58px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding: 0 30px;
-    width: 100vw;
-    min-width: 1350px;
-    z-index: 1000;
-    @include trans();
-    &.black {
-      background: #000000;
-      .rightTools {
-        .item {
-          &:hover {
-            @include bhover();
-          }
-        }
-      }
-      .middleTab {
-        .tab {
-          color: #B8B8B8;
-        }
-        .pull-left {
-          &.active {
-            .tab {
-              color: #fff;
-              font-weight: bold;
-              border-bottom: 1px solid #fff;
-              @include trans;
-            }
-          }
-        }
-      }
-    }
-    &.white {
-      background: #FFFFFF;
-      .rightTools {
-        .item {
-          &:hover {
-            @include whover();
-          }
-        }
-      }
-    }
-
-    .logo {
-      height: 26px;
-      margin-top: 16px;
-      cursor: pointer;
-    }
+@import "../assets/scss/tool.scss";
+.header {
+  height: 58px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0 30px;
+  width: 100vw;
+  min-width: 1350px;
+  z-index: 1000;
+  @include trans();
+  &.black {
+    background: #000000;
     .rightTools {
-      height: 58px;
-
       .item {
-        @include trans();
-        height: 58px;
-        display: inline-block;
-        width: 58px;
-        text-align: center;
-        padding-top: 18px;
+        &:hover {
+          @include bhover();
+        }
       }
     }
-
     .middleTab {
-      width: 500px;
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 58px;
+      .tab {
+        color: #b8b8b8;
+      }
       .pull-left {
-        width: 100px;
-        text-align: center;
-        vertical-align: top;
-        @include hand;
-        @include trans;
-        &:hover {
-          background: rgba(0, 0, 0, .1);
-        }
-
         &.active {
           .tab {
-            color: #000;
+            color: #fff;
             font-weight: bold;
-            border-bottom: 1px solid #000;
+            border-bottom: 1px solid #fff;
             @include trans;
           }
         }
       }
-      .tab {
-        box-sizing: border-box;
-        display: inline-block;
-        height: 58px;
-        line-height: 58px;
-        color: #898989;
-        font-size: 15px;
-        margin: 0 auto;
+    }
+  }
+  &.white {
+    background: #ffffff;
+    .rightTools {
+      .item {
+        &:hover {
+          @include whover();
+        }
+        cursor: pointer;
       }
     }
   }
-  .personshow{
-    position: fixed;
-    right: 0;
-    top: 58px;
-    bottom:0;
+
+  .logo {
+    height: 26px;
+    margin-top: 16px;
+    cursor: pointer;
   }
+  .rightTools {
+    height: 58px;
+
+    .item {
+      @include trans();
+      height: 58px;
+      display: inline-block;
+      width: 58px;
+      text-align: center;
+      padding-top: 18px;
+    }
+  }
+
+  .middleTab {
+    width: 500px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 58px;
+    .pull-left {
+      width: 100px;
+      text-align: center;
+      vertical-align: top;
+      @include hand;
+      @include trans;
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      &.active {
+        .tab {
+          color: #000;
+          font-weight: bold;
+          border-bottom: 1px solid #000;
+          @include trans;
+        }
+      }
+    }
+    .tab {
+      box-sizing: border-box;
+      display: inline-block;
+      height: 58px;
+      line-height: 58px;
+      color: #898989;
+      font-size: 15px;
+      margin: 0 auto;
+    }
+  }
+}
+.personshow {
+  position: fixed;
+  right: 0;
+  top: 58px;
+  bottom: 0;
+}
 </style>

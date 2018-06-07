@@ -42,7 +42,7 @@
     <div class="books clearfix">
       <div class="item pull-left" v-for='i in 8'>
 
-        <div class="forBook" v-if='i % 2 == 1'>
+        <div class="forBook" v-if='i % 2 == 1' @click='bookspage'>
           <div class="title">
             写下你的一生
           </div>
@@ -87,6 +87,9 @@ export default {
     }
   },
   methods:{
+    bookspage(){
+      this.$router.push({path:'/whiterow/publish',query:{type:"white",other:'books'}})
+    },
   	tourl(url){
       tools.router.push({path:url})
     }
@@ -96,6 +99,7 @@ export default {
     this.$store.commit('changeFooter',true)
     this.$store.commit('changeHeader',true)
     this.$store.commit('changeType', '');
+
   },
    components:{
   }
@@ -105,7 +109,7 @@ export default {
 <style scoped lang='scss'>
   @import "../assets/scss/tool.scss";
   .utter{
-    height: 100%;
+    // height: 100%;
     padding-top: 100px !important;
     @include cstyle();
 

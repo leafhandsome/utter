@@ -90,11 +90,14 @@
     }
 
     .input__item {
-        padding: 20px;
+       
+        height: 60px;
         width: 250px;
         border: 1px solid #000;
-
         margin-bottom: 28px;
+        input{
+             padding-left: 20px;
+        }
     }
 
     .upload {

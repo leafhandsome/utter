@@ -38,6 +38,7 @@ export default {
       window.history.back()
     },
   	tourl(url,query){
+      url=url=='/modey'?'/whiterow'+url:'/whitecol'+url
       tools.router.push({path:url,query:query});
       //window.open('#/modey?type=black')
     }

@@ -83,6 +83,7 @@ export default {
           message: '登录成功',
           type: 'success'
         });
+        this.$router.push('/whiterow/modey?type=white')
       }else{
         this.$message('登录失败');
       }

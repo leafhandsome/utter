@@ -5,31 +5,31 @@
   </div>
 </template>
 <script>
-import edittools from '../components/EditTools';
+import edittools from "../components/EditTools";
 export default {
-  data () {
-    return {
+  data() {
+    return {};
+  },
+  methods: {
+    tourl(url, query) {
+      tools.router.push({ path: url, query: query });
     }
   },
-  methods:{
-    tourl(url,query){
-      tools.router.push({path:url,query:query})
-    }
-  },
-  mounted(){
+ 
+  mounted() {
     var _this = this;
     this.$store.state.showHeader = false;
     this.$store.state.showFooter = false;
   },
-   components:{
+
+  components: {
     edittools
   }
-}
+};
 </script>
 
 <style scoped lang='scss'>
-  @import "../assets/scss/tool.scss";
-  .editor{
-
-  }
+@import "../assets/scss/tool.scss";
+.editor {
+}
 </style>
