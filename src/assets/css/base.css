@@ -132,3 +132,27 @@ input:focus {
 .el-tree {
     border: none;
 }
+
+.ut-input-white input {
+    color: #000;
+    background-color: #F7F7F7;
+}
+
+.ut-input-black input {
+    color: white;
+    background-color: #1b1b1b;
+}
+
+.pagecolr-black {
+    background-color: black;
+}
+
+.pagecolr-white {
+    background-color: white;
+}
+
+.clearfix:after {
+    content: "";
+    display: block;
+    clear: both;
+}

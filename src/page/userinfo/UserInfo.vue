@@ -1,5 +1,5 @@
 <template lang="html">
-    <div class="userinfo">
+    <div class="userinfo" :class="$route.query.type=='white'?'ut-input-white':'ut-input-white'">
           <!-- 私信   -->
           <div class="msg" v-show='showmsg'>
               <div class="mainItem">
@@ -28,7 +28,9 @@
                         </div>
                         <div class="btn__message">
                             <a href='javaScript:;'>
-                            <img src="../../assets/images/userinfo/142 用户-私信-黑.png" alt=""  @click="showmsg=true">
+                            <img v-show="!showmsg" src="../../assets/images/userinfo/139 用户-私信.png" alt=""  @click="showmsg=true">
+                            <img v-show="showmsg&&$route.query.type=='white'" src="../../assets/images/userinfo/142 用户-私信-黑.png" alt=""  @click="showmsg=true">
+                            <img v-show="showmsg&&$route.query.type=='black'" src="../../assets/images/userinfo/145 用户-私信-白.png" alt=""  @click="showmsg=true">
                             </a>
                         </div>
                         <div class="btn__add">
@@ -44,7 +46,7 @@
                         
                     </div>
                 </div>
-                <div :class='showidea?"usermsg":""' ref="usermsg">
+                <div :class='showidea?"usermsg":"bordermsg"' ref="usermsg">
                 <div class="msg__name"> <input class="msg__name" type="text" v-model="user.name" placeholder='' :readonly='showidea'></div>
                 <div class="msg__occupation"> <input class="msg__adress" type="text" v-model="user.adress" placeholder='' :readonly='showidea'>
                 <i class='adress1'></i> 
@@ -153,11 +155,12 @@ export default {
 .userinfo {
   width: 1264px;
   margin: 0 auto;
-  margin-top: 208px;
+  padding-top: 208px;
   position: relative;
+  height: 100%;
   .msg {
     position: absolute;
-    top: -20px;
+    // top: 0;
     left: 300px;
     z-index: 50;
     width: 650px;
@@ -225,6 +228,12 @@ export default {
       }
     }
   }
+  .bordermsg{
+    input{
+        border:1px solid #999;
+    }
+  
+  }
   .usermsg {
     input {
       border: none;
@@ -247,7 +256,7 @@ export default {
     }
   }
   input {
-    padding-left: 5px;
+    padding:5px;
   }
   .msg__adress {
     width: 100px;

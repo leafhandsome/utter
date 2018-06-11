@@ -123,250 +123,251 @@
   </div>
 </template>
 <script>
-export default {
-  data() {
-    return {
-      showmore: false
+    export default {
+        data() {
+            return {
+                showmore: false
+            };
+        },
+        methods: {
+            tourl(url, query) {
+                tools.router.push({
+                    path: url,
+                    query: query
+                });
+            }
+        },
+        mounted() {
+            var _this = this;
+            this.$store.commit("changeFooter", false);
+            this.$store.commit("changeHeader", true);
+            this.$store.commit("changeType", "user");
+        },
+        components: {}
     };
-  },
-  methods: {
-    tourl(url, query) {
-      tools.router.push({
-        path: url,
-        query: query
-      });
-    }
-  },
-  mounted() {
-    var _this = this;
-    this.$store.commit("changeFooter", false);
-    this.$store.commit("changeHeader", true);
-    this.$store.commit("changeType", "user");
-  },
-  components: {}
-};
 </script>
 
 <style scoped lang='scss'>
-@import "../assets/scss/tool.scss";
-.articleinfo {
-  width: 1040px;
-  margin: 135px auto 0;
-  .article {
-    .titleBox {
-      height: 100px;
-      border-top: 1px solid #e6e6e6;
-      border-bottom: 1px solid #e6e6e6;
-      padding: 0 18px;
-      .pull-left {
-        font-size: 25px;
-        font-weight: bold;
-        color: #000;
-        line-height: 100px;
-        @include copynone;
-      }
-      .pull-right {
-        height: 100px;
-        text-align: right;
-        padding-top: 26px;
-        .time {
-          margin-bottom: 10px;
-          font-size: 15px;
-        }
-        .nickName {
-          font-weight: bold;
-        }
-      }
-    }
-    .desc {
-      padding: 40px 18px;
-      line-height: 1.5;
-      @include copynone;
-    }
-    .tools {
-      padding: 0 18px;
-      margin-top: 50px;
-      .pull-left {
-        .tool {
-          height: 17px;
-          vertical-align: middle;
-          display: inline-block;
-          font-size: 15px;
-          margin-right: 10px;
-          span {
-            vertical-align: top;
-          }
-        }
-      }
-      .pull-right {
-        .pageTools {
-          width: 200px;
-          height: 25px;
-          line-height: 25px;
-          position: relative;
-          .itemTools {
-            position: absolute;
-            top: -50px;
-            left: -10px;
-            width: 300px;
-            .tools {
-              margin-top: 0;
-              float: left;
-            }
-          }
-          .innerbox {
-            width: 200px;
-            height: 25px;
-            margin: 0 auto;
-            @include copynone;
-            position: relative;
-            .more {
-              position: absolute;
-              left: 50%;
-              top: 50%;
-              transform: translate3d(-50%, -50%, 0);
-              width: 20px;
-              height: 18px;
-            }
-            // &:after {
-            //     content: '';
-            //     display: block;
-            //     position: absolute;
-            //     left: 50%;
-            //     top: 50%;
-            //     transform: translate3d(-50%, -50%, 0);
-            //     width: 20px;
-            //     height: 18px;
-            //     background: url('../assets/images/article/more.png') no-repeat 0 0;
-            //     background-size: 20px 18px;
-            //     opacity: .6;
-            // }
-          }
-          .pull-left,
-          .pull-right {
-            height: 25px;
-            line-height: 25px;
-            @include hand;
-            img {
-              height: 25px;
-            }
-            span {
-              display: inline-block;
-              vertical-align: top;
-              margin: 0 10px;
-            }
-          }
-        }
-      }
-    }
-  }
-  .comment {
-    margin-bottom: 200px;
-    .arrowBox {
-      height: 22px;
-      margin-top: 25px;
-      position: relative;
-      &:after {
-        content: "";
-        width: 100%;
-        height: 1px;
-        position: absolute;
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
-        background: #e6e6e6;
-        z-index: -1;
-      }
-      .innerBox {
-        width: 100px;
-        height: 22px;
-        text-align: center;
+    @import "../assets/scss/tool.scss";
+    .articleinfo {
+        width: 1040px;
         margin: 0 auto;
-        background: #fff;
-      }
-    }
-    .sendBox {
-      height: 178px;
-      padding-left: 17px;
-      padding-top: 29px;
-      position: relative;
-      border-bottom: 1px solid #e6e6e6;
-      .cover {
-        width: 44px;
-        height: 44px;
-        background: black;
-      }
-      .info {
-        margin-left: 15px;
-        position: relative;
-        .nickName {
-          line-height: 11px;
-          margin-bottom: 13px;
-        }
-        textarea {
-          border: none;
-          resize: none;
-          outline: none;
-          width: 900px;
-          height: 100px;
-        }
-      }
-      .submit {
-        position: absolute;
-        right: 13px;
-        bottom: 15px;
-        @include hand;
-        padding: 5px 0;
-      }
-    }
-    .item {
-      padding: 29px 17px;
-      position: relative;
-      border-bottom: 1px solid #e6e6e6;
-      .del {
-        position: absolute;
-        top: 26px;
-        right: 16px;
-        opacity: 0.6;
-        @include hand;
-      }
-      .cover {
-        width: 44px;
-        height: 44px;
-        background: black;
-      }
-      .info {
-        margin-left: 15px;
-        position: relative;
-        .nickName {
-          line-height: 11px;
-          margin-bottom: 13px;
-        }
-      }
-      .commentBottom {
-        margin-top: 35px;
-        .time {
-          color: #9f9f9f;
-          font-size: 15px;
-        }
-        .tools {
-          opacity: 0.6;
-          .tool {
-            height: 17px;
-            vertical-align: middle;
-            display: inline-block;
-            font-size: 15px;
-            margin-right: 10px;
-            &:last-child {
-              margin-right: 0;
+        padding-top: 135px;
+        .article {
+            .titleBox {
+                height: 100px;
+                border-top: 1px solid #e6e6e6;
+                border-bottom: 1px solid #e6e6e6;
+                padding: 0 18px;
+                .pull-left {
+                    font-size: 25px;
+                    font-weight: bold;
+                    color: #000;
+                    line-height: 100px;
+                    @include copynone;
+                }
+                .pull-right {
+                    height: 100px;
+                    text-align: right;
+                    padding-top: 26px;
+                    .time {
+                        margin-bottom: 10px;
+                        font-size: 15px;
+                    }
+                    .nickName {
+                        font-weight: bold;
+                    }
+                }
             }
-            span {
-              vertical-align: top;
+            .desc {
+                padding: 40px 18px;
+                line-height: 1.5;
+                @include copynone;
             }
-          }
+            .tools {
+                padding: 0 18px;
+                margin-top: 50px;
+                .pull-left {
+                    .tool {
+                        height: 17px;
+                        vertical-align: middle;
+                        display: inline-block;
+                        font-size: 15px;
+                        margin-right: 10px;
+                        span {
+                            vertical-align: top;
+                        }
+                    }
+                }
+                .pull-right {
+                    .pageTools {
+                        width: 200px;
+                        height: 25px;
+                        line-height: 25px;
+                        position: relative;
+                        .itemTools {
+                            position: absolute;
+                            top: -50px;
+                            left: -10px;
+                            width: 300px;
+                            .tools {
+                                margin-top: 0;
+                                float: left;
+                            }
+                        }
+                        .innerbox {
+                            width: 200px;
+                            height: 25px;
+                            margin: 0 auto;
+                            @include copynone;
+                            position: relative;
+                            .more {
+                                position: absolute;
+                                left: 50%;
+                                top: 50%;
+                                transform: translate3d(-50%, -50%, 0);
+                                width: 20px;
+                                height: 18px;
+                            }
+                            // &:after {
+                            //     content: '';
+                            //     display: block;
+                            //     position: absolute;
+                            //     left: 50%;
+                            //     top: 50%;
+                            //     transform: translate3d(-50%, -50%, 0);
+                            //     width: 20px;
+                            //     height: 18px;
+                            //     background: url('../assets/images/article/more.png') no-repeat 0 0;
+                            //     background-size: 20px 18px;
+                            //     opacity: .6;
+                            // }
+                        }
+                        .pull-left,
+                        .pull-right {
+                            height: 25px;
+                            line-height: 25px;
+                            @include hand;
+                            img {
+                                height: 25px;
+                            }
+                            span {
+                                display: inline-block;
+                                vertical-align: top;
+                                margin: 0 10px;
+                            }
+                        }
+                    }
+                }
+            }
         }
-      }
+        .comment {
+            margin-bottom: 200px;
+            .arrowBox {
+                height: 22px;
+                margin-top: 25px;
+                position: relative;
+                &:after {
+                    content: "";
+                    width: 100%;
+                    height: 1px;
+                    position: absolute;
+                    top: 50%;
+                    left: 0;
+                    transform: translateY(-50%);
+                    background: #e6e6e6;
+                    z-index: -1;
+                }
+                .innerBox {
+                    width: 100px;
+                    height: 22px;
+                    text-align: center;
+                    margin: 0 auto;
+                    background: #fff;
+                }
+            }
+            .sendBox {
+                height: 178px;
+                padding-left: 17px;
+                padding-top: 29px;
+                position: relative;
+                border-bottom: 1px solid #e6e6e6;
+                .cover {
+                    width: 44px;
+                    height: 44px;
+                    background: black;
+                }
+                .info {
+                    margin-left: 15px;
+                    position: relative;
+                    .nickName {
+                        line-height: 11px;
+                        margin-bottom: 13px;
+                    }
+                    textarea {
+                        border: none;
+                        resize: none;
+                        outline: none;
+                        width: 900px;
+                        height: 100px;
+                    }
+                }
+                .submit {
+                    position: absolute;
+                    right: 13px;
+                    bottom: 15px;
+                    @include hand;
+                    padding: 5px 0;
+                }
+            }
+            .item {
+                padding: 29px 17px;
+                position: relative;
+                border-bottom: 1px solid #e6e6e6;
+                .del {
+                    position: absolute;
+                    top: 26px;
+                    right: 16px;
+                    opacity: 0.6;
+                    @include hand;
+                }
+                .cover {
+                    width: 44px;
+                    height: 44px;
+                    background: black;
+                }
+                .info {
+                    margin-left: 15px;
+                    position: relative;
+                    .nickName {
+                        line-height: 11px;
+                        margin-bottom: 13px;
+                    }
+                }
+                .commentBottom {
+                    margin-top: 35px;
+                    .time {
+                        color: #9f9f9f;
+                        font-size: 15px;
+                    }
+                    .tools {
+                        opacity: 0.6;
+                        .tool {
+                            height: 17px;
+                            vertical-align: middle;
+                            display: inline-block;
+                            font-size: 15px;
+                            margin-right: 10px;
+                            &:last-child {
+                                margin-right: 0;
+                            }
+                            span {
+                                vertical-align: top;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
-}
 </style>

@@ -122,8 +122,8 @@
     </div>
 </template>
 <script>
-import bookinfo from './BookInfo'
-import apply from './Apply'
+    import bookinfo from './BookInfo'
+    import apply from './Apply'
     export default {
 
         data() {
@@ -133,28 +133,31 @@ import apply from './Apply'
                 mywritingBooks: [],
                 purchasedBooks: [],
                 collectionBooks: [],
-                showboks:false,
-                showapply:false,    
+                showboks: false,
+                showapply: false,
             }
         },
-        created(){
-            this.showboks=this.$route.query.other=='books'?true:false
+        created() {
+            this.showboks = this.$route.query.other == 'books' ? true : false
         },
         methods: {
-            setshowtab(){
-                this.showapply=true;
+            setshowtab() {
+                this.showapply = true;
 
             },
             tourl(url, query) {
-                tools.router.push({ path: url, query: query })
+                tools.router.push({
+                    path: url,
+                    query: query
+                })
             },
             changeTab(idx) {
                 this.tabIndex = idx;
                 // this.tourl('/publish', { tab: 4, index: idx });
             },
             toBookInfo() {
-                this.showboks=true;
-                 window.scrollTo(0, 0);
+                this.showboks = true;
+                window.scrollTo(0, 0);
             }
         },
         mounted() {
@@ -172,8 +175,8 @@ import apply from './Apply'
             this.collectionBooks = arr
         },
         components: {
-             bookinfo,
-             apply   
+            bookinfo,
+            apply
         }
     }
 </script>
@@ -181,16 +184,17 @@ import apply from './Apply'
 <style scoped lang='scss'>
     @import "../../assets/scss/tool.scss";
     .publish {
-        margin-top: 58px;
+        /* margin-top: 58px; */
+        overflow: hidden;
     }
-
+    
     .tab {
         margin: 0 auto;
         margin-top: 140px;
         overflow: hidden;
         width: 540px;
     }
-
+    
     .tab__item {
         float: left;
         width: 170px;
@@ -200,14 +204,14 @@ import apply from './Apply'
         box-sizing: border-box;
         border-right: 1px solid #fdfdfd;
     }
-
+    
     .tab__item--active {
         color: #000;
         font-weight: 700;
     }
-
+    
     .mywriting {}
-
+    
     .mywriting__btn {
         width: 304px;
         height: 58px;
@@ -218,13 +222,13 @@ import apply from './Apply'
         margin: 0 auto;
         margin-top: 320px;
     }
-
+    
     .list {
         width: 1246px;
         margin: 0 auto;
         margin-top: 50px;
     }
-
+    
     .list__item {
         width: 330px;
         height: 514px;
@@ -233,21 +237,21 @@ import apply from './Apply'
         margin-right: 128px;
         margin-bottom: 100px;
     }
-
+    
     .list__item:nth-child(3n) {
         margin-right: 0;
     }
-
+    
     .list__img {
         width: 100%;
         height: 414px;
     }
-
+    
     .list__img img {
         width: 100%;
         height: 100%;
     }
-
+    
     .list__bottom {
         width: 100%;
         height: 100px;
@@ -257,7 +261,7 @@ import apply from './Apply'
         justify-content: center;
         align-items: center;
     }
-
+    
     .list__icon {
         text-align: center;
         padding: 0 16px;

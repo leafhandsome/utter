@@ -1,5 +1,5 @@
 <template>
-<div class="edit" :class='{black:utstyle != "white"}' :style='{height:height + "px"}'>
+<div class="edit" :class='{black:utstyle != "white"}' :style='{height:height + "px"}' @click="showset=false">
 
   <div class="header">
     <img @click='change' v-if='utstyle == "white"' class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
@@ -54,7 +54,11 @@
     </div>
 
     <div class="rightTools clearfix">
-      <div class="set pull-left" :class='{b:utstyle == "white",w:utstyle != "white"}'></div>
+      <div class="set pull-left" :class='{b:utstyle == "white",w:utstyle != "white"}' @click.stop="showset=true">
+        <img v-show="showset&&utstyle == 'black'" class="w" src="../assets/images/editor/setw.png" alt="">
+        <img v-show="showset&&utstyle == 'white'" class="" src="../assets/images/editor/setb.png" alt="">
+        <img v-show="!showset" src="../assets/images/editor/seta.png" alt="">
+      </div>
 
       <div class="back pull-left" :class='{b:utstyle == "white",w:utstyle != "white"}' @click="back"></div>
     </div>
@@ -63,7 +67,30 @@
   <div class="middleView">
     <div id="container"></div>
   </div>
-  
+    <!-- 设置-发表信息 -->
+    <div class="sendmsg">
+      <!-- 发表信息 -->
+        <div class="send ">
+            <div class="clearfix">
+            <div class="left fl ut-white1">
+
+            </div>
+          
+            <div class="right fr">
+                <div class="creat fr ut-white1" >创建类别</div>
+                <div class="istrue ut-white1"><a href="javaScript:;" class="ut-white1">确认</a></div>
+            </div>
+            </div>
+            <div class="bottom ut-white1">
+                  <textarea name="name" rows="8" cols="45" placeholder='为文章写一段摘要'></textarea>
+        <el-tooltip effect="dark" content="发表" placement="bottom">
+          <img src="../assets/images/article/submit.png" class='submit' alt="发表">
+        </el-tooltip>
+            </div>
+        </div>
+        <!-- 出版信息 -->
+        
+    </div>
 </div>
 </template>
 
@@ -76,6 +103,7 @@ export default {
   data() {
     return {
       utstyle: "white",
+      showset: false,
       activeTools: "",
       toolsList: [
         {
@@ -177,6 +205,7 @@ export default {
       ],
       colorList: [
         "#1B1B1B",
+        "#F7F7F7",
         "#434343",
         "#A40035",
         "#FE0000",
@@ -203,6 +232,12 @@ export default {
         target: "_blank"
       }
     };
+  },
+  created() {
+    this.utstyle = this.$route.query.type;
+    if (this.$route.query.type == "black") {
+      // this.editor.execCommand("forecolor", 1);
+    }
   },
   methods: {
     back() {
@@ -344,11 +379,16 @@ export default {
       var editor = this.editor;
       this.editor.ready(function() {
         console.log("ue finish");
-       
+
         editor.setContent("阿萨德撒从自行车撒初三");
       });
       return;
-
+      // UE.dom.domUtils.setStyles(this.editor.body, {
+      //   color: "#fff",
+      //   "font-family":
+      //     "'Microsoft Yahei','Helvetica Neue', Helvetica, STHeiTi, Arial, sans-serif",
+      //   "font-size": "14px"
+      // });
       setInterval(() => {
         let data = editor.execCommand("getlocaldata");
         console.log(data);
@@ -371,7 +411,7 @@ export default {
     window.onresize = function() {
       _this.height = window.innerHeight;
     };
-    
+
     this.initUeditor();
   }
 };
@@ -384,6 +424,66 @@ export default {
   width: 100%;
   height: 100%;
   transition: background 0.3s ease;
+  .sendmsg {
+    width: 492px;
+    height: 492px;
+    background-color: #eeeeee;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 1000;
+    transform: translate(-50%, -50%);
+    .send {
+      padding: 40px;
+      .left {
+        width: 50%;
+        height: 217px;
+        overflow-y: scroll;
+      }
+      .right {
+        width: 50%;
+        height: 217px;
+        position: relative;
+        text-align: center;
+        line-height: 54px;
+        .creat {
+          width: 80%;
+          height: 54px;
+        }
+        .istrue {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          width: 80%;
+          height: 54px;
+          a {
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+      .bottom {
+        width: 100%;
+        height: 140px;
+        margin-top: 20px;
+        padding: 10px 10px 0 10px;
+        position: relative;
+        textarea{
+          border: none;
+          outline: none;
+           resize: none;
+        }
+        img{
+          position: absolute;
+          right: 15px;
+          bottom: 15px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
   &.black {
     background: #000;
 
@@ -458,16 +558,19 @@ export default {
     }
 
     .set {
-      background-size: 19px 23px;
-      &.w {
-        background-image: url("../assets/images/editor/setw.png");
-      }
-      &.b {
-        background-image: url("../assets/images/editor/setb.png");
-      }
-      &:hover {
-        background-image: url("../assets/images/editor/seta.png") !important;
-      }
+      text-align: center;
+      vertical-align: center;
+      line-height: 56px;
+      // background-size: 19px 23px;
+      // &.w {
+      //   background-image: url("../assets/images/editor/setw.png");
+      // }
+      // &.b {
+      //   background-image: url("../assets/images/editor/setb.png");
+      // }
+      // &:hover {
+      //   background-image: url("../assets/images/editor/seta.png") !important;
+      // }
     }
 
     .back {
@@ -475,11 +578,11 @@ export default {
         background-image: url("../assets/images/editor/backw.png");
       }
       &.b {
-        background-image: url("../assets/images/editor/backb.png");
+        background-image: url("../assets/images/editor/backa.png");
       }
-      &:hover {
-        background-image: url("../assets/images/editor/backa.png") !important;
-      }
+      // &:hover {
+      //   background-image: url("../assets/images/editor/backa.png") !important;
+      // }
     }
   }
   @mixin tool() {
