@@ -1,5 +1,5 @@
 <template lang="html">
-    <div class="apply">
+    <div class="apply" :class="$route.query.type=='black'?'ut-input-black':'ut-input-white'">
         <div class="input__item">
             <input type="text" id="name" placeholder="真实姓名">
         </div>
@@ -27,19 +27,19 @@
             <div class="textarea__hint">正式出版的书籍（此处为选填加分项）
                 <br>请填写书名、作者名，出版社，出版时间。可附作品链接。
                 <br>实例：</div>
-            <textarea name="" id="" cols="30" rows="10"></textarea>
+            <textarea :class="$route.query.type=='black'?'ut-black1':'ut-white1'" name="" id="" cols="30" rows="10"></textarea>
         </div>
         <div class="textarea">
             <div class="textarea__hint">已发表的文章
                 <br>请填写您在任何报刊杂志或网络上公开发表的作品，并附上相关链接。
              </div>
-            <textarea name="" id="" cols="30" rows="10"></textarea>
+            <textarea  :class="$route.query.type=='black'?'ut-black1':'ut-white1'" name="" id="" cols="30" rows="10"></textarea>
         </div>
         <div class="agreement">
             协议
         </div>
         <div class="checkagree"><input type="checkbox">我以阅读并接受以上协议 </div>
-        <div class="submitbtn">确认提交</div>
+        <div class=""><a class="submitbtn" href="javaScript:;"> 确认提交</a> </div>
     </div>
 </template>
 <script>
@@ -71,7 +71,8 @@
         width: 610px;
         margin: 0 auto;
         margin-top: 140px;
-        padding-bottom: 28px;
+        padding-bottom: 108px;
+
     }
 
     .hint {
@@ -90,13 +91,13 @@
     }
 
     .input__item {
-       
+        padding-left: 20px;
         height: 60px;
         width: 250px;
         border: 1px solid #000;
         margin-bottom: 28px;
         input{
-             padding-left: 20px;
+            
         }
     }
 
@@ -120,12 +121,15 @@
     }
 
     .input__intro {
-        padding: 20px;
+        padding-left: 20px;
+        height: 60px;
         width: 100%;
         border: 1px solid #000;
 
         margin-bottom: 28px;
-
+        input{
+            height: 100%;
+        }
     }
 
     .upload__item:nth-child(2) {
@@ -161,7 +165,9 @@
             width: 14px;
             height: 14px;
             border: 1px solid #ccc;
-            background: #fff;
+            // background: #fff;
+            vertical-align: middle;
+            cursor: pointer;
         }
     }
     .submitbtn {

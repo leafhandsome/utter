@@ -27,10 +27,10 @@
                 <div class="book__time">出版日期：2017.09.26 无修订</div>
             </div>
             <div class="book__btn">
-                <router-link to="/read">
-                <a href="javaScript" class="book__trybtn">试读</a>
+                <router-link :to="{path:'/read',query:{type:$route.query.type}}">
+                <button class="book__trybtn">试读</button>
                 </router-link>
-                <a href="javaScript" class="book__collectbtn">收藏</a>
+                <button class="book__collectbtn">收藏</button>
                
                 <br>
                 <button class="book__addbtn">加入书单</button>
@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="show">
-            <div class="show__catalog">
+            <div class="show__catalog utBorder">
                 <div class="show__cataloghead">
                     <div class="show__more">
                         <img src="../../assets/images/publish/131 书架-更多-黑.png" alt="">
@@ -53,9 +53,10 @@
             </div>
             <div class="show__comment">
                 <div class="comment">
-                    <div class="comment__head">
+                    <div class="comment__head utBorder">
                         <span>
-                            <img src="../../assets/images/publish/116 评论回复-黑.png" alt="">
+                            <img v-show="$route.query.type=='white'" src="../../assets/images/publish/116 评论回复-黑.png" alt="">
+                            <img v-show="$route.query.type=='black'" src="../../assets//images/publish/111 评论回复.png" alt="">
                         </span>
                     </div>
                     <div class="clearfix"></div>
@@ -146,15 +147,19 @@
                 }
             }
         },
-        created(){
+        created() {
             setTimeout(() => {
-                  document.querySelector('.el-tree').style.background=this.$route.query.type=='white'?'white':"#1b1b1b";
-      
-            }, 50);   
-              },       
+
+                document.querySelector('.el-tree').style.background = this.$route.query.type == 'white' ? 'white' : "black";
+
+            }, 50);
+        },
         methods: {
             tourl(url, query) {
-                tools.router.push({ path: url, query: query })
+                tools.router.push({
+                    path: url,
+                    query: query
+                })
             },
             handleNodeClick(data) {
                 console.log(data);
@@ -179,11 +184,11 @@
         overflow: hidden;
         clear: both;
     }
-
+    
     .el-tree {
         border: none;
     }
-
+    
     .bookinfo {
         width: 1264px;
         margin: 0 auto;
@@ -191,43 +196,43 @@
         padding-bottom: 200px;
         overflow: hidden;
     }
-
+    
     button {
         background: #fff;
     }
-
+    
     .book {
         overflow: hidden;
     }
-
+    
     .book__img {
         width: 418px;
         height: 510px;
         background: #eeeeee;
         float: left;
     }
-
+    
     .book__msg {
         float: left;
         margin-left: 50px;
     }
-
+    
     .book__name {
         font-size: 26px;
         font-weight: bold;
     }
-
+    
     .book__author {
         font-weight: bold;
         margin-top: 30px;
     }
-
+    
     .book__price {
         font-size: 26px;
         margin-top: 74px;
         font-weight: bold;
     }
-
+    
     .book__feedback {
         margin-top: 18px;
         strong,
@@ -235,12 +240,11 @@
             display: inline-block;
             vertical-align: top;
         }
-        span{
+        span {
             padding-right: 20px;
         }
-
     }
-
+    
     .book__intro {
         height: 218px;
         margin-top: 42px;
@@ -248,19 +252,22 @@
             font-weight: bold;
         }
     }
-
+    
     .book__time {
         color: #aaa;
     }
-
+    
     .book__btn {
         float: right;
         text-align: center;
         line-height: 52px;
         // font-weight: bold;
         overflow: hidden;
+        button {
+            cursor: pointer;
+        }
     }
-
+    
     .book__trybtn,
     .book__collectbtn {
         float: left;
@@ -269,11 +276,11 @@
         border: 1px solid #000000;
         overflow: hidden;
     }
-
+    
     .book__collectbtn {
         margin-left: 16px;
     }
-
+    
     .book__addbtn,
     .book__buybtn {
         width: 210px;
@@ -283,44 +290,44 @@
         overflow: hidden;
         cursor: pointer;
     }
-
+    
     .show {
         margin-top: 96px;
     }
-
+    
     .show__catalog {
         border-top: 1px solid #eee;
         float: left;
         width: 414px;
     }
-
+    
     .show__cataloghead {
         padding: 26px;
     }
-
+    
     .show__more {
         float: left;
     }
-
+    
     .show__total {
         float: right;
         font-size: 12px;
         color: #aaa;
         font-weight: bold;
     }
-
+    
     .show__cataloglist {
         margin-top: 28px;
         margin-left: 20px;
     }
-
+    
     .show__comment {
         width: 800px;
         float: right;
     }
-
+    
     .comment {}
-
+    
     .comment__head {
         text-align: center;
         span {
@@ -331,7 +338,7 @@
             top: -10px;
         }
     }
-
+    
     .comment__head::before,
     .comment__head::after {
         width: 346px;
@@ -339,30 +346,29 @@
         background: #eee;
         content: '';
         float: left;
-
     }
-
+    
     .comment__item {
         padding: 30px 20px;
         overflow: hidden;
     }
-
+    
     .comment__userimg {
         width: 44px;
         height: 44px;
         background: #ccc;
         float: left;
     }
-
+    
     .comment__text {
         float: left;
         margin-left: 14px;
     }
-
+    
     .comment__time {
         float: left;
     }
-
+    
     .comment__feedback {
         float: right;
         strong,
@@ -378,11 +384,11 @@
             padding-right: 0;
         }
     }
-
+    
     .comment__content {
         margin-top: 8px;
     }
-
+    
     .comment__s {
         margin-top: 40px;
         color: #aaa;

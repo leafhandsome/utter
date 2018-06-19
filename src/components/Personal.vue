@@ -1,5 +1,5 @@
 <template>
-  <div class="personal" :class="{'personal--white':UTstyle =='white','personal--black':UTstyle =='black'}">
+  <div class="personal utBorder" :class="{'personal--white':UTstyle =='white','personal--black':UTstyle =='black'}">
     <div class="personal__box">
       <div class="personal__quanzi" v-show="footTab == 0">
         <div class="quanzi__tab">
@@ -50,20 +50,22 @@
             <div class="person__btnitem" :class="{'person__btnitem--active':personTab==0}" @click="changePersonTab(0)">购书计划</div>
             <div class="person__buyplan" v-show="personTab == 0">
               <div class="buyplan__books">
-                <div class="books__list">
-                  <div class="books__item">
+                <el-carousel class="books__list"  trigger="click" height="160px" indicator-position="none">
+                        <el-carousel-item v-for="(item, index) in 5" :key="index">
+                  <div class="books__item fl">
                     <div class="books__img">
                       <img src="" alt="">
                     </div>
                     <div class="books__name">沉默的青春</div>
                   </div>
-                  <div class="books__item">
+                  <div class="books__item fr">
                     <div class="books__img">
                       <img src="" alt="">
                     </div>
                     <div class="books__name">沉默的青春</div>
                   </div>
-                </div>
+                </el-carousel-item>
+                </el-carousel>
               </div>
             </div>
             <div class="person__btnitem" :class="{'person__btnitem--active':personTab==1}" @click="changePersonTab(1)">最近浏览</div>
@@ -74,26 +76,28 @@
                 <div class="tab__item" :class="{'tab__item--active':lastvisitedTab==2}" @click="changeLastVisitTab(2)">用户</div>
               </div>
               <div class="lastvisited__list" v-show="lastvisitedTab==0">
-                <div class="list__item">
+                <div class="list__item" v-for="(item, index) in 8" :key="index">
                   <div class="list__name">青海之行</div>
                   <div class="list__author">一笑而过</div>
                 </div>
               </div>
               <div class="lastvisited__list" v-show="lastvisitedTab==1">
-                <div class="books__list">
-                  <div class="books__item">
+                <el-carousel class="books__list"  trigger="click"  height="160px" indicator-position="none">
+                    <el-carousel-item v-for="(item, index) in 3" :key="index">
+                  <div class="books__item fl">
                     <div class="books__img">
                       <img src="" alt="">
                     </div>
                     <div class="books__name">沉默的青春</div>
                   </div>
-                  <div class="books__item">
+                  <div class="books__item fr">
                     <div class="books__img">
                       <img src="" alt="">
                     </div>
                     <div class="books__name">沉默的青春</div>
                   </div>
-                </div>
+                    </el-carousel-item>
+                </el-carousel>
               </div>
               <div class="lastvisited__list" v-show="lastvisitedTab==2">
                 <div class="lastvisited__show">
@@ -296,7 +300,7 @@
         border-style: solid;
         border-color: #e6e6ee;
         font-size: 14px;
-        .tab__item{
+        .tab__item {
             cursor: pointer;
         }
     }
@@ -590,10 +594,9 @@
             font-size: 12px;
             font-weight: bold;
             .books__item {
-                float: left;
                 width: 108px;
                 overflow: hidden;
-                margin-right: 24px;
+                /* margin-right: 24px; */
                 .books__img {
                     width: 100%;
                     height: 134px;
@@ -653,6 +656,8 @@
                 }
             }
             .lastvisited__list {
+                max-height: 250px;
+                overflow-y: auto;
                 .books__list {
                     padding-top: 20px;
                 }
@@ -769,7 +774,7 @@
         .person__pwdset {
             .pwdset__item {
                 width: 100%;
-                padding:2px 5px ;
+                padding: 2px 5px;
                 height: 50px;
                 border: 1px solid #666;
                 margin-top: 20px;

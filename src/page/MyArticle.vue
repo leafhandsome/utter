@@ -1,19 +1,19 @@
 <template lang="html">
-<div :class='pagecolor=="white"?"":"whitecolor"' class="container">
+<div class="container">
   <div class="myarticle clearfix" v-show='!showartice'>
-    <div class="leftCate pull-left" :style='height'>
-      <div class="cateList">
-        <div :class="tab==1?'cate '+active:'cate '" @click='tab=1'>
+    <div class="leftCate pull-left utBorder" :style='height'>
+      <div class="cateList utBorder">
+        <div class="utBorder" :class="tab==1?'cate '+active:'cate '" @click='tab=1'>
           默认分类
         </div>
-        <div :class="tab==2?'cate '+active:'cate '" @click='tab=2'>
+        <div class="utBorder" :class="tab==2?'cate '+active:'cate '" @click='tab=2'>
           我的草稿
         </div>
-        <div :class="tab==3?'cate '+active:'cate '" @click='tab=3'>
+        <div class="utBorder" :class="tab==3?'cate '+active:'cate '" @click='tab=3'>
           我的收藏
         </div>
-        <div class="tools clearfix">
-          <div class="pull-left"  @click='openfun(1)'>
+        <div class="tools utBorder clearfix">
+          <div class="pull-left utBorder"  @click='openfun(1)'>
             <!-- <el-tooltip effect="dark" content="公开" placement="bottom"> -->
                  <img v-show='showopen' src="../assets/images/article/open-c.png" alt="公开">
               <img v-show='(!showopen||opentab==1)&&$route.query.type=="white"'  src="../assets/images/article/open.png" alt="公开">
@@ -36,8 +36,8 @@
       </div>
     </div>
 
-    <div class="list pull-left" >
-      <div class="item clearfix" @click='showartice=true'>
+    <div class="list pull-left utBorder" >
+      <div class="item clearfix utBorder" @click='showartice=true'>
         <div class="leftSide pull-left">
           <div class="articleTitle" @click='tourl("articleinfo")'>
             写下你的一生
@@ -82,7 +82,7 @@
         </div>
       </div>
 
-      <div class="item clearfix">
+      <div class="item clearfix utBorder">
         <div class="leftSide pull-left">
           <div class="articleTitle" @click='tourl("articleinfo")'>
             欢迎来到UTTER
@@ -98,31 +98,36 @@
             2017-11-19 / 23:59
           </div>
 
-          <el-tooltip effect="dark" content="更多" placement="bottom">
-            <img src="../assets/images/article/more.png" alt="更多" @click='tourl("articleinfo")'>
-          </el-tooltip>
+          <!-- <el-tooltip effect="dark" content="更多" placement="bottom"> -->
+            <img v-show="pagecolor=='white'" src="../assets/images/article/more.png" alt="更多" @click='tourl("articleinfo")'>
+            <img v-show="pagecolor=='black'" src="../assets/images/article/more-w.png" alt="更多" @click='tourl("articleinfo")'>
+          <!-- </el-tooltip> -->
         </div>
 
-        <div class="itemTools">
-          <div class="tools">
-            <el-tooltip effect="dark" content="分享" placement="right-end">
-              <img src="../assets/images/article/share.png" alt="分享">
-            </el-tooltip>
+        <div class="itemTools utBorder">
+          <div class="tools utBorder">
+            <!-- <el-tooltip effect="dark" content="分享" placement="right-end"> -->
+              <img v-show="pagecolor=='white'" src="../assets/images/article/share.png" alt="分享">
+              <img v-show="pagecolor=='black'" src="../assets/images/article/103 分享-白.png" alt="分享">
+            <!-- </el-tooltip> -->
           </div>
-          <div class="tools">
-            <el-tooltip effect="dark" content="编辑" placement="right-end">
-              <img src="../assets/images/article/edit.png" alt="编辑">
-            </el-tooltip>
+          <div class="tools utBorder">
+            <!-- <el-tooltip effect="dark" content="编辑" placement="right-end"> -->
+              <img  v-show="pagecolor=='white'" src="../assets/images/article/edit.png" alt="编辑">
+              <img v-show="pagecolor=='black'" src="../assets/images/article/104 编辑-白.png" alt="编辑">
+            <!-- </el-tooltip> -->
           </div>
-          <div class="tools">
-            <el-tooltip effect="dark" content="下载" placement="right-end">
-              <img src="../assets/images/article/moredown.png" alt="下载">
-            </el-tooltip>
+          <div class="tools utBorder">
+            <!-- <el-tooltip effect="dark" content="下载" placement="right-end"> -->
+              <img  v-show="pagecolor=='white'" src="../assets/images/article/moredown.png" alt="下载">
+              <img  v-show="pagecolor=='black'" src="../assets/images/article/105 下载-白.png" alt="下载">
+            <!-- </el-tooltip> -->
           </div>
-          <div class="tools">
-            <el-tooltip effect="dark" content="删除" placement="right-end">
-              <img src="../assets/images/article/del.png" alt="删除">
-            </el-tooltip>
+          <div class="tools utBorder">
+            <!-- <el-tooltip effect="dark" content="删除" placement="right-end"> -->
+              <img  v-show="pagecolor=='white'" src="../assets/images/article/del.png" alt="删除">
+              <img  v-show="pagecolor=='black'" src="../assets/images/article/105 删除-白.png" alt="删除">
+            <!-- </el-tooltip> -->
           </div>
         </div>
       </div>
@@ -132,10 +137,14 @@
     <div class="pageTools">
       <div class="innerbox clearfix">
         <div class="pull-left">
-          <span>0</span><img src="../assets/images/article/prev.png" alt="上一页">
+          <span>0</span>
+          <!-- <img v-show="" src="../assets/images/article/prev.png" alt="上一页"> -->
+          <img v-show="pagecolor=='white'" src="../assets/images/article/prev-black.png" alt="上一页">
+          <img  v-show="pagecolor=='black'" src="../assets/images/article/prev-w.png" alt="上一页">
         </div>
         <div class="pull-right">
-          <img src="../assets/images/article/next.png" alt="下一页"><span>1</span>
+          <img v-show="pagecolor=='white'" src="../assets/images/article/next.png" alt="">
+          <img v-show="pagecolor=='black'" src="../assets/images/article/next-w.png" alt="下一页"><span>1</span>
         </div>
       </div>
     </div>
@@ -187,8 +196,7 @@
         },
         created() {
             this.pagecolor = this.$route.query.type;
-            this.active =
-                this.$route.query.type == "white" ? "active-black" : "active-white";
+            this.active = this.$route.query.type == "white" ? "active-black" : "active-white";
         },
         mounted() {
             var _this = this;
@@ -211,11 +219,11 @@
         height: 100%;
         /* overflow: hidden; */
     }
-    
+    /*     
     .whitecolor {
         background: #1b1b1b;
         color: white;
-    }
+    } */
     
     .myarticle {
         width: 1264px;

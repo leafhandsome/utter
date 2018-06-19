@@ -2,7 +2,7 @@
 <div  @click="showhideset" class="ut-view">
   <div class="header clearfix" :class="pagecolr=='white'?'content pagecolr-white':'content pagecolr-black'">
     <!-- 横向header -->
-    <img @click='change' v-if='utstyle == "white"' class='logo' src="../../assets/images/utter/logo.png" alt="UTTER">
+    <img @click='change' v-if='pagecolr == "white"' class='logo' src="../../assets/images/utter/logo.png" alt="UTTER">
     <img @click='change' v-else class='logo' src="../../assets/images/utter/logow.png" alt="UTTER">
 
     <div class="middleTab clearfix">
@@ -77,254 +77,255 @@
       <linkIdea></linkIdea>
   </div>
    <router-view></router-view>
+   <!-- <footer></footer> -->
    </div>
 </template>
 
 <script>
-import personal from "../../components/Personal.vue";
-import msg from "../../components/msg.vue";
-import linkIdea from "../../components/linkIdea.vue";
-export default {
-  data() {
-    return {
-      utstyle: "white",
-      tab: 1,
-      showPersonal: false,
-      showmsg: false,
-      styleimg: {
-        showimg1: true,
-        showimg2: true,
-        showimg3: true,
-        showimg4: true,
-        showimg5: true
-      },
-      tabactive: 0,
-      pagecolr: "white", //背景颜色
-      showlink:true,
+    import personal from "../../components/Personal.vue";
+    import msg from "../../components/msg.vue";
+    import linkIdea from "../../components/linkIdea.vue";
+    // import footer from "../../components/Footer.vue";
+    export default {
+        data() {
+            return {
+                utstyle: "white",
+                tab: 1,
+                showPersonal: false,
+                showmsg: false,
+                styleimg: {
+                    showimg1: true,
+                    showimg2: true,
+                    showimg3: true,
+                    showimg4: true,
+                    showimg5: true
+                },
+                tabactive: 0,
+                pagecolr: "white", //背景颜色
+                showlink: false,
+            };
+        },
+        props: ["type", "activeTab"],
+        created() {
+            this.pagecolr = this.$route.query.type;
+            document.querySelector("#app").style.background = this.pagecolr == "white" ? "" : "black";
+            document.querySelector("#app").style.color = this.pagecolr == "white" ? "black" : "white";
+            // document.querySelector("#app").style.borderColor = this.pagecolr == "white" ? "#dcdddd" : "#1b1b1b";
+        },
+        mounted() {},
+        methods: {
+            //控制右边个人中心显示隐藏
+            showhideset() {
+                this.showPersonal = false;
+                this.tabactive = 0;
+                this.showmsg = false;
+                this.showlink = false;
+            },
+            getuseractive() {
+                this.showPersonal = true;
+                this.tabactive = 5;
+            },
+            getactivenave(num) {
+                this.tabactive = num;
+                this.showlink = false;
+                this.showPersonal = false;
+                this.showmsg = false;
+                if (num == 2) {
+                    this.showlink = true;
+                } else if (num == 4) {
+                    this.showmsg = true;
+                } else if (num == 5) {
+                    this.showPersonal = true;
+                    this.utstyle = this.$route.query.type;
+                }
+            },
+            changeTab(tab, url) {
+                this.tab = tab;
+                if (url)
+                // window.open('#/' + url + '?tab=' + tab)
+                    this.$router.push(url + "?tab=" + tab);
+            },
+            change() {
+                // this.$store.commit("changeStyle");
+                this.$router.push("/index");
+            },
+            tourl(url) {
+                tools.router.push({
+                    path: url
+                });
+            }
+        },
+        activeted() {
+            this.tab = 1;
+        },
+        watch: {
+            "$store.state.utstyle": function(val) {
+                this.utstyle = val;
+            }
+        },
+        components: {
+            personal,
+            msg,
+            linkIdea,
+            // footer
+        }
     };
-  },
-  props: ["type", "activeTab"],
-  created() {
-    this.pagecolr = this.$route.query.type;
-    document.querySelector("#app").style.background =
-      this.pagecolr == "white" ? "" : "#1b1b1b";
-    document.querySelector("#app").style.color =
-      this.pagecolr == "white" ? "black" : "white";
-  },
-  mounted() {},
-  methods: {
-    //控制右边个人中心显示隐藏
-    showhideset() {
-      this.showPersonal = false;
-      this.tabactive = 0;
-      this.showmsg = false;
-    },
-    getuseractive() {
-      this.showPersonal = true;
-      this.tabactive = 5;
-    },
-    getactivenave(num) {
-      this.tabactive = num;
-      if (num == 2) {
-        this.$router.push("/editor");
-      } else if (num == 4) {
-        this.showmsg = true;
-         this.showPersonal = false;
-      } else if (num == 5) {
-        this.showPersonal = true;
-         this.showmsg = false;
-      } else {
-        this.showmsg = false;
-        this.showPersonal = false;
-      }
-    },
-    changeTab(tab, url) {
-      this.tab = tab;
-      if (url)
-        // window.open('#/' + url + '?tab=' + tab)
-        this.$router.push(url + "?tab=" + tab);
-    },
-    change() {
-      // this.$store.commit("changeStyle");
-      this.$router.push("/index");
-    },
-    tourl(url) {
-      tools.router.push({
-        path: url
-      });
-    }
-  },
-  activeted() {
-    this.tab = 1;
-  },
-  watch: {
-    "$store.state.utstyle": function(val) {
-      this.utstyle = val;
-    }
-  },
-  components: {
-    personal,
-    msg,
-    linkIdea
-  }
-};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang='scss'>
-@import "../../assets/scss/tool.scss";
-.content {
-  overflow: hidden;
-  height: 100%;
-}
-.ut-view{
-    height: 100%;
-}
-
-
-.header {
-  height: 58px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  padding: 0 30px;
-  width: 100vw;
-  min-width: 1350px;
-  z-index: 1000;
-  @include trans();
-  &.black {
-    background: #000000;
-    .rightTools {
-      .item {
-        &:hover {
-          @include bhover();
-        }
-      }
+    @import "../../assets/scss/tool.scss";
+    .content {
+        overflow: hidden;
+        height: 100%;
     }
-    .middleTab {
-      .tab {
-        color: #b8b8b8;
-      }
-      .active {
-        .tab {
-          color: #fff;
-          font-weight: bold;
-          border-bottom: 1px solid #fff;
-          @include trans;
-        }
-        .tab-black {
-          color: white;
-          font-weight: bold;
-          border-bottom: 1px solid white;
-          @include trans;
-        }
-      }
-      .pull-left {
-      }
+    
+    .ut-view {
+        height: 100%;
     }
-  }
-  &.white {
-    background: #ffffff;
-    .rightTools {
-      .item {
-        // &:hover {
-        //   @include whover();
-        // }
-        cursor: pointer;
-      }
+    
+    .header {
+        height: 58px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 0 30px;
+        width: 100vw;
+        min-width: 1350px;
+        z-index: 1000;
+        @include trans();
+        &.black {
+            background: #000000;
+            .rightTools {
+                .item {
+                    &:hover {
+                        @include bhover();
+                    }
+                }
+            }
+            .middleTab {
+                .tab {
+                    color: #b8b8b8;
+                }
+                .active {
+                    .tab {
+                        color: #fff;
+                        font-weight: bold;
+                        border-bottom: 1px solid #fff;
+                        @include trans;
+                    }
+                    .tab-black {
+                        color: white;
+                        font-weight: bold;
+                        border-bottom: 1px solid white;
+                        @include trans;
+                    }
+                }
+                .pull-left {}
+            }
+        }
+        &.white {
+            background: #ffffff;
+            .rightTools {
+                .item {
+                    // &:hover {
+                    //   @include whover();
+                    // }
+                    cursor: pointer;
+                }
+            }
+        }
+        .logo {
+            height: 26px;
+            margin-top: 16px;
+            cursor: pointer;
+        }
+        .rightTools {
+            height: 58px;
+            .item {
+                @include trans();
+                height: 58px;
+                display: inline-block;
+                width: 58px;
+                text-align: center;
+                padding-top: 18px;
+                position: relative;
+                cursor: pointer;
+                .search {
+                    width: 275px;
+                    height: 35px;
+                    position: absolute;
+                    top: 10px;
+                    right: 0;
+                    outline: none;
+                    padding-left: 10px;
+                    border: none;
+                    z-index: 15px;
+                }
+                .white {
+                    color: black;
+                    background-color: #eee;
+                }
+                .black {
+                    color: white;
+                    background-color: #1b1b1b;
+                }
+                img {
+                    position: absolute;
+                    top: 18px;
+                    right: 10px;
+                    z-index: 20;
+                }
+            }
+        }
+        .middleTab {
+            width: 500px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 58px;
+            .active {
+                .tab {
+                    color: #000;
+                    font-weight: bold;
+                    border-bottom: 1px solid #000;
+                    @include trans;
+                }
+                .tab-black {
+                    color: white;
+                    font-weight: bold;
+                    border-bottom: 1px solid white;
+                    @include trans;
+                }
+            }
+            .pull-left {
+                width: 100px;
+                text-align: center;
+                vertical-align: top;
+                @include hand;
+                @include trans;
+                // &:hover {
+                //     background: rgba(0, 0, 0, 0.1);
+                // }
+            }
+            .tab {
+                box-sizing: border-box;
+                display: inline-block;
+                height: 58px;
+                line-height: 58px;
+                color: #898989;
+                font-size: 15px;
+                margin: 0 auto;
+            }
+        }
     }
-  }
-  .logo {
-    height: 26px;
-    margin-top: 16px;
-    cursor: pointer;
-  }
-  .rightTools {
-    height: 58px;
-    .item {
-      @include trans();
-      height: 58px;
-      display: inline-block;
-      width: 58px;
-      text-align: center;
-      padding-top: 18px;
-      position: relative;
-      cursor: pointer;
-      .search {
-        width: 275px;
-        height: 35px;
-        position: absolute;
-        top: 10px;
+    
+    .personshow {
+        position: fixed;
         right: 0;
-        outline: none;
-        padding-left: 10px;
-        border: none;
-        z-index: 15px;
-      }
-      .white {
-        color: black;
-        background-color: #eee;
-      }
-      .black {
-        color: white;
-        background-color: #1b1b1b;
-      }
-      img {
-        position: absolute;
-        top: 18px;
-        right: 10px;
-        z-index: 20;
-      }
+        top: 58px;
+        bottom: 0;
+        z-index: 5;
     }
-  }
-  .middleTab {
-    width: 500px;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 58px;
-    .active {
-      .tab {
-        color: #000;
-        font-weight: bold;
-        border-bottom: 1px solid #000;
-        @include trans;
-      }
-      .tab-black {
-        color: white;
-        font-weight: bold;
-        border-bottom: 1px solid white;
-        @include trans;
-      }
-    }
-    .pull-left {
-      width: 100px;
-      text-align: center;
-      vertical-align: top;
-      @include hand;
-      @include trans;
-      &:hover {
-        background: rgba(0, 0, 0, 0.1);
-      }
-    }
-    .tab {
-      box-sizing: border-box;
-      display: inline-block;
-      height: 58px;
-      line-height: 58px;
-      color: #898989;
-      font-size: 15px;
-      margin: 0 auto;
-    }
-  }
-}
-
-.personshow {
-  position: fixed;
-  right: 0;
-  top: 58px;
-  bottom: 0;
-  z-index: 5;
-}
 </style>

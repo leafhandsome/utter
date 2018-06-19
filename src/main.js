@@ -37,9 +37,9 @@ const store = new Vuex.Store({
         }
     }
 });
-router.afterEach((to, from, next) => {
-    window.scrollTo(0, 0);
-});
+// router.afterEach((to, from, next) => {
+//     window.scrollTo(0, 0);
+// });
 Vue.prototype.$store = store;
 
 Vue.config.productionTip = false

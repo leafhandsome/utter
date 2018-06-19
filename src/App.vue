@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="clearfix">
+  <div id="app" class="clearfix" :class="$route.query.type=='black'?'borderblack':'borderwhite'">
     <!-- <utheader :type='type' v-show='showHeader'></utheader> -->
     <!-- {{$store.state.prevModule}}123 -->
     <transition name="fade" mode="out-in">

@@ -77,183 +77,172 @@
   </div>
 </template>
 <script>
+    export default {
 
+        data() {
+            return {
+                middleType: 1
+            }
+        },
+        methods: {
+            bookspage() {
+                this.$router.push({
+                    path: '/whiterow/publish',
+                    query: {
+                        type: "white",
+                        other: 'books'
+                    }
+                })
+            },
+            tourl(url) {
+                tools.router.push({
+                    path: url
+                })
+            }
+        },
+        mounted() {
+            var _this = this;
+            this.$store.commit('changeFooter', true)
+            this.$store.commit('changeHeader', true)
+            this.$store.commit('changeType', '');
 
-export default {
-
-  data () {
-    return {
-      middleType:1
+        },
+        components: {}
     }
-  },
-  methods:{
-    bookspage(){
-      this.$router.push({path:'/whiterow/publish',query:{type:"white",other:'books'}})
-    },
-  	tourl(url){
-      tools.router.push({path:url})
-    }
-  },
-  mounted(){
-    var _this = this;
-    this.$store.commit('changeFooter',true)
-    this.$store.commit('changeHeader',true)
-    this.$store.commit('changeType', '');
-
-  },
-   components:{
-  }
-}
 </script>
 
 <style scoped lang='scss'>
-  @import "../assets/scss/tool.scss";
-  .utter{
-    // height: 100%;
-    padding-top: 100px !important;
-    @include cstyle();
-
-    .newActive{
-      margin-top: 35px;
-      width: 100%;
-      height: 206px;
-
-      .item{
-        width: 428px;
-        height: 206px;
-        background: #EEEEEE;
-        margin-right: 33px;
-
-        &:last-child{
-          margin-right: 0;
+    @import "../assets/scss/tool.scss";
+    .utter {
+        // height: 100%;
+        padding-top: 100px !important;
+        @include cstyle();
+        .newActive {
+            margin-top: 35px;
+            width: 100%;
+            height: 206px;
+            .item {
+                width: 428px;
+                height: 206px;
+                background: #EEEEEE;
+                margin-right: 33px;
+                &:last-child {
+                    margin-right: 0;
+                }
+                img {
+                    width: 428px;
+                    height: 206px;
+                    cursor: pointer;
+                }
+            }
         }
-
-        img{
-          width: 428px;
-          height: 206px;
-          cursor: pointer;
+        .middleTab {
+            margin: 51px auto;
+            width: 522px;
+            .item {
+                @include trans();
+                &:hover {
+                    cursor: pointer;
+                    color: #000;
+                }
+                &.active {
+                    color: #000;
+                    font-weight: bold;
+                }
+                color: #717171;
+                text-align: center;
+                width: 174px;
+                height: 57px;
+                line-height: 57px;
+                font-size: 14px;
+            }
         }
-      }
+        .books {
+            .item {
+                margin-right: 45px;
+                margin-bottom: 64px;
+                &:nth-child(4n) {
+                    margin-right: 0;
+                }
+                .forBook {
+                    @include trans;
+                    @include hand;
+                    &:hover {
+                        @include bookAnimate;
+                    }
+                    width: 303px;
+                    height: 372px;
+                    border: 1px solid #E5E5E5;
+                    padding: 50px 34px;
+                    background: #fff;
+                    .title {
+                        font-size: 25px;
+                        font-weight: bold;
+                        margin-bottom: 30px;
+                        user-select: none;
+                    }
+                    .desc {
+                        max-height: 190px;
+                        font-size: 14px;
+                        overflow: hidden;
+                        user-select: none;
+                    }
+                }
+                .isBook {
+                    @include trans;
+                    @include hand;
+                    &:hover {
+                        @include bookAnimate;
+                    }
+                    border: 1px solid #E5E5E5;
+                    width: 303px;
+                    height: 372px;
+                    // background: #EEEEEE;
+                    position: relative;
+                    img {
+                        max-width: 303px;
+                        max-height: 372px;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        margin: auto;
+                        display: block;
+                    }
+                }
+            }
+            .user {
+                height: 82px;
+                line-height: 82px;
+                border-bottom: 1px solid #E6E6E6;
+                .cover {
+                    width: 45px;
+                    height: 45px;
+                    border-radius: 50%;
+                    background: #C9C9C9;
+                    margin: 19px 15px 0 0;
+                }
+                .nickName {
+                    font-size: 14px;
+                    color: #000;
+                }
+                .like {
+                    margin-right: 30px;
+                }
+                .like,
+                .good {
+                    height: 82px;
+                    line-height: 82px;
+                    img {
+                        position: relative;
+                        /* top: 3px; */
+                        margin-right: 9px;
+                        cursor: pointer;
+                        vertical-align: middle;
+                    }
+                }
+            }
+        }
     }
-
-    .middleTab{
-      margin: 51px auto;
-      width: 522px;
-
-      .item{
-        @include trans();
-        &:hover{
-          cursor: pointer;
-          color: #000;
-        }
-
-        &.active{
-          color: #000;
-          font-weight: bold;
-        }
-
-        color: #717171;
-        text-align: center;
-        width: 174px;
-        height: 57px;
-        line-height: 57px;
-        font-size: 14px;
-      }
-    }
-
-    .books{
-      .item{
-        margin-right: 45px;
-        margin-bottom: 64px;
-        &:nth-child(4n){
-          margin-right: 0;
-        }
-        .forBook{
-          @include trans;
-          @include hand;
-          &:hover{
-            @include bookAnimate;
-          }
-          width: 303px;
-          height: 372px;
-          border: 1px solid #E5E5E5;
-          padding: 50px 34px;
-          background: #fff;
-
-          .title{
-            font-size: 25px;
-            font-weight: bold;
-            margin-bottom: 30px;
-            user-select:none;
-          }
-          .desc{
-            max-height: 190px;
-            font-size: 14px;
-            overflow: hidden;
-            user-select:none;
-          }
-        }
-        .isBook{
-          @include trans;
-          @include hand;
-          &:hover{
-            @include bookAnimate;
-          }
-          border: 1px solid #E5E5E5;
-          width: 303px;
-          height: 372px;
-          // background: #EEEEEE;
-          position: relative;
-
-          img{
-            max-width: 303px;
-            max-height: 372px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            margin: auto;
-            display: block;
-          }
-        }
-      }
-
-      .user{
-        height: 82px;
-        line-height: 82px;
-        border-bottom: 1px solid #E6E6E6;
-        .cover{
-          width: 45px;
-          height: 45px;
-          border-radius: 50%;
-          background: #C9C9C9;
-          margin: 19px 15px 0 0 ;
-        }
-        .nickName{
-          font-size: 14px;
-          color: #000;
-        }
-
-        .like{
-          margin-right: 30px;
-        }
-        .like,.good{
-          height: 82px;
-          line-height: 82px;
-
-          img{
-            position: relative;
-            top: 3px;
-            margin-right: 9px;
-            cursor: pointer;
-          }
-        }
-      }
-
-    }
-
-
-
-  }
 </style>
