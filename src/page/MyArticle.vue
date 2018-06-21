@@ -1,5 +1,5 @@
 <template lang="html">
-<div class="container">
+<div class="container" @click="closepage">
   <div class="myarticle clearfix" v-show='!showartice'>
     <div class="leftCate pull-left utBorder" :style='height'>
       <div class="cateList utBorder">
@@ -14,19 +14,19 @@
         </div>
         <div class="tools utBorder clearfix">
           <div class="pull-left utBorder"  @click='openfun(1)'>
-            <!-- <el-tooltip effect="dark" content="公开" placement="bottom"> -->
-                 <img v-show='showopen' src="../assets/images/article/open-c.png" alt="公开">
-              <img v-show='(!showopen||opentab==1)&&$route.query.type=="white"'  src="../assets/images/article/open.png" alt="公开">
-              <img v-show='(!showopen||opentab==1)&&$route.query.type=="black"'  src="../assets/images/article/open-w.png" alt="公开">
-            <!-- </el-tooltip> -->
+            <el-tooltip effect="dark" content="公开" placement="bottom">
+                 <img v-if='showopen' src="../assets/images/article/open-c.png" alt="公开">
+              <img v-if='(!showopen||opentab==1)&&$route.query.type=="white"'  src="../assets/images/article/open.png" alt="公开">
+              <img v-if='(!showopen||opentab==1)&&$route.query.type=="black"'  src="../assets/images/article/open-w.png" alt="公开">
+            </el-tooltip>
 
           </div>
           <div class="pull-right"  @click='closefun(2)'>
-            <!-- <el-tooltip effect="dark" content="保密" placement="bottom"> -->
-             <img  v-show='showclose' src="../assets/images/article/close-c.png" alt="保密">
-              <img  v-show='(!showclose||opentab==2)&&$route.query.type=="white"'  src="../assets/images/article/close.png" alt="保密">
-              <img  v-show='(!showclose||opentab==2)&&$route.query.type=="black"'  src="../assets/images/article/close-w.png" alt="保密">
-            <!-- </el-tooltip> -->
+            <el-tooltip effect="dark" content="保密" placement="bottom">
+             <img  v-if='showclose' src="../assets/images/article/close-c.png" alt="保密">
+              <img  v-if='(!showclose||opentab==2)&&$route.query.type=="white"'  src="../assets/images/article/close.png" alt="保密">
+              <img  v-if='(!showclose||opentab==2)&&$route.query.type=="black"'  src="../assets/images/article/close-w.png" alt="保密">
+            </el-tooltip>
           </div>
         </div>
 
@@ -37,54 +37,9 @@
     </div>
 
     <div class="list pull-left utBorder" >
-      <div class="item clearfix utBorder" @click='showartice=true'>
+      <div class="item clearfix utBorder" @click='showartice=true' v-for="(item, index) in 3" :key="index">
         <div class="leftSide pull-left">
-          <div class="articleTitle" @click='tourl("articleinfo")'>
-            写下你的一生
-          </div>
-          <div class="articleDesc">
-            心的角落，没有垃圾桶能容下她的尘。<br>
-            而写作，有时可以清洁内心。<br>
-            UTTER/发声，至自己，或者给世界。
-          </div>
-        </div>
-        <div class="rightSide pull-right">
-          <div class="time">
-            2017-11-19 / 23:59
-          </div>
-
-          <el-tooltip effect="dark" content="更多" placement="bottom">
-            <img src="../assets/images/article/more.png" alt="更多" >
-          </el-tooltip>
-        </div>
-
-        <div class="itemTools">
-          <div class="tools">
-            <el-tooltip effect="dark" content="分享" placement="right-end">
-              <img src="../assets/images/article/share.png" alt="分享">
-            </el-tooltip>
-          </div>
-          <div class="tools" @click='showartice=true'>
-            <el-tooltip effect="dark" content="编辑" placement="right-end">
-              <img src="../assets/images/article/edit.png" alt="编辑">
-            </el-tooltip>
-          </div>
-          <div class="tools">
-            <el-tooltip effect="dark" content="下载" placement="right-end">
-              <img src="../assets/images/article/moredown.png" alt="下载">
-            </el-tooltip>
-          </div>
-          <div class="tools">
-            <el-tooltip effect="dark" content="删除" placement="right-end">
-              <img src="../assets/images/article/del.png" alt="删除">
-            </el-tooltip>
-          </div>
-        </div>
-      </div>
-
-      <div class="item clearfix utBorder">
-        <div class="leftSide pull-left">
-          <div class="articleTitle" @click='tourl("articleinfo")'>
+          <div class="articleTitle">
             欢迎来到UTTER
           </div>
           <div class="articleDesc">
@@ -98,36 +53,41 @@
             2017-11-19 / 23:59
           </div>
 
-          <!-- <el-tooltip effect="dark" content="更多" placement="bottom"> -->
-            <img v-show="pagecolor=='white'" src="../assets/images/article/more.png" alt="更多" @click='tourl("articleinfo")'>
-            <img v-show="pagecolor=='black'" src="../assets/images/article/more-w.png" alt="更多" @click='tourl("articleinfo")'>
-          <!-- </el-tooltip> -->
+          <el-tooltip effect="dark" content="更多" placement="bottom" >
+            <img v-if="!more[index].moreActive" src="../assets/images/article/more-w.png" alt="更多" @click.stop="getmoretools(index)">
+            <img v-if="pagecolor=='black'&&more[index].moreActive" src="../assets/images/article/135 书架-更多-白.png" alt="更多" @click.stop="getmoretools(index)">
+            <img v-if="pagecolor=='white'&&more[index].moreActive" src="../assets/images/article/more.png" alt="更多" @click.stop="getmoretools(index)">
+          </el-tooltip>
         </div>
 
-        <div class="itemTools utBorder">
-          <div class="tools utBorder">
-            <!-- <el-tooltip effect="dark" content="分享" placement="right-end"> -->
-              <img v-show="pagecolor=='white'" src="../assets/images/article/share.png" alt="分享">
-              <img v-show="pagecolor=='black'" src="../assets/images/article/103 分享-白.png" alt="分享">
-            <!-- </el-tooltip> -->
+        <div class="itemTools utBorder" v-show="tools[index].showtools" @click.stop="showtools=true">
+          <div class="tools utBorder" @click="gettools(1)">
+            <el-tooltip effect="dark" content="分享" placement="right-end">
+              <img v-if="pagecolor=='white'&&tabactive==1" src="../assets/images/article/share.png" alt="分享">
+              <img v-if="pagecolor=='black'&&tabactive==1" src="../assets/images/article/103 分享-白.png" alt="分享">
+              <img v-if="tabactive!=1" src="../assets/images/article/87 分享.png" alt="分享">
+            </el-tooltip>
           </div>
-          <div class="tools utBorder">
-            <!-- <el-tooltip effect="dark" content="编辑" placement="right-end"> -->
-              <img  v-show="pagecolor=='white'" src="../assets/images/article/edit.png" alt="编辑">
-              <img v-show="pagecolor=='black'" src="../assets/images/article/104 编辑-白.png" alt="编辑">
-            <!-- </el-tooltip> -->
+          <div class="tools utBorder"  @click="gettools(2)">
+            <el-tooltip effect="dark" content="编辑" placement="right-end">
+              <img  v-if="pagecolor=='white'&&tabactive==2" src="../assets/images/article/edit.png" alt="编辑">
+              <img v-if="pagecolor=='black'&&tabactive==2" src="../assets/images/article/104 编辑-白.png" alt="编辑">
+              <img v-if="tabactive!=2" src="../assets/images/article/88 编辑.png" alt="编辑">
+            </el-tooltip>
           </div>
-          <div class="tools utBorder">
-            <!-- <el-tooltip effect="dark" content="下载" placement="right-end"> -->
-              <img  v-show="pagecolor=='white'" src="../assets/images/article/moredown.png" alt="下载">
-              <img  v-show="pagecolor=='black'" src="../assets/images/article/105 下载-白.png" alt="下载">
-            <!-- </el-tooltip> -->
+          <div class="tools utBorder" @click="gettools(3)">
+            <el-tooltip effect="dark" content="下载" placement="right-end">
+              <img  v-if="pagecolor=='white'&&tabactive==3" src="../assets/images/article/moredown.png" alt="下载">
+              <img  v-if="pagecolor=='black'&&tabactive==3" src="../assets/images/article/105 下载-白.png" alt="下载">
+              <img  v-if="tabactive!=3" src="../assets/images/article/89 下载.png" alt="下载">
+            </el-tooltip>
           </div>
-          <div class="tools utBorder">
-            <!-- <el-tooltip effect="dark" content="删除" placement="right-end"> -->
-              <img  v-show="pagecolor=='white'" src="../assets/images/article/del.png" alt="删除">
-              <img  v-show="pagecolor=='black'" src="../assets/images/article/105 删除-白.png" alt="删除">
-            <!-- </el-tooltip> -->
+          <div class="tools utBorder" @click="gettools(4)">
+            <el-tooltip effect="dark" content="删除" placement="right-end">
+              <img  v-if="pagecolor=='white'&&tabactive==4" src="../assets/images/article/del.png" alt="删除">
+              <img  v-if="pagecolor=='black'&&tabactive==4" src="../assets/images/article/105 删除-白.png" alt="删除">
+              <img  v-if="tabactive!=4" src="../assets/images/article/90 删除.png" alt="删除">
+            </el-tooltip>
           </div>
         </div>
       </div>
@@ -172,10 +132,51 @@
                 active: "",
                 showclose: true,
                 showopen: false,
-                opentab: 1
+                opentab: 1,
+                tools: [{
+                    showtools: false
+                }, {
+                    showtools: false
+                }, {
+                    showtools: false
+                }, ],
+
+                tabactive: 0,
+                more: [{
+                    moreActive: false
+                }, {
+                    moreActive: false
+                }, {
+                    moreActive: false
+                }, ],
+                morenum: '',
             };
         },
         methods: {
+            // 工具栏
+            gettools(value) {
+                this.tabactive = value;
+            },
+            getmoretools(index) {
+                if (this.morenum != index) {
+                    this.more[this.morenum].moreActive = false;
+                    this.tools[this.morenum].showtools = false;
+                }
+                this.morenum = index;
+                this.more[index].moreActive = true;
+                this.tools[index].showtools = true;
+
+            },
+            //关闭页面
+            closepage() {
+                for (let i = 0; i < this.tools.length; i++) {
+                    this.tools[i].showtools = false;
+                }
+                for (let i = 0; i < this.more.length; i++) {
+                    this.more[i].moreActive = false;
+                }
+                this.tabactive = 0;
+            },
             //是否公开
             openfun(value) {
                 this.showopen = false;
@@ -251,9 +252,9 @@
                     color: #a0a0a0;
                     @include hand;
                     @include trans;
-                    &:hover {
+                    /* &:hover {
                         background: rgba(0, 0, 0, 0.1);
-                    }
+                    } */
                     &.active-white {
                         color: white;
                         font-weight: bold;
@@ -272,9 +273,9 @@
                         text-align: center;
                         @include hand;
                         @include trans;
-                        &:hover {
-                            background: rgba(0, 0, 0, 0.1);
-                        }
+                        // &:hover {
+                        //     background: rgba(0, 0, 0, 0.1);
+                        // }
                         &:first-child {
                             border-right: 1px solid #e6e6e6;
                         }
@@ -303,18 +304,18 @@
                 padding: 40px 19px;
                 position: relative;
                 cursor: pointer;
-                &:hover {
+                /* &:hover {
                     .itemTools {
                         display: block;
                     }
-                }
+                } */
                 .leftSide {
                     // color: #000;
                     // overflow: hidden;
                     max-width: 70%;
                     .articleTitle {
                         margin-bottom: 30px;
-                        font-size: 23px;
+                        font-size: 22px;
                         font-weight: bold;
                         @include hand;
                         @include trans;
@@ -324,7 +325,7 @@
                         }
                     }
                     .articleDesc {
-                        font-size: 18px;
+                        font-size: 15px;
                         line-height: 1.6;
                     }
                 }
@@ -347,7 +348,7 @@
                     width: 54px;
                     height: 219px;
                     top: -1px;
-                    display: none;
+                    /* display: none; */
                     .tools {
                         width: 54px;
                         height: 54px;

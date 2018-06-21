@@ -300,6 +300,7 @@
         border-style: solid;
         border-color: #e6e6ee;
         font-size: 14px;
+        opacity: .9;
         .tab__item {
             cursor: pointer;
         }

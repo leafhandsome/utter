@@ -1,8 +1,8 @@
 <template>
-  <div class="header clearfix" :class='utstyle' @click="tabactive=0">
+  <div class="header clearfix"  @click="tabactive=0">
     <!-- 横向header -->
-    <img @click='change' v-if='utstyle == "white"' class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
-    <img @click='change' v-else class='logo' src="../assets/images/utter/logow.png" alt="UTTER">
+    <img v-if='utstyle == "white"' class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
+    <img  v-else class='logo' src="../assets/images/utter/logow.png" alt="UTTER">
 
     <div class="middleTab clearfix" v-if='type'>
       <div class="pull-left" :class='{"active":tab == 1}' @click='changeTab(1,"modey")'>
@@ -93,25 +93,25 @@
                     showimg4: true,
                     showimg5: true,
                 },
-                tabactive:0,
+                tabactive: 0,
             };
         },
         props: ["type", "activeTab"],
-     
+
         created() {
 
         },
         methods: {
-             getactivenave(num) {
+            getactivenave(num) {
                 this.tabactive = num;
-               
+
                 if (num == 5) {
-                   this.styleimg.showimg5=false;
+                    this.styleimg.showimg5 = false;
                     // 如果没有登录
                     this.$router.push('/login')
-                }else if(num == 1){
-                   this.styleimg.showimg1=false;
-                   
+                } else if (num == 1) {
+                    this.styleimg.showimg1 = false;
+
                 }
             },
             changeTab(tab, url) {
@@ -202,7 +202,7 @@
             height: 58px;
             .item {
                 // @include trans();
-                  height: 58px;
+                height: 58px;
                 display: inline-block;
                 width: 58px;
                 text-align: center;
@@ -220,11 +220,11 @@
                     border: none;
                     z-index: 15px;
                 }
-                  .white {
+                .white {
                     color: black;
                     background-color: #eee;
                 }
-                   img {
+                img {
                     position: absolute;
                     top: 18px;
                     right: 10px;

@@ -105,6 +105,7 @@
         border: 1px solid #dcdddd;
         font-size: 14px;
         position: relative;
+        opacity: .9;
         .activecolor {
             font-weight: 700;
         }

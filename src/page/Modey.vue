@@ -73,6 +73,12 @@
         <img src="../../static/img/1.jpg" alt="" @click='setbackgroundimg("../../static/img/1.jpg")'>
       </div>
     <div class="module" :class='{"active":showAll}' @click.stop='show'>
+      <!-- 返回海报设置 -->
+      <div class="backset fr" v-show='hiddenArrow&&!showbooks' >
+        <a href='javascript:;'>
+        <img src="../assets/images/editor/backa.png" alt=""  @click.stop='getbackset'>
+      </a>
+      </div>
       <!-- <div class="out">
       <img src="../assets/images/module/down.png" class='down' v-show='!hiddenArrow && className== "white"' :class='{"active":showAll}' @click.stop='show'>
       <img src="../assets/images/module/downw.png" class='down' v-show='!hiddenArrow && className== "black"' :class='{"active":showAll}' @click.stop='show'> -->
@@ -107,16 +113,31 @@
             <img src="../assets/images/module/m5.png" class='m5'>
             <img src="../assets/images/module/m6.png" class='m6'>
           </div> -->
-
         </div>
       </div>
-  
+    <input type='file' id='file' class="files" ref='file' @change='changeImg' style='width:0;height:0;position:fixed;top:-2000px;'>
       <!-- 海报图片设置 -->
       <div  :class="$route.query.type=='white'?'ut-input-white':'ut-input-black'" v-show='!showbooks' class="outbooks utBorder" :ref="'styletwo'+index"  v-for='(item,index) in stylelist' :key='index'>
+            <div class="images"  v-show='hiddenArrow&&styleindex!=0'>
+                 <img v-if="styleindex==1&&imageUrl1"  :src='imageUrl1' class="avatar">
+                 <img v-if="styleindex==2&&index==0&&imageUrl2"  :src='imageUrl2' class="avatar">
+                 <img v-if="styleindex==2&&index==1&&imageUrl3"  :src='imageUrl3' class="avatar">
+                 <img v-if="styleindex==3&&index==0&&imageUrl4"  :src='imageUrl4' class="avatar">
+                 <img v-if="styleindex==4&&index==1&&imageUrl5"  :src='imageUrl5' class="avatar">
+             </div>
             <div class="sendimg" >
-              <a href="javaScript:;" @click="changeImge">
+              <a href="javaScript:;" @click="changeImge(index)">
               <img class="linkimg" src="../assets/images//module/37 个人首页-海报区上传图片.png" alt="">
-              <!-- <input type="text" ref="updatedimg"> -->
+            
+                <!-- <el-upload
+                    class="avatar-uploader file"
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess(index)"
+                    :before-upload="beforeAvatarUpload">
+                   
+                    <i  class="el-icon-plus "></i>
+                  </el-upload> -->
             </a>
             <div class="rihgtdiv">
             <a href="javaScript:;" @click='getbtnshow(index)' :ref="'linkborder'+index">
@@ -156,12 +177,64 @@
                 mintitile: 10,
                 maxcontent: 65,
                 mincontent: 10,
-                titilefonts: ['16', "17", "18", "19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"],
-                contentfonts:['16', "17", "18", "19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36"],
-                titlevalue: '32',
-                contentvalue: '16',
-                showtitilefont:false,
-                showcontentfont:false,
+                titilefonts: [
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32",
+                    "33",
+                    "34",
+                    "35",
+                    "36"
+                ],
+                contentfonts: [
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32",
+                    "33",
+                    "34",
+                    "35",
+                    "36"
+                ],
+                titlevalue: "32",
+                contentvalue: "16",
+                showtitilefont: false,
+                showcontentfont: false,
+                imageUrl1: "",
+                imageUrl2: "",
+                imageUrl3: "",
+                imageUrl4: "",
+                imageUrl5: "",
+                imageUrl: {},
+                styleindex: 0,
+                imgindex: 0
             };
         },
         watch: {
@@ -179,14 +252,89 @@
             this.stylecolor = this.$route.query.type;
         },
         methods: {
-            //控制字体
-            gettitilefonts(value){
-                this.titlevalue=value;
-                this.$refs.titile.style.fontSize = value+"px";
+            // 上传图片
+            // handleAvatarSuccess(res,file) {
+            //     console.log(res,file)
+            //     if(file){
+            //             if(this.styleindex==1){
+            //         this.imageUrl1= URL.createObjectURL(file.raw);
+            //     }else if(this.styleindex==2){
+            //         if(this.imgindex==0){
+            //             this.imageUrl2 = URL.createObjectURL(file.raw);
+            //         }else{
+            //             this.imageUrl3 = URL.createObjectURL(file.raw);
+            //         }
+
+            //     }else{
+            //           if(this.imgindex==0){
+            //             this.imageUrl4 = URL.createObjectURL(file.raw);
+            //         }else{
+            //             this.imageUrl5 = URL.createObjectURL(file.raw);
+            //         }
+            //     }
+            //     }
+
+            // },
+            // beforeAvatarUpload(file) {
+            //   const isJPG = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
+            //   const isLt2M = file.size / 1024 / 1024 < 2;
+
+            //   if (!isJPG) {
+            //     this.$message.error("上传头像图片只能是 JPG/jpg 格式!");
+            //   }
+            //   if (!isLt2M) {
+            //     this.$message.error("上传头像图片大小不能超过 2MB!");
+            //   }
+            //   return isJPG && isLt2M;
+            // },
+
+            changeImg(e) {
+                //图片change回调
+                var file = e.target.files[0];
+                var _this = this;
+                // debugger
+                try {
+                    if (file.type.indexOf("image") >= 0) {
+                        //是图片文件
+                        if (file.size / 1024 / 1024 < 5) {
+                            //图片小于5M
+                            var url = this.getFileUrl(file);
+                            if (url) {
+                                if (this.styleindex == 1) {
+                                    this.imageUrl1 = url;
+                                } else if (this.styleindex == 2) {
+                                    if (this.imgindex == 0) {
+                                        this.imageUrl2 = url;
+                                    } else {
+                                        this.imageUrl3 = url;
+                                    }
+                                } else {
+                                    if (this.imgindex == 0) {
+                                        this.imageUrl4 = url;
+                                    } else {
+                                        this.imageUrl5 = url;
+                                    }
+                                }
+                            }
+                            this.$refs.file.value = "";
+                        } else {
+                            this.$message.error("图片大于5M,请更换一张");
+                        }
+                    } else {
+                        this.$message.error("请选择图片文件");
+                    }
+                } catch (e) {
+                    this.$message.error("请选择图片文件");
+                }
             },
-            getcontentfonts(value){
-                this.contentvalue=value;
-                 this.$refs.content.style.fontSize = value+"px";
+            //控制字体
+            gettitilefonts(value) {
+                this.titlevalue = value;
+                this.$refs.titile.style.fontSize = value + "px";
+            },
+            getcontentfonts(value) {
+                this.contentvalue = value;
+                this.$refs.content.style.fontSize = value + "px";
             },
             settingfun() {
                 this.showset = true;
@@ -212,17 +360,15 @@
             //切换皮肤
             setbackgroundimg(value) {
                 // this.imgurl='/static/img/6.jpg'
-                if(value=='none'){
-                    if(this.$route.query.type=='white'){
-                         this.$refs.modey.style.background="#efefef"
-                    }else{
-                         this.$refs.modey.style.background="#1b1b1b"
+                if (value == "none") {
+                    if (this.$route.query.type == "white") {
+                        this.$refs.modey.style.background = "#efefef";
+                    } else {
+                        this.$refs.modey.style.background = "#1b1b1b";
                     }
-                   
-                }else{
+                } else {
                     this.$refs.modey.style.background = "url(" + value + ")";
                 }
-                
             },
             gettitleactiveimg(num) {
                 this.settitleimgshow = false;
@@ -322,6 +468,7 @@
             // 风格样式
             setstyle(num) {
                 this.showbooks = false;
+                this.styleindex = num;
                 if (num == 1) {
                     this.stylelist = 1;
                 } else if (num == 2) {
@@ -342,6 +489,17 @@
                         this.$refs.styletwo1[0].style.height = "50%";
                         // this.$refs.styletwo1[0].style.float = "left";
                     }, 20);
+                }
+            },
+            getbackset() {
+                this.showbooks = true;
+                if (this.stylelist != 1) {
+                    this.$refs.styletwo0[0].style.width = "100%";
+                    this.$refs.styletwo1[0].style.width = "100%";
+                    this.$refs.styletwo0[0].style.float = "unset";
+                    this.$refs.styletwo0[0].style.border = "none";
+                    this.$refs.styletwo0[0].style.height = "100%";
+                    this.$refs.styletwo1[0].style.height = "100%";
                 }
             },
             getbtnshow(index) {
@@ -367,8 +525,9 @@
                     }
                 }, 20);
             },
-            changeImge() {
-                // this.$refs.updatedimg
+            changeImge(index) {
+                this.$refs.file.click()
+                this.imgindex = index;
             },
             closeshow() {
                 this.showAll = false;
@@ -377,8 +536,8 @@
                 this.settab = 1;
                 this.setimgshow = true;
                 this.settitleimgshow = false;
-                this.showcontentfont=false;
-                this.showtitilefont=false;
+                this.showcontentfont = false;
+                this.showtitilefont = false;
                 setTimeout(() => {
                     this.hiddenArrow = false;
                 }, 1000);
@@ -480,17 +639,19 @@
         }
         .setting {
             width: 300px;
-            height: 136px;
+            height: 137px;
             position: absolute;
             right: 0;
             bottom: 0;
             z-index: 100;
+            opacity: .9;
             img {
                 cursor: pointer;
             }
             .left {
                 float: left;
-                width: 80px;
+                width: 70px;
+                margin-left: 10px;
                 img {
                     margin-right: 15px;
                     margin-top: 18px;
@@ -523,8 +684,13 @@
                         border: 1px solid;
                         color: #999;
                         z-index: 10000;
-                      
                     }
+                }
+                .titilefont {
+                    float: left;
+                }
+                .contentfont {
+                    float: right;
                 }
             }
             .right {
@@ -539,6 +705,14 @@
         .outbooks {
             height: 100%;
             position: relative;
+            .images {
+                width: 100%;
+                height: 100%;
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
             a {
                 display: inline-block;
                 width: 40px;
@@ -556,8 +730,12 @@
                 width: 100%;
                 height: 40px;
                 line-height: 40px;
+                a {
+                    position: relative;
+                }
                 .linkimg {
                     margin-right: 20px;
+                    cursor: pointer;
                 }
                 .rihgtdiv {
                     display: inline-block;
@@ -573,6 +751,32 @@
                     display: none;
                     border: 1px solid #ccc;
                     border-left: none;
+                }
+                .files {
+                    width: 40px;
+                    height: 40px;
+                    left: 46%;
+                    top: 2px;
+                    display: inline;
+                    //    opacity: 0;
+                    position: absolute;
+                    cursor: pointer;
+                    .el-upload {
+                        display: inline-block;
+                        width: 40px;
+                        height: 40px;
+                    }
+                    i {
+                        display: inline;
+                        position: absolute;
+                        width: 40px;
+                        height: 40px;
+                        top: 0;
+                        left: -25px;
+                    }
+                    .el-icon-plus:before {
+                        content: "";
+                    }
                 }
             }
         }
@@ -657,6 +861,13 @@
             z-index: 10;
             &.active {
                 transform: translate3d(-50%, -92%, 0);
+            }
+            .backset {
+                margin: 20px;
+                position: absolute;
+                top: 0;
+                right: 0;
+                z-index: 5;
             }
             .down {
                 width: 44px;

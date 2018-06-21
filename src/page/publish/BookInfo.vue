@@ -235,6 +235,7 @@
     
     .book__feedback {
         margin-top: 18px;
+        color: #aaa;
         strong,
         span {
             display: inline-block;
@@ -313,7 +314,7 @@
         float: right;
         font-size: 12px;
         color: #aaa;
-        font-weight: bold;
+        /* font-weight: bold; */
     }
     
     .show__cataloglist {
@@ -392,7 +393,7 @@
     .comment__s {
         margin-top: 40px;
         color: #aaa;
-        font-weight: bold;
+        /* font-weight: bold; */
         font-size: 14px;
     }
 </style>

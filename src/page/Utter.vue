@@ -59,9 +59,11 @@
         </div>
 
         <div class="user clearfix">
+        <router-link to="/whiterow/modey?type=white">
           <div class="cover pull-left"></div>
+          
           <div class="nickName pull-left">墨石</div>
-
+        </router-link>
           <div class="good pull-right">
             <img src="../assets/images/utter/good.png" alt="点赞"> 28
           </div>
@@ -99,6 +101,9 @@
                     path: url
                 })
             }
+        },
+        created() {
+            document.querySelector("body").style.background = 'white'
         },
         mounted() {
             var _this = this;
@@ -221,11 +226,13 @@
                     height: 45px;
                     border-radius: 50%;
                     background: #C9C9C9;
+                    cursor: pointer;
                     margin: 19px 15px 0 0;
                 }
                 .nickName {
                     font-size: 14px;
                     color: #000;
+                    cursor: pointer;
                 }
                 .like {
                     margin-right: 30px;

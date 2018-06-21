@@ -51,7 +51,7 @@
 
 <style>
     #app {
-        overflow: auto;
+        /* overflow: auto; */
         /*font-family: Helvetica Neue,Roboto Light,PingFang SC,Lantinghei SC,Hiragino Sans GB,Microsoft Yahei,Arial;*/
         /*font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;*/
     }

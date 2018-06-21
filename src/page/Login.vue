@@ -55,6 +55,9 @@
                 type: 1
             }
         },
+        created() {
+            document.querySelector("body").style.background = 'white'
+        },
         methods: {
             changeType() {
                 if (this.type % 2 == 1) {
@@ -255,7 +258,7 @@
                 line-height: 60px;
                 text-align: center;
                 background: #000;
-                width: 100%;
+                width: 332px;
                 border: none;
                 color: #fff;
                 font-size: 15px;

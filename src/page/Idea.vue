@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="idea clearfix">
+  <div class="idea clearfix" @click="closeshow">
     <!-- <button type="button" @click='bold' name="button">加粗</button>
     <div id='container' class="ue">
 
@@ -16,31 +16,30 @@
 
       </div>
     </div>
-
-    <div class="list pull-left utBorder">
+    <!-- 想法 -->
+    <div class="list pull-left utBorder" v-show="cateTab==0">
       <div class="mainItem utBorder">
-        <textarea :class="$route.query.type=='white'?'ut-white1':'ut-black1 '" name="name" rows="8" cols="80" placeholder='写下你的想法吧...'></textarea>
-
-        <!-- <el-tooltip effect="dark" content="发表" placement="bottom"> -->
-          <img v-show="$route.query.type=='white'" src="../assets/images/editor/issueb.png" class='submit' alt="发表">
-          <img v-show="$route.query.type=='black'"  src="../assets/images/editor/issuew.png" class='submit' alt="发表">
-        <!-- </el-tooltip> -->
-
+        <textarea :class="$route.query.type=='white'?'ut-white1':'ut-black1 '" name="name" rows="8" cols="100" placeholder='写下你的想法吧...'></textarea>
+        <el-tooltip effect="dark" content="发表" placement="bottom">
+                <img v-if="!submitactive" src="../assets/images/userinfo/112 提交.png" class='submit'  @click.stop="submitactive=true">
+                <img v-if="submitactive&&pagecolor=='white'" src="../assets/images/editor/issueb.png" class='submit'  @click.stop="submitactive=true">
+                <img v-if="submitactive&&pagecolor=='black'" src="../assets/images/editor/issuew.png" class='submit'  @click.stop="submitactive=true">
+        </el-tooltip>
         <div class="itemTools utBorder">
           <div class="tools utBorder" @click='openfun(1)'>
-            <!-- <el-tooltip effect="dark" content="公开" placement="bottom"> -->
-              <img v-show='showopen' src="../assets/images/article/open-c.png" alt="公开">
-              <img v-show='(!showopen||opentab==1)&&$route.query.type=="white"'  src="../assets/images/article/open.png" alt="公开">
-              <img v-show='(!showopen||opentab==1)&&$route.query.type=="black"'  src="../assets/images/article/open-w.png" alt="公开">
+            <el-tooltip effect="dark" content="公开" placement="right">
+              <img v-if='showopen' src="../assets/images/article/open-c.png" alt="公开">
+              <img v-if='(!showopen||opentab==1)&&$route.query.type=="white"'  src="../assets/images/article/open.png" alt="公开">
+              <img v-if='(!showopen||opentab==1)&&$route.query.type=="black"'  src="../assets/images/article/open-w.png" alt="公开">
               
-            <!-- </el-tooltip> -->
+            </el-tooltip>
           </div>
           <div class="tools"  @click='closefun(2)'>
-            <!-- <el-tooltip effect="dark" content="保密" placement="bottom"> -->
-               <img  v-show='showclose' src="../assets/images/article/close-c.png" alt="保密">
-              <img  v-show='(!showclose||opentab==2)&&$route.query.type=="white"'  src="../assets/images/article/close.png" alt="保密">
-              <img  v-show='(!showclose||opentab==2)&&$route.query.type=="black"'  src="../assets/images/article/close-w.png" alt="保密">
-            <!-- </el-tooltip> -->
+            <el-tooltip effect="dark" content="保密" placement="right">
+               <img  v-if='showclose' src="../assets/images/article/close-c.png" alt="保密">
+              <img  v-if='(!showclose||opentab==2)&&$route.query.type=="white"'  src="../assets/images/article/close.png" alt="保密">
+              <img  v-if='(!showclose||opentab==2)&&$route.query.type=="black"'  src="../assets/images/article/close-w.png" alt="保密">
+            </el-tooltip>
           </div>
 
         </div>
@@ -58,7 +57,7 @@
             <div class="time">
               2017-11-19 / 23:59
             </div>
-
+            
             <div class="tools">
               <div class="tool utBorder">
                 <!-- <img src="../assets/images/article/see.png" alt="关注"> -->
@@ -76,24 +75,26 @@
                  <span>28</span>
               </div>
             </div>
-
-            <el-tooltip effect="dark" content="更多" placement="bottom">
-                <img v-if="$route.query.type=='white'" src="../assets/images/article/more.png" class='more' alt="更多">
-                <img else src="../assets/images/article/more-w.png" class='more' alt="更多">>
-            </el-tooltip>
+            <el-tooltip effect="dark" content="更多" placement="bottom" class="toolright tools">
+            <img v-if="!moreActive" src="../assets/images/article/more-w.png" alt="更多" @click.stop="getmoretools">
+            <img v-if="pagecolor=='black'&&moreActive" src="../assets/images/article/135 书架-更多-白.png" alt="更多" @click.stop="getmoretools">
+            <img v-if="pagecolor=='white'&&moreActive" src="../assets/images/article/more.png" alt="更多" @click.stop="getmoretools">
+          </el-tooltip>
           </div>
 
-          <div class="itemTools utBorder">
-            <div class="tools utBorder">
+          <div class="itemTools remove utBorder" v-show="showtools" @click.stop="showtools=true">
+            <div class="tools utBorder"  @click.stop="gettools(1)">
               <el-tooltip effect="dark" content="编辑" placement="right-end">
-                <img v-if="$route.query.type=='white'" src="../assets/images/article/edit.png" alt="编辑">
-                <img else src="../assets/images/article/104 编辑-白.png" alt="编辑">
+                <img v-if="toolactive!=1" src="../assets/images/article/88 编辑.png" alt="编辑">
+                <img v-if="$route.query.type=='white'&&toolactive==1" src="../assets/images/article/edit.png" alt="编辑">
+                <img v-if="$route.query.type=='black'&&toolactive==1" src="../assets/images/article/104 编辑-白.png" alt="编辑">
               </el-tooltip>
             </div>
-            <div class="tools utBorder">
-              <el-tooltip effect="dark" content="删除" placement="right-end">
-                <img v-if="$route.query.type=='white'" src="../assets/images/article/del.png" alt="删除">
-                <img else src="../assets/images/article/105 删除-白.png" alt="删除">
+            <div class="tools utBorder" @click.stop="gettools(2)">
+              <el-tooltip effect="dark" content="删除" placement="right-end" >
+                <img v-if="toolactive!=2" src="../assets/images/article/90 删除.png" alt="删除">
+                <img v-if="$route.query.type=='white'&&toolactive==2" src="../assets/images/article/del.png" alt="删除">
+                <img v-if="$route.query.type=='black'&&toolactive==2"  src="../assets/images/article/105 删除-白.png" alt="删除">
               </el-tooltip>
             </div>
           </div>
@@ -102,8 +103,9 @@
         <div class="comments">
           <div class="comment utBorder">
             <el-tooltip effect="dark" content="删除" placement="bottom" class="fr">
-              <img  v-if="$route.query.type=='white'" src="../assets/images/article/del.png" class='del' alt="删除">
-              <img else src="../assets/images/article/105 删除-白.png" alt="删除">
+                 <img v-if="" src="../assets/images/article/90 删除.png" alt="删除" class='del'>
+              <!-- <img  v-if="$route.query.type=='white'" src="../assets/images/article/del.png" class='del' alt="删除">
+              <img else src="../assets/images/article/105 删除-白.png" alt="删除" class='del'> -->
             </el-tooltip>
             <div class="leftSide clearfix">
 
@@ -150,7 +152,61 @@
       </div>
 
     </div>
-
+        <!-- 灵感 -->
+        <div class="list pull-left utBorder" v-show="cateTab==1">
+            <div class="mainItem utBorder">
+              <textarea :class="$route.query.type=='white'?'ut-white1':'ut-black1 '" name="name" rows="8" cols="100" placeholder='写下你的灵感吧...'></textarea>
+              <el-tooltip effect="dark" content="发表" placement="bottom">
+                      <img v-if="!submitactive" src="../assets/images/userinfo/112 提交.png" class='submit'  @click.stop="submitactive=true">
+                      <img v-if="submitactive&&pagecolor=='white'" src="../assets/images/editor/issueb.png" class='submit'  @click.stop="submitactive=true">
+                      <img v-if="submitactive&&pagecolor=='black'" src="../assets/images/editor/issuew.png" class='submit'  @click.stop="submitactive=true">
+              </el-tooltip>
+            </div>
+      
+            <div class="items">
+              <div class="item clearfix utBorder"  @click.stop="toolactive==3" >
+                <div class="leftSide" v-show="toolactive!=3">
+                  <div class="content">
+                    如果有人想要了解你，也许可以给他一个你个UTTER。
+                  </div>
+                </div>
+                <textarea v-show="toolactive==3":class="$route.query.type=='white'?'ut-white1':'ut-black1 '" 
+                 name="name" rows="5" cols="100" placeholder=''></textarea>
+                <div class="rightSide clearfix">
+                  <div class="time">
+                    2017-11-19 / 23:59
+                  </div>
+               
+                  <el-tooltip effect="dark" content="更多" placement="bottom" class="toolright tools">
+                  <img v-if="!moreActive" src="../assets/images/article/more-w.png" alt="更多" @click.stop="getmoretools">
+                  <img v-if="pagecolor=='black'&&moreActive" src="../assets/images/article/135 书架-更多-白.png" alt="更多" @click.stop="getmoretools">
+                  <img v-if="pagecolor=='white'&&moreActive" src="../assets/images/article/more.png" alt="更多" @click.stop="getmoretools">
+                </el-tooltip>
+                </div>
+      
+                <div class="itemTools remove utBorder" v-show="showtools" @click.stop="showtools=true">
+                  <div class="tools utBorder"  @click.stop="gettools(3)">
+                    <el-tooltip effect="dark" content="编辑" placement="right-end">
+                      <img v-if="toolactive!=3" src="../assets/images/article/88 编辑.png" alt="编辑">
+                      <img v-if="$route.query.type=='white'&&toolactive==3" src="../assets/images/article/edit.png" alt="编辑">
+                      <img v-if="$route.query.type=='black'&&toolactive==3" src="../assets/images/article/104 编辑-白.png" alt="编辑">
+                    </el-tooltip>
+                  </div>
+                  <div class="tools utBorder" @click.stop="gettools(4)">
+                    <el-tooltip effect="dark" content="删除" placement="right-end" >
+                      <img v-if="toolactive!=4" src="../assets/images/article/90 删除.png" alt="删除">
+                      <img v-if="$route.query.type=='white'&&toolactive==4" src="../assets/images/article/del.png" alt="删除">
+                      <img v-if="$route.query.type=='black'&&toolactive==4"  src="../assets/images/article/105 删除-白.png" alt="删除">
+                    </el-tooltip>
+                  </div>
+                </div>
+              </div>
+      
+             
+            </div>
+      
+          </div>
+      
      <div class="pageTools">
       <div class="innerbox clearfix">
         <div class="pull-left">
@@ -186,10 +242,30 @@
                 showclose: true,
                 showopen: false,
                 opentab: 1,
+                submitactive: false,
+                pagecolor: this.$route.query.type,
+                moreActive: false,
+                showtools: false,
+                toolactive: 0,
             }
         },
         created() {},
         methods: {
+            gettools(value) {
+                this.toolactive = value;
+            },
+            closeshow() {
+                this.moreActive = false;
+                this.showtools = false;
+                this.submitactive = false;
+                this.toolactive = 0;
+            },
+            // 更多
+            getmoretools() {
+                this.moreActive = true;
+                this.showtools = true;
+
+            },
             //是否公开
             openfun(value) {
                 this.showopen = false;
@@ -265,9 +341,9 @@
                     color: #A0A0A0;
                     @include hand;
                     @include trans;
-                    &:hover {
+                    /* &:hover {
                         background: rgba(0, 0, 0, .1);
-                    }
+                    } */
                     &.active {
                         color: #000;
                         font-weight: bold;
@@ -330,7 +406,7 @@
                     }
                     .tools {
                         position: absolute;
-                        opacity: .6;
+                        // opacity: .6;
                         bottom: 0;
                         right: 50px;
                         .tool {
@@ -350,6 +426,7 @@
                     }
                     .toolright {
                         right: 0;
+                        cursor: pointer;
                     }
                 }
                 .itemTools {
@@ -371,6 +448,9 @@
                             border-bottom: none;
                         }
                     }
+                }
+                .remove {
+                    display: block;
                 }
             }
             .comments {

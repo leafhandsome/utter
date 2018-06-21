@@ -108,7 +108,7 @@
         props: ["type", "activeTab"],
         created() {
             this.pagecolr = this.$route.query.type;
-            document.querySelector("#app").style.background = this.pagecolr == "white" ? "" : "black";
+            document.querySelector("body").style.background = this.pagecolr == "white" ? "" : "black";
             document.querySelector("#app").style.color = this.pagecolr == "white" ? "black" : "white";
             // document.querySelector("#app").style.borderColor = this.pagecolr == "white" ? "#dcdddd" : "#1b1b1b";
         },
@@ -285,6 +285,7 @@
             left: 50%;
             transform: translateX(-50%);
             height: 58px;
+           
             .active {
                 .tab {
                     color: #000;
@@ -317,6 +318,7 @@
                 color: #898989;
                 font-size: 15px;
                 margin: 0 auto;
+             
             }
         }
     }

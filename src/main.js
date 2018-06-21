@@ -48,7 +48,13 @@ window.tools = {};
 window.tools.vue = Vue;
 window.tools.router = router;
 
-/* eslint-disable no-new */
+//methods.js导入自定义方法(/变量)用于全局方法
+import methods from './common/common.js';
+//方法挂靠全局
+Object.keys(methods).forEach((key) => {
+        Vue.prototype[key] = methods[key];
+    })
+    /* eslint-disable no-new */
 window.vm = new Vue({
     el: '#app',
     render: h => h(App),

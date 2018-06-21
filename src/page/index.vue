@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class='utstyle' :showseach="showseach" @seach="fun">
+  <div id="app" >
     <utheader :type='type' v-show='showHeader'></utheader>
     <!-- {{$store.state.prevModule}}123 -->
     <transition name="fade" mode="out-in">
@@ -17,18 +17,14 @@
         name: 'app',
         data() {
             return {
-                utstyle: 'white',
                 showFooter: true,
                 showHeader: true,
                 type: '',
-                showseach: false
             }
         },
+
         methods: {
-            fun() {
-                this.showseach = true
-                console(this.showseach)
-            }
+
         },
         components: {
             utheader,

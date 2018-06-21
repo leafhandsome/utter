@@ -11,38 +11,53 @@
                 申请独立出版
             </a>
             <div class="list clearfix">
-                <div class="list__item" v-for="(item,idx) in mywritingBooks" @click="toBookInfo">
-                    <div class="list__img">
+                <div class="list__item" v-for="(item,idx) in mywritingBooks">
+                    <div class="list__img cursor" @click="toBookInfo">
                         <img src="" alt="">
                     </div>
                     <div class="list__bottom utBorder">
-                        <div class="list__icon">
+                        <div class="list__icon"  @click="gettools1">
                             <strong>
-                                <img v-show="$route.query.type=='white'" src="../../assets/images/publish/129 书架-独立出版-黑.png" alt="">
-                                <img v-show="$route.query.type=='black'" src="../../assets/images/publish/133 书架-独立出版-白.png" alt="">
+                                <img src="../../assets//images/publish/books-c.png" alt="">
+                                <!-- <img v-show="$route.query.type=='white'" src="../../assets/images/publish/129 书架-独立出版-黑.png" alt="">
+                                <img v-show="$route.query.type=='black'" src="../../assets/images/publish/133 书架-独立出版-白.png" alt=""> -->
                             </strong>
                             <span>独立出版</span>
                         </div>
-                        <div class="list__icon">
+                        <div class="list__icon"  @click="gettools2()">
+                            <a href='javascript:;'>
                             <strong>
-                                <img v-show="$route.query.type=='white'" src="../../assets/images/publish/130 书架-收藏-黑.png" alt="">
-                                <img  v-show="$route.query.type=='black'" src="../../assets/images/publish/134 书架-收藏-白.png" alt="">
+                                <!-- //saved收藏过 -->
+                                <span v-if="!saved">
+                                <img v-show="!tools.save" src="../../assets/images/publish/109 收藏.png" alt="">
+                            </span>
+                            <span else>
+                                <img v-show="$route.query.type=='white'&&(tools.save||saved)" src="../../assets/images/publish/130 书架-收藏-黑.png" alt="">
+                                <img  v-show="$route.query.type=='black'&&(tools.save||saved)" src="../../assets/images/publish/134 书架-收藏-白.png" alt="">
+                            </span>
                             </strong>
-                            <span>收藏</span>
+                           <span :class="!(tools.save||saved)?'fontColor':$route.query.type=='white'?'ut-white1':'ut-black1'">6546</span>
+                        </a>
                         </div>
-                        <div class="list__icon">
+                        <div class="list__icon"  @click="gettools3">
+                                <a href='javascript:;'>
                             <strong>
-                                <img v-show="$route.query.type=='white'" src="../../assets/images/publish/131 书架-更多-黑.png" alt="">
-                                <img  v-show="$route.query.type=='black'" src="../../assets/images/publish/135 书架-更多-白.png" alt="">
+                                <img v-show="!tools.details" src="../../assets/images/article/more-w.png" alt="">
+                                <img v-show="$route.query.type=='white'&&tools.details" src="../../assets/images/publish/131 书架-更多-黑.png" alt="">
+                                <img  v-show="$route.query.type=='black'&&tools.details" src="../../assets/images/publish/135 书架-更多-白.png" alt="">
                             </strong>
                             <span>详情</span>
+                        </a>
                         </div>
-                        <div class="list__icon">
+                        <div class="list__icon"  @click="gettools4">
+                         <a href='javascript:;'>
                             <strong>
-                                <img v-show="$route.query.type=='white'" src="../../assets/images/publish/132 书架-购物车-黑.png" alt="">
-                                <img  v-show="$route.query.type=='black'" src="../../assets/images/publish/136 书架-购物车-白.png" alt="">
+                                <img v-show="!tools.car" src="../../assets/images/publish/128 书架-购物车.png" alt="">
+                                <img v-show="$route.query.type=='white'&&tools.car" src="../../assets/images/publish/132 书架-购物车-黑.png" alt="">
+                                <img  v-show="$route.query.type=='black'&&tools.car" src="../../assets/images/publish/136 书架-购物车-白.png" alt="">
                             </strong>
                             <span>23.00￥</span>
+                        </a>
                         </div>
                     </div>
                 </div>
@@ -139,12 +154,37 @@
                 collectionBooks: [],
                 showboks: false,
                 showapply: false,
+                tools: {
+                    publish: false,
+                    save: false,
+                    details: false,
+                    car: false,
+                },
+                saved: true,
             }
         },
         created() {
             this.showboks = this.$route.query.other == 'books' ? true : false
         },
         methods: {
+            // 工具栏
+            //  出版   
+            gettools1() {
+                this.tools.publish = true;
+            },
+            // 收藏
+            gettools2() {
+
+                this.tools.save = true;
+            },
+            // 详情
+            gettools3() {
+                this.tools.details = true;
+            },
+            // 购物车
+            gettools4() {
+                this.tools.car = true;
+            },
             setshowtab() {
                 this.showapply = true;
 
@@ -161,7 +201,9 @@
             },
             toBookInfo() {
                 this.showboks = true;
-                window.scrollTo(0, 0);
+                if (this.showboks) {
+                    window.scrollTo(0, 0);
+                }
             }
         },
         mounted() {
@@ -284,6 +326,9 @@
         strong,
         span {
             display: block;
+        }
+        .fontColor{
+             color: #aaa;
         }
         strong {
             padding-bottom: 10px;

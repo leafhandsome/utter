@@ -35,25 +35,33 @@
         </div>
         <div class="pull-right">
           <div class="pageTools">
-              <div class="itemTools" v-show='showmore' @click.stop="showmore=true">
-                  <a href="javaScript:;" class="tools">
-                    <el-tooltip effect="dark" content="分享" placement="right-end">
-                      <img src="../assets/images/article/share.png" alt="分享">
+              <div class="itemTools utBorder" v-show='showmore' @click.stop="showmore=true">
+                  <a href="javaScript:;" class="tools utBorder"  @click="gettools(1)">
+                    <el-tooltip effect="dark" content="分享" placement="top">
+                        <img v-if="pagecolor=='white'&&tabactive==1" src="../assets/images/article/share.png" alt="分享">
+                        <img v-if="pagecolor=='black'&&tabactive==1" src="../assets/images/article/103 分享-白.png" alt="分享">
+                        <img v-if="tabactive!=1" src="../assets/images/article/87 分享.png" alt="分享">
                     </el-tooltip>
                   </a>
-                  <a href="javaScript:;" class="tools" @click='showartice=true'>
-                    <el-tooltip effect="dark" content="编辑" placement="right-end">
-                      <img src="../assets/images/article/edit.png" alt="编辑">
+                  <a href="javaScript:;" class="tools utBorder"  @click="gettools(2)">
+                    <el-tooltip effect="dark" content="编辑" placement="top">
+                        <img  v-if="pagecolor=='white'&&tabactive==2" src="../assets/images/article/edit.png" alt="编辑">
+                        <img v-if="pagecolor=='black'&&tabactive==2" src="../assets/images/article/104 编辑-白.png" alt="编辑">
+                        <img v-if="tabactive!=2" src="../assets/images/article/88 编辑.png" alt="编辑">
                     </el-tooltip>
                   </a>
-                  <a href="javaScript:;" class="tools">
-                    <el-tooltip effect="dark" content="下载" placement="right-end">
-                      <img src="../assets/images/article/moredown.png" alt="下载">
+                  <a href="javaScript:;" class="tools utBorder"  @click="gettools(3)">
+                    <el-tooltip effect="dark" content="下载" placement="top">
+                        <img  v-if="pagecolor=='white'&&tabactive==3" src="../assets/images/article/moredown.png" alt="下载">
+                        <img  v-if="pagecolor=='black'&&tabactive==3" src="../assets/images/article/105 下载-白.png" alt="下载">
+                        <img  v-if="tabactive!=3" src="../assets/images/article/89 下载.png" alt="下载">
                     </el-tooltip>
                   </a>
-                  <a href="javaScript:;" class="tools">
-                    <el-tooltip effect="dark" content="删除" placement="right-end">
-                      <img src="../assets/images/article/del.png" alt="删除">
+                  <a href="javaScript:;" class="tools utBorder"  @click="gettools(4)">
+                    <el-tooltip effect="dark" content="删除" placement="top">
+                        <img  v-if="pagecolor=='white'&&tabactive==4" src="../assets/images/article/del.png" alt="删除">
+                        <img  v-if="pagecolor=='black'&&tabactive==4" src="../assets/images/article/105 删除-白.png" alt="删除">
+                        <img  v-if="tabactive!=4" src="../assets/images/article/90 删除.png" alt="删除">
                     </el-tooltip>
                   </a>
                 </div>
@@ -86,8 +94,11 @@
           <div class="nickName">用户名</div>
           <textarea name="name" placeholder="请发表你的见解或欣赏"></textarea>
         </div>
-
-        <img src="../assets/images/article/submit.png" class='submit'>
+        <div  @click="submitactive=true">
+        <img v-show="!submitactive" src="../assets/images/userinfo/112 提交.png" class='submit'>
+        <img v-show="submitactive&&pagecolor=='white'" src="../assets/images/editor/issueb.png" class='submit'>
+        <img v-show="submitactive&&pagecolor=='black'" src="../assets/images/editor/issuew.png" class='submit'>
+       </div>
       </div>
 
       <div class="item clearfix">
@@ -126,10 +137,26 @@
     export default {
         data() {
             return {
-                showmore: false
+                pagecolor: this.$route.query.type,
+                showmore: false,
+                tabactive: 0,
+                submitactive:false,
             };
         },
         methods: {
+            // 工具栏
+            gettools(value) {
+                this.tabactive = value;
+                if (value == 2) {
+                    this.$router.push({
+                        path: '/editor',
+                        query: {
+                            editor: "idea",
+                            type: this.$route.query.type
+                        }
+                    })
+                }
+            },
             tourl(url, query) {
                 tools.router.push({
                     path: url,
@@ -175,7 +202,7 @@
                         font-size: 15px;
                     }
                     .nickName {
-                        font-weight: bold;
+                        /* font-weight: bold; */
                     }
                 }
             }
@@ -195,7 +222,7 @@
                         font-size: 15px;
                         margin-right: 10px;
                         span {
-                            vertical-align: top;
+                            vertical-align: middle;
                         }
                     }
                 }
@@ -207,12 +234,18 @@
                         position: relative;
                         .itemTools {
                             position: absolute;
-                            top: -50px;
+                            top: -70px;
                             left: -10px;
                             width: 300px;
                             .tools {
-                                margin-top: 0;
+                                margin: 0;
+                                padding: 0;
                                 float: left;
+                                border: 1px solid;
+                                width: 54px;
+                                height: 54px;
+                                line-height: 54px;
+                                text-align: center;
                             }
                         }
                         .innerbox {
@@ -314,7 +347,7 @@
                 }
                 .submit {
                     position: absolute;
-                    right: 13px;
+                    right: 10px;
                     bottom: 15px;
                     @include hand;
                     padding: 5px 0;
@@ -362,7 +395,7 @@
                                 margin-right: 0;
                             }
                             span {
-                                vertical-align: top;
+                                vertical-align: middle;
                             }
                         }
                     }

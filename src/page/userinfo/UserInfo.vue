@@ -18,7 +18,15 @@
         <div class="user">
 
             <div class="user__photo">
-                <img src="" alt="">
+                    <el-upload
+                    class="avatar-uploader"
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload">
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  </el-upload>
             </div>
             <div class="user__msg" :class="$route.query.type=='white'?'ut-input-white':'ut-input-black'">
                 <div class="msg__btn">
@@ -42,7 +50,7 @@
 
                     <div class="btn__edit">
                         <img v-show="showidea" src="../../assets/images/editor/88 编辑.png" alt="" @click='showidea=false'>
-                        <img v-show='!showidea' src="../../assets/images/userinfo/112 提交.png" alt=""  @click='setusermsg'>
+                        <img class="img" v-show='!showidea' src="../../assets/images/userinfo/112 提交.png" alt=""  @click='setusermsg'>
                         
                     </div>
                 </div>
@@ -127,10 +135,29 @@
                     adress: "广州",
                     name: "utter",
                     nickname: "最好的自己"
-                }
+                },
+                imageUrl: '',
             };
         },
         methods: {
+            //上传头像
+            handleAvatarSuccess(res, file) {
+                this.imageUrl = URL.createObjectURL(file.raw);
+                console.log(this.imageUrl)
+            },
+            beforeAvatarUpload(file) {
+
+                const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG/png 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
             gethostory(value) {
                 this.recordIndex = value
             },
@@ -207,6 +234,19 @@
         height: 240px;
         background: #eee;
         float: left;
+        .avatar {
+            width: 240px;
+            height: 240px;
+        }
+    }
+    
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 240px;
+        height: 240px;
+        line-height: 240px;
+        text-align: center;
     }
     
     .user__msg {
@@ -228,9 +268,11 @@
                 padding-top: 40px;
                 float: right;
                 img {
+                    cursor: pointer;
+                }
+                .img {
                     width: 24px;
                     // height: 16px;
-                    cursor: pointer;
                 }
             }
         }

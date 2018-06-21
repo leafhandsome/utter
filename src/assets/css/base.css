@@ -175,6 +175,7 @@ textarea {
     resize: none;
     outline: none;
     font-size: 14px;
+    line-height: 20px;
 }
 
 .font-activeb {
@@ -252,7 +253,7 @@ textarea {
 }
 
 .el-tooltip__popper.is-dark {
-    background: white;
+    background: unset;
     color: #999;
 }
 
@@ -263,4 +264,8 @@ tooltip__popper .popper__arrow,
 
 .el-tooltip__popper .popper__arrow {
     border-width: 0;
+}
+
+.cursor {
+    cursor: pointer;
 }
