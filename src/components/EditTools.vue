@@ -8,30 +8,30 @@
     <div class="toolsView clearfix">
       <input type='file' id='file' ref='file' @change='changeImg' style='width:0;height:0;position:fixed;top:-2000px;'>
 
-      <div class="icon utBorder pull-left"
-        @click.self='handleTool(i.key)'
+      <div class="icon utBorder pull-left" :class="index==toolindex?'iconBorder':''"
+        @click.self='handleTool(i.key,index)'
         :style="{'background-image': utstyle == 'white' ? 'url('+ i.bicon +')' : 'url('+ i.wicon +')' }" 
         v-for='(i,index) in toolsList' :key="index">
 
-        <div class="fontsizeTools" v-if='activeTools == "fontsize" && i.key == "fontsize"'>
+        <div class="fontsizeTools utBorder" v-if='activeTools == "fontsize" && i.key == "fontsize"'>
           <div class="item" @click='fontsizeHandle(7 + i)' v-for='i in 21'>{{7 + i}}</div>
         </div>
 
-        <div class="fontfamilyTools" v-if='activeTools == "fontfamily" && i.key == "fontfamily"'>
+        <div class="fontfamilyTools utBorder" v-if='activeTools == "fontfamily" && i.key == "fontfamily"'>
           <div class="item" v-for='(item,index) in familyList' @click='fontfamilyHandle(item)' :key="index">{{item}}</div>
         </div>
 
-        <div class="forecolorTools" v-if='activeTools == "forecolor" && i.key == "forecolor"'>
+        <div class="forecolorTools utBorder" v-if='activeTools == "forecolor" && i.key == "forecolor"'>
           <div class="item" v-for='i in colorList' @click='forecolorHandle(i)'>
             <div class="color" :style='{"background-color":i}'></div>
           </div>
         </div>
         
-        <div class="fontsizeTools" v-if='activeTools == "lineheight" && i.key == "lineheight"'>
+        <div class="fontsizeTools utBorder" v-if='activeTools == "lineheight" && i.key == "lineheight"'>
           <div class="item" v-for='i in 21' @click='lineheightHandle(7 + i)'>{{7 + i}}</div>
         </div>
 
-        <div class="fontsizeTools" v-if='activeTools == "rowspacing" && i.key == "rowspacing"'>
+        <div class="fontsizeTools utBorder" v-if='activeTools == "rowspacing" && i.key == "rowspacing"'>
           <div class="item" v-for='i in 10'>{{i - 1}}</div>
         </div>
 
@@ -90,6 +90,7 @@
   </div>
 
   <div class="middleView">
+      <h2 :class="utstyle=='white'?'ut-input-white':'ut-input-black'"><input  class="title" type="text" value="标题" ></h2>
     <div id="container" @click="showset=false"></div>
   </div>
     <!-- 设置-发表信息 -->
@@ -200,8 +201,23 @@
       <img v-show="utstyle=='white'" class="navimg treeimg" src="../assets/images/editor/175 创作区-目录.png" alt="" @click="getnvetree">
       <img v-show="utstyle=='black'" class="navimg treeimg" src="../assets/images/editor/192 创作区-目录-白.png" alt="" @click="getnvetree">
       </a>
-      <el-tree v-show="showTree" :class="utstyle=='white'?'ut-white':'ut-black'" class="nav-tree" :data="data" :props="defaultProps" @node-click="handleNodeClick"  node-key="id"
-  :default-expand-all="true"></el-tree>
+      <!-- <el-tree v-show="showTree=false" :class="utstyle=='white'?'ut-white':'ut-black'" class="nav-tree" :data="data" :props="defaultProps" @node-click="handleNodeClick"  node-key="id"
+  :default-expand-all="true"   :expand-on-click-node="false">
+  
+    </el-tree> -->
+       <div class="titile" :class="utstyle=='white'?'ut-white1':'ut-black1'">
+           <div class="line" :class="utstyle=='white'?'navBorder-b pagecolr-black-after':'navBorder-w pagecolr-white-after'"></div>
+            <ul>
+                <li class='bor'>前言</li>
+               
+            </ul>
+            <ul>
+                 <li class='bor'>第一章</li>
+                 <li class="big-titile">标题</li>
+                 <li class="small-titile">小标题</li>
+            </ul>
+            <ul> <li class='bor'>结语</li></ul>
+       </div> 
   </div>
   
 
@@ -212,7 +228,7 @@
     import "../../static/ue/ueditor.config.js";
     import "../../static/ue/ueditor.all.min.js";
     import "../../static/ue/lang/zh-cn/zh-cn.js";
-
+    let id = 1000;
     export default {
         data() {
             return {
@@ -340,39 +356,31 @@
                 shownote: false,
                 // 目录
                 data: [{
-                    label: "一级 1",
-                    children: [{
-                        label: "二级 1-1",
-                        children: [{
-                            label: "三级 1-1-1"
-                        }]
-                    }]
+                    label: "前言",
+                    id: 0,
                 }, {
-                    label: "一级 2",
+                    label: "一级",
+                    id: 1,
                     children: [{
                         label: "二级 2-1",
+                        id: 2,
                         children: [{
                             label: "三级 2-1-1"
                         }]
                     }, {
-                        label: "二级 2-2",
+                        id: 3,
+                        label: '一级 2',
                         children: [{
-                            label: "三级 2-2-1"
+                            id: 5,
+                            label: '二级 2-1'
+                        }, {
+                            id: 6,
+                            label: '二级 2-2'
                         }]
                     }]
                 }, {
-                    label: "一级 3",
-                    children: [{
-                        label: "二级 3-1",
-                        children: [{
-                            label: "三级 3-1-1"
-                        }]
-                    }, {
-                        label: "二级 3-2",
-                        children: [{
-                            label: "三级 3-2-1"
-                        }]
-                    }]
+                    label: "结语",
+
                 }],
                 defaultProps: {
                     children: "children",
@@ -385,25 +393,27 @@
                 tabcreat: 0,
                 showclose: true,
                 showopen: false,
-                opentab: 1
+                opentab: 1,
+                toolindex:100,
             };
+        },
+        beforeCreate(){
+             UE.delEditor("container");
         },
         created() {
             this.utstyle = this.$route.query.type;
-            // if (this.$route.query.type == "black") {
-            //  this.forecolorHandle('#F7F7F7')
-            // }
-            setTimeout(() => {
-                if (this.$route.query.type == "black") {
-                    // this.forecolorHandle("#F7F7F7");
-                    document.getElementById("ueditor_0").contentWindow.document.querySelector("body").style.color = "white";
+              setTimeout(() => {
+                  console.log(document.querySelector('iframe'))
+                if(document.querySelector('iframe')){
+                     if (this.$route.query.type == "black") {
+                   document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "white";
                 } else {
                     // this.forecolorHandle("#1b1b1b");
-                    document.getElementById("ueditor_0").contentWindow.document.querySelector("body").style.color = "black";
+                   document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "black";
 
                 }
-            }, 2000);
-
+                }
+                   }, 2000);
         },
         methods: {
             // 创作背景
@@ -431,15 +441,33 @@
                     document.querySelector('.treeimg').style.transform = "rotate(0deg)";
                 }
             },
+            // append(data) {
+            //     const newChild = {
+            //         id: id++,
+            //         label: 'testtest',
+            //         children: []
+            //     };
+            //     if (!data.children) {
+            //         this.$set(data, 'children', []);
+            //     }
+            //     data.children.push(newChild);
+            // },
+
+            // remove(node, data) {
+            //     const parent = node.parent;
+            //     const children = parent.data.children || parent.data;
+            //     const index = children.findIndex(d => d.id === data.id);
+            //     children.splice(index, 1);
+            // },
             //更换背景色
             getreadercolor(color) {
                 this.utstyle = color;
                 if (color == "black") {
                     this.forecolorHandle("#F7F7F7");
-                    document.getElementById("ueditor_0").contentWindow.document.querySelector("body").style.color = "white";
+                   document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "white";
                 } else {
                     this.forecolorHandle("#1b1b1b");
-                    document.getElementById("ueditor_0").contentWindow.document.querySelector("body").style.color = "black";
+                   document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "black";
                 }
             },
             handleNodeClick(data) {
@@ -556,10 +584,10 @@
                     tools.toastWarn("请选择图片文件");
                 }
             },
-            handleTool(key) {
+            handleTool(key,index) {
                 this.activeTools = this.activeTools == key ? "" : key;
                 console.log(key);
-
+                this.toolindex=index;    
                 switch (key) {
                     case "italic":
                         this.editor.execCommand("italic");
@@ -582,7 +610,8 @@
                 }
             },
             change() {
-                this.$store.commit("changeStyle");
+                // this.$store.commit("changeStyle");
+                this.$router.push('/index');
             },
             tourl(url) {
                 tools.router.push({
@@ -590,6 +619,7 @@
                 });
             },
             initUeditor() {
+               
                 this.editor = UE.getEditor("container", {
                     toolbars: [],
                     focus: true,
@@ -605,7 +635,7 @@
                 this.editor.ready(function() {
                     console.log("ue finish");
 
-                    editor.setContent("阿萨德撒从自行车撒初三");
+                    editor.setContent("<h2>545</h2>");
                 });
                 return;
                 // UE.dom.domUtils.setStyles(this.editor.body, {
@@ -629,6 +659,11 @@
                 this.utstyle = val;
             }
         },
+        beforeDestroy(){
+            if(typeof(UE.getEditor("container")) !='undefined'){
+                 UE.getEditor("container").destroy();
+            }
+        },
         mounted() {
             var _this = this;
             this.height = window.innerHeight;
@@ -648,6 +683,14 @@
         width: 100%;
         height: 100%;
         transition: background 0.3s ease;
+        .custom-tree-node {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            padding-right: 8px;
+        }
         .activeset {
             border: 1px solid #e6e6e6;
         }
@@ -655,6 +698,42 @@
             position: absolute;
             top: 100px;
             left: 35px;
+            .titile {
+                margin-top: 58px;
+                position: relative;
+                .line {
+                    height: 700px;
+                    position: absolute;
+                    top: 13px;
+                    left: 5px;
+                    border-left: 1px solid;
+                    &::after {
+                        content: '';
+                        width: 10px;
+                        height: 10px;
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        transform: translateX(-50%);
+                        border-radius: 50%;
+                    }
+                }
+                ul {
+                    margin-top: 30px;
+                    line-height: 30px;
+                    padding: 0 20px;
+                    .bor {
+                        list-style-type: initial;
+                        //  padding-left:10px;
+                    }
+                    .big-titile {
+                        margin-left: 15px;
+                    }
+                    .small-titile {
+                        margin-left: 30px
+                    }
+                }
+            }
         }
         .sendmsg {
             width: 492px;
@@ -932,7 +1011,6 @@
                 position: relative;
                 width: 56px;
                 height: 56px;
-                border: 1px solid transparent;
                 background-position: 50% 50%;
                 background-repeat: no-repeat;
                 @include hand;
@@ -940,6 +1018,9 @@
                 &:hover {
                     border-color: #e6e6e6;
                 }
+            }
+            .iconBorder{
+                  border: 1px solid; 
             }
         }
         .rightTools {
@@ -1148,12 +1229,26 @@
             }
         }
         .middleView {
+            position: relative;
+            h2 {
+                position: absolute;
+                top: -50px;
+                left: 50%;
+                transform: translate(-50%, 0);
+                width: 984px;
+                margin: 0 auto;
+            }
             #container {
                 max-width: 1000px;
                 height: 750px;
                 overflow: hidden;
-                margin: 60px auto 0;
+                margin: 100px auto 0;
                 padding-bottom: 16px;
+            }
+            .title {
+                width: 100%;
+                font-size: 17px;
+                font-weight: 700;
             }
         }
     }

@@ -24,7 +24,7 @@
                 </div>
                 <div class="book__intro">
                     <span>介绍：</span>不问远征 无关朝夕</div>
-                <div class="book__time">出版日期：2017.09.26 无修订</div>
+                <div class="book__time">出版日期：2017.09.26 无修订<img class="editimg" src="../../assets/images/editor/88 编辑.png" alt=""></div>
             </div>
             <div class="book__btn">
                 <router-link :to="{path:'/read',query:{type:$route.query.type}}">
@@ -60,7 +60,20 @@
                         </span>
                     </div>
                     <div class="clearfix"></div>
-                    <div class="comment__item">
+                    <div class="comment__item utBorder">
+                        <div class="tool">
+                            <a href='javascript:;' class="maxTop">
+                                <img src="../../assets/images/article/top-a.png" alt="">
+                                <!-- <img src="../../assets/images/article/top-b.png" alt="">
+                                <img src="../../assets/images/article/top-w.png" alt=""> -->
+                            </a>
+                            <a href='javascript:;'>
+                            <img src="../../assets/images/article/90 删除.png" alt="">
+                            <!-- <img src="../../assets/images/article/105 删除-白.png" alt="">
+                            <img src="../../assets/images/article/del.png" alt=""> -->
+                        </a>
+                        
+                        </div>
                         <div class="clearfix">
                             <div class="comment__userimg"></div>
                             <div class="comment__text">
@@ -81,11 +94,11 @@
                         <div class="comment__s clearfix">
                             <div class="comment__time">2017 11 18 / 23:59</div>
                             <div class="comment__feedback">
-                                <strong>
+                                <!-- <strong>
                                     <img src="../../assets/images/publish/108 浏览.png" alt="">
                                 </strong>
                                 <span>39</span>
-                                <strong>
+                                <strong> -->
                                     <img src="../../assets/images/publish/111 评论回复.png" alt="">
                                 </strong>
                                 <span>39</span>
@@ -247,6 +260,7 @@
     }
     
     .book__intro {
+        width: 550px;
         height: 218px;
         margin-top: 42px;
         span {
@@ -256,6 +270,12 @@
     
     .book__time {
         color: #aaa;
+        position: relative;
+        .editimg {
+            position: absolute;
+            top: 0;
+            right: -232px;
+        }
     }
     
     .book__btn {
@@ -352,6 +372,16 @@
     .comment__item {
         padding: 30px 20px;
         overflow: hidden;
+        border-bottom: 1px solid;
+        position: relative;
+        .tool {
+            position: absolute;
+            top: 20px;
+            right: 22px;
+            .maxTop {
+                margin-right: 15px;
+            }
+        }
     }
     
     .comment__userimg {
@@ -375,7 +405,7 @@
         strong,
         span {
             display: inline-block;
-            vertical-align: top;
+            vertical-align: middle;
         }
         span {
             padding-left: 8px;

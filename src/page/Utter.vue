@@ -65,7 +65,9 @@
           <div class="nickName pull-left">墨石</div>
         </router-link>
           <div class="good pull-right">
-            <img src="../assets/images/utter/good.png" alt="点赞"> 28
+            <!-- <img src="../assets/images/utter/good.png" alt="点赞">  -->
+            <img src="../assets/images/publish/110 赞扬.png" alt="点赞"> 
+            28
           </div>
 
           <div class="like pull-right">

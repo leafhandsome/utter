@@ -124,11 +124,11 @@
               </div>
 
               <div class="tools toolright">
-                <div class="tool">
-                  <!-- <img src="../assets/images/article/see.png" alt="关注"> -->
+                <!-- <div class="tool">
+                  <img src="../assets/images/article/see.png" alt="关注">
                    <img src="../assets/images/publish/108 浏览.png" alt="关注">
                    <span>99</span>
-                </div>
+                </div> -->
                 <div class="tool">
                   <!-- <img src="../assets/images/article/comments.png" alt="评论"> -->
                    <img src="../assets/images/publish/111 评论回复.png" alt="评论">
@@ -520,7 +520,7 @@
                 }
                 span {
                     display: inline-block;
-                    vertical-align: top;
+                    vertical-align: middle;
                     margin: 0 10px;
                 }
             }

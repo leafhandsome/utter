@@ -164,6 +164,14 @@ input:focus {
     background-color: white;
 }
 
+.pagecolr-black-after::after {
+    background-color: black;
+}
+
+.pagecolr-white-after::after {
+    background-color: white;
+}
+
 .clearfix:after {
     content: "";
     display: block;
@@ -268,4 +276,12 @@ tooltip__popper .popper__arrow,
 
 .cursor {
     cursor: pointer;
+}
+
+.navBorder-w {
+    border-color: white;
+}
+
+.navBorder-b {
+    border-color: black;
 }

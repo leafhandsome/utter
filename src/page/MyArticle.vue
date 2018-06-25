@@ -399,7 +399,7 @@
                 }
                 span {
                     display: inline-block;
-                    vertical-align: top;
+                    vertical-align: middle;
                     margin: 0 10px;
                 }
             }

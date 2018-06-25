@@ -70,7 +70,9 @@
                 <span>0</span><img src="../assets/images/article/prev.png" alt="上一页">
               </div>
               <a href='javaScript:;'>
-              <img class="more" src="../assets/images/article/more.png" alt="" @click.stop="showmore=true">
+                <img v-show="!showmore" class="more" src="../assets/images/article/more-w.png" alt="" @click.stop="showmore=true">
+              <img v-show="$route.query.type=='white'&&showmore" class="more" src="../assets/images/article/more.png" alt="" @click.stop="showmore=true">
+              <img v-show="$route.query.type=='black'&&showmore" class="more" src="../assets/images/article/135 书架-更多-白.png" alt="" @click.stop="showmore=true">
               </a>
               <div class="pull-right">
                 <img src="../assets/images/article/next.png" alt="下一页"><span>1</span>
@@ -83,8 +85,9 @@
 
     <div class="comment">
       <div class="arrowBox">
-        <div class="innerBox">
-          <img src="../assets/images/article/commentl.png">
+        <div class="innerBox" :class="$route.query.type=='white'?'ut-white1':'ut-black1'">
+          <img v-show="$route.query.type=='white'" src="../assets/images/article/commentl.png">
+          <img  v-show="$route.query.type=='black'"  src="../assets/images/article/commentl-w.png">
         </div>
       </div>
 
@@ -118,9 +121,9 @@
           <div class="time pull-left">2017-11-19 / 23:59</div>
 
           <div class="tools pull-right">
-            <div class="tool">
+            <!-- <div class="tool">
               <img src="../assets/images/article/see.png" alt="关注"> <span>99</span>
-            </div>
+            </div> -->
             <div class="tool">
               <img src="../assets/images/article/comments.png" alt="评论"> <span>03</span>
             </div>
@@ -140,7 +143,7 @@
                 pagecolor: this.$route.query.type,
                 showmore: false,
                 tabactive: 0,
-                submitactive:false,
+                submitactive: false,
             };
         },
         methods: {
@@ -286,7 +289,7 @@
                             }
                             span {
                                 display: inline-block;
-                                vertical-align: top;
+                                vertical-align: middle;
                                 margin: 0 10px;
                             }
                         }
@@ -316,7 +319,6 @@
                     height: 22px;
                     text-align: center;
                     margin: 0 auto;
-                    background: #fff;
                 }
             }
             .sendBox {

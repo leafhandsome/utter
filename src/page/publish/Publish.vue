@@ -29,7 +29,7 @@
                             <strong>
                                 <!-- //saved收藏过 -->
                                 <span v-if="!saved">
-                                <img v-show="!tools.save" src="../../assets/images/publish/109 收藏.png" alt="">
+                                <img v-show="!tools.save" src="../../assets/images/publish/126 书架-收藏.png" alt="">
                             </span>
                             <span else>
                                 <img v-show="$route.query.type=='white'&&(tools.save||saved)" src="../../assets/images/publish/130 书架-收藏-黑.png" alt="">

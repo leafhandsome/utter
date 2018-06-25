@@ -7,28 +7,28 @@
 
     <div class="middleTab clearfix">
       <router-link :to="{path:'/whiterow/modey',query:{type:pagecolr}}">
-      <div class="pull-left" >
-        <div :class="pagecolr=='white'?'tab':'tab tab-black'">首页</div>
+      <div class="pull-left"  @mouseover="moveEle(0)" @mouseout="moveoOut(0)" @mousedown="moveEle(0,'none')" @click="moveoOut(0,'block')">
+        <div :class="pagecolr=='white'?'tab':'tab tab-black'">首页<i></i></div>
       </div>
       </router-link>
         <router-link :to="{path:'/whiterow/myarticle',query:{type:pagecolr}}">
-      <div class="pull-left" >
-        <div :class="pagecolr=='white'?'tab':'tab tab-black'">文章</div>
+      <div class="pull-left"  @mouseover="moveEle(1)" @mouseout="moveoOut(1)"  @mousedown="moveEle(1,'none')" @mouseup="moveoOut(1,'block')">
+        <div :class="pagecolr=='white'?'tab':'tab tab-black'">文章<i></i></div>
       </div>
        </router-link>
         <router-link :to="{path:'/whiterow/idea',query:{type:pagecolr}}">
-      <div class="pull-left" >
-        <div :class="pagecolr=='white'?'tab':'tab tab-black'">想法</div>
+      <div class="pull-left" @mouseover="moveEle(2)"  @mouseout="moveoOut(2)"  @mousedown="moveEle(2,'none')" @mouseup="moveoOut(2,'block')">
+        <div :class="pagecolr=='white'?'tab':'tab tab-black'">想法<i></i></div>
       </div>
        </router-link>
         <router-link  :to="{path:'/whiterow/publish',query:{type:pagecolr}}">
-      <div class="pull-left" >
-        <div :class="pagecolr=='white'?'tab':'tab tab-black'">出版</div>
+      <div class="pull-left" @mouseover="moveEle(3)" @mouseout="moveoOut(3)"  @mousedown="moveEle(3,'none')" @mouseup="moveoOut(3,'block')">
+        <div :class="pagecolr=='white'?'tab':'tab tab-black'" >书籍<i></i></div>
       </div>
        </router-link>
         <router-link  :to="{path:'/whiterow/userinfo',query:{type:pagecolr}}">
-      <div class="pull-left" >
-        <div :class="pagecolr=='white'?'tab':'tab tab-black'">用户名</div>
+      <div class="pull-left"  @mouseover="moveEle(4)" @mouseout="moveoOut(4)"  @mousedown="moveEle(4,'none')" @mouseup="moveoOut(4,'block')">
+        <div :class="pagecolr=='white'?'tab':'tab tab-black'">用户名<i></i></div>
       </div>
        </router-link>
     </div>
@@ -114,6 +114,42 @@
         },
         mounted() {},
         methods: {
+            // tab hover
+            moveEle(index,dis){
+                var tab=document.querySelector('.active>.pull-left').children[0];
+             var tabElement = document.querySelectorAll('.tab');
+             for(var i=0;i<tabElement.length;i++){
+                 if(tabElement[i]==tab){
+                     var tabi=tab.children[0]
+                    if(dis){
+                     tabi.style.display=dis;
+                }else{
+                      tabi.style.transform='translateX('+100*(index-i)+'px)';
+                }
+                    
+                 }
+             }
+           
+            },
+            moveoOut(index,dis){
+               
+                         var tab=document.querySelector('.active>.pull-left').children[0];
+             var tabElement = document.querySelectorAll('.tab');
+             for(var i=0;i<tabElement.length;i++){
+                 if(tabElement[i]==tab){
+                     var tabi=tab.children[0];
+                      if(dis){
+                          setTimeout(() => {
+                                 tabi.style.display=dis;
+                          }, 600);
+                  
+                }
+                    //   tabi.style.width=tabElement[index].offsetWidth+"px";
+                     tabi.style.transform='translateX(0px)';
+                     tabi.style.transtion='all 0.1s';
+                 }
+             }
+            },
             //控制右边个人中心显示隐藏
             showhideset() {
                 this.showPersonal = false;
@@ -206,21 +242,22 @@
             .middleTab {
                 .tab {
                     color: #b8b8b8;
+                 
                 }
-                .active {
-                    .tab {
-                        color: #fff;
-                        font-weight: bold;
-                        border-bottom: 1px solid #fff;
-                        @include trans;
-                    }
-                    .tab-black {
-                        color: white;
-                        font-weight: bold;
-                        border-bottom: 1px solid white;
-                        @include trans;
-                    }
-                }
+                // .active {
+                //     .tab {
+                //         color: #fff;
+                //         font-weight: bold;
+                //         border-bottom: 1px solid #fff;
+                //         @include trans;
+                //     }
+                //     .tab-black {
+                //         color: white;
+                //         font-weight: bold;
+                //         border-bottom: 1px solid white;
+                //         @include trans;
+                //     }
+                // }
                 .pull-left {}
             }
         }
@@ -285,17 +322,37 @@
             left: 50%;
             transform: translateX(-50%);
             height: 58px;
-           
+            .tab{
+                //    &:hover{
+                //          &::after{
+                            
+                //             
+                //          }
+                //     }
+            }
             .active {
-                .tab {
-                    color: #000;
+               .tab{
+                    position: relative;
                     font-weight: bold;
+                      color: #000;
+                     @include trans;
+                    //  transition: all 3s;
+                    
+               }
+               .tab-black{
+                  color:white;
+               }
+                i {
+                    width: 100%;
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
                     border-bottom: 1px solid #000;
-                    @include trans;
+                    transition: all .3s;
                 }
-                .tab-black {
+                .tab-black i{
                     color: white;
-                    font-weight: bold;
+                    
                     border-bottom: 1px solid white;
                     @include trans;
                 }
@@ -318,7 +375,6 @@
                 color: #898989;
                 font-size: 15px;
                 margin: 0 auto;
-             
             }
         }
     }
