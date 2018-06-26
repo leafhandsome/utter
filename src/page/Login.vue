@@ -3,8 +3,9 @@
 
 
     <div class="header clearfix">
+        <router-link to="/index">
       <img class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
-
+    </router-link>   
       <div class="rightTools pull-right">
         <div class="item" @click='back'><img src="../assets/images/login/back.png" alt="返回"></div>
       </div>
@@ -12,28 +13,114 @@
     </div>
 
     <!-- <button style='margin-top:100px;' type="button" name="button" @click='changeType'>changeType</button> -->
-
+    <!-- 登录 -->
     <div class="main" :class='{"active":type == 1}'>
       <img class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
       <div class="say">写下你的一生</div>
-
+      <div class="message">
       <input type="text" placeholder='手机号或常用邮箱…'>
-
+      <p class="err">*错误提示</p>
+        </div> 
+      <div class="message">
       <input type="text" placeholder='输入密码…'>
-
+      <a href='javascript:;' class="loginPass" @click="type=5">忘记密码</a>
+      <p class="err">*错误提示</p>
+      </div>
       <div class="btns clearfix">
         <el-tooltip effect="dark" content="注册" placement="bottom">
-          <div @click='reg' class="reg pull-left"></div>
+          <div @click='reg' :class="type==2?'activeReg':''" class="reg pull-left"></div>
         </el-tooltip>
 
         <el-tooltip effect="dark" content="登录" placement="bottom">
-          <div @click='login' class="loginicon pull-right"></div>
+          <div @click='login' :class="type==1?'activeLogin':''" class="loginicon pull-right"></div>
         </el-tooltip>
 
       </div>
     </div>
 
-    <div class="main2" :class='{"active":type == 2}'>
+    <!-- 注册 -->
+    <div class="main" :class='{"active":type == 2}'>
+      <img class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
+      <div class="say">写下你的一生</div>
+        <div class="mobile">
+      <input type="text" placeholder='请输入常用邮箱…'  @focus="$refs.msg1.style.top='-3px'" @blur="$refs.msg1.style.top='0px'">
+      <a href='javascript:;' class="msg" ref="msg1" >
+      <span  @click="sendMsg" v-show="showkuaijie" class="getcode">发送验证</span>
+      <span v-show="!showkuaijie" :class="{success:!showkuaijie}" class="getcode">{{countkuaijie}}s</span>
+    </a>
+    <p class="err">*错误提示</p>
+    </div>
+        <div class="message">
+      <input type="text" placeholder='输入验证码' @focus="$refs.msg.style.top='-3px'" @blur="$refs.msg.style.top='0px'">
+         <a href='javascript:;' class="msg" ref="msg"  @click="nextmsg">验证</a>
+         <p class="err">*错误提示</p>   
+    </div>    
+      <div class="btns clearfix">
+        <el-tooltip effect="dark" content="注册" placement="bottom">
+          <div @click='reg' :class="type==2?'activeReg':''" class="reg pull-left"></div>
+        </el-tooltip>
+
+        <el-tooltip effect="dark" content="登录" placement="bottom">
+          <div @click='login' :class="type==1?'activeLogin':''" class="loginicon pull-right"></div>
+        </el-tooltip>
+
+      </div>
+    </div>
+    <!-- 设置密码 -->
+      <div class="main2" :class='{"active":type == 3}'>
+        <div class="title">
+            设置密码
+        </div>
+        <div class="message">
+        <input type="text" placeholder='密码'>
+        <p class="err">*错误提示</p>
+        </div> 
+        <div class="message">   
+        <input type="text" placeholder='确认密码'>
+        <p class="err">*错误提示</p>
+        </div>     
+        <button @click='setpassword' type="button" name="button" class='create'>确&nbsp;&nbsp;定</button>
+    </div>
+
+  <!-- 设置新密码 -->
+  <div class="main2" :class='{"active":type == 6}'>
+        <div class="title">
+            设置新密码
+        </div>
+        <div class="message">
+        <input type="text" placeholder='新密码'>
+        <p class="err">*错误提示</p>
+        </div> 
+        <div class="message">
+        <input type="text" placeholder='确认密码'>
+        <p class="err">*错误提示</p>
+        </div>  
+        <button @click='type=1' type="button" name="button" class='create'>确&nbsp;&nbsp;定</button>
+    </div>
+
+     <!-- 找回密码 -->
+     <div class="main2 main" :class='{"active":type == 5}'>
+            <div class="title">
+                找回密码
+            </div>
+    
+            <div class="mobile">
+                    <input type="text" placeholder='输入注册邮箱…'  @focus="$refs.msg2.style.top='-3px'" @blur="$refs.msg2.style.top='0px'">
+                    <a href='javascript:;' class="msg" ref="msg2">
+                            <span  @click="sendMsgPass" v-show="showtime" class="getcode">发送验证</span>
+                            <span v-show="!showtime" :class="{success:!showtime}" class="getcode">{{count}}s</span>
+                    </a>
+                    <p class="err">*错误提示</p>
+            </div> 
+            <div class="message">
+                    <input type="text" placeholder='输入验证码'>
+                       <!-- <a href='javascript:;' class="msg" @click="nextmsg">验证</a>    -->
+                    <p class="err">*错误提示</p>  
+                  </div> 
+            <button @click='fondpassword' type="button" name="button" class='create'>下&nbsp;&nbsp;一&nbsp;&nbsp;步</button>
+        </div>
+
+    <div class="main2" :class='{"active":type == 4}'>
         <div class="title">
           以简驭繁，只为<b>深度创造</b>
         </div>
@@ -48,17 +135,66 @@
   </div>
 </template>
 <script>
+    const TIME_COUNT = 60;
     export default {
 
         data() {
             return {
-                type: 1
+                type: 1,
+                showkuaijie: true,
+                countkuaijie: '',
+                count: '',
+                showtime: true,
             }
         },
         created() {
             document.querySelector("body").style.background = 'white'
         },
         methods: {
+            // 找回密码
+            fondpassword() {
+                this.type = 6;
+
+            },
+            // 找回密码发送验证码
+            sendMsgPass() {
+                if (!this.timer) {
+                    this.count = TIME_COUNT;
+                    this.showtime = false;
+                    this.timer = setInterval(() => {
+                        if (this.count > 0 && this.count <= TIME_COUNT) {
+                            this.count--;
+                        } else {
+                            this.showtime = true;
+                            clearInterval(this.timer);
+                            this.timer = null;
+                        }
+                    }, 1000)
+                }
+            },
+            setpassword() {
+                this.type = 4;
+            },
+            //注册验证
+            nextmsg() {
+                this.type = 3;
+            },
+            //发送注册验证码
+            sendMsg() {
+                if (!this.timerkuaijie) {
+                    this.countkuaijie = TIME_COUNT;
+                    this.showkuaijie = false;
+                    this.timerkuaijie = setInterval(() => {
+                        if (this.countkuaijie > 0 && this.countkuaijie <= TIME_COUNT) {
+                            this.countkuaijie--;
+                        } else {
+                            this.showkuaijie = true;
+                            clearInterval(this.timerkuaijie);
+                            this.timerkuaijie = null;
+                        }
+                    }, 1000)
+                }
+            },
             changeType() {
                 if (this.type % 2 == 1) {
                     this.type = 2;
@@ -67,20 +203,22 @@
                 }
             },
             reg() {
-                if (Math.random() > 0.5) {
-                    this.$message({
-                        message: '注册成功',
-                        type: 'success'
-                    });
+                this.type = 2;
+                // if (Math.random() > 0.5) {
+                //     this.$message({
+                //         message: '注册成功',
+                //         type: 'success'
+                //     });
 
-                    setTimeout(function() {
-                        this.type = 2;
-                    }.bind(this), 500)
-                } else {
-                    this.$message('注册失败');
-                }
+                //     setTimeout(function() {
+                //         this.type = 2;
+                //     }.bind(this), 500)
+                // } else {
+                //     this.$message('注册失败');
+                // }
             },
             login() {
+                this.type = 1;
                 if (Math.random() > 0.5) {
                     this.$message({
                         message: '登录成功',
@@ -143,6 +281,17 @@
                 }
             }
         }
+        .err {
+            position: absolute;
+            top: 0;
+            right: -100px;
+            height: 60px;
+            line-height: 60px;
+            color: red;
+        }
+        .message {
+            position: relative;
+        }
         .main {
             position: fixed;
             top: -5%;
@@ -154,6 +303,29 @@
             height: 374px;
             opacity: 0;
             transition: all 1s ease-out;
+            .mobile {
+                position: relative;
+            }
+            .msg {
+                position: absolute;
+                top: 0;
+                right: -18px;
+                height: 60px;
+                line-height: 60px;
+                width: 90px;
+                text-align: center;
+                border-left: 1px solid #000000;
+                  @include trans;
+            }
+            .loginPass {
+                position: absolute;
+                top: 0;
+                right: 0;
+                height: 60px;
+                line-height: 60px;
+                color: #CBCBCB;
+                text-decoration: underline;
+            }
             &.active {
                 // left:0;
                 transform: translate3d(350px, 0, 0);
@@ -203,6 +375,12 @@
                     background: url('../assets/images/login/rega.png') no-repeat;
                 }
             }
+            .activeReg {
+                background: url('../assets/images/login/rega.png') no-repeat;
+            }
+            // .active:hover{
+            // background: url('images/ico.gif') no-repeat center bottom!important;
+            // }
             .loginicon {
                 width: 26px;
                 height: 26px;
@@ -213,6 +391,9 @@
                 &:hover {
                     background: url('../assets/images/login/logina.png') no-repeat;
                 }
+            }
+            .activeLogin {
+                background: url('../assets/images/login/logina.png') no-repeat;
             }
         }
         .main2 {
@@ -233,8 +414,12 @@
             }
             .title {
                 text-align: center;
-                font-size: 28px;
+                font-size: 24px;
                 margin-bottom: 50px;
+                /* color: #848484;
+                b {
+                    color: #000;
+                } */
             }
             input {
                 border: 1px solid #000000;

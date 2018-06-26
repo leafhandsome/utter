@@ -119,7 +119,8 @@ input:focus {
     background: white;
 }
 
-.ut-white1 li:hover {
+
+/* .ut-white1 li:hover {
     color: #000;
     background-color: #efefef;
 }
@@ -127,7 +128,7 @@ input:focus {
 .ut-black1 li:hover {
     color: white;
     background-color: #16161a;
-}
+} */
 
 .ut-black {
     color: white;
@@ -283,5 +284,13 @@ tooltip__popper .popper__arrow,
 }
 
 .navBorder-b {
+    border-color: black;
+}
+
+.borderwhite .navBorder {
+    border-color: white;
+}
+
+.borderblack .navBorder {
     border-color: black;
 }

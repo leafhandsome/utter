@@ -90,8 +90,23 @@
   </div>
 
   <div class="middleView">
-      <h2 :class="utstyle=='white'?'ut-input-white':'ut-input-black'"><input  class="title" type="text" value="标题" ></h2>
+      <h2 :class="utstyle=='white'?'ut-input-white':'ut-input-black'"><input  class="title" type="text" placeholder="请输入标题" v-model="titile"></h2>
     <div id="container" @click="showset=false"></div>
+    <!-- page -->
+     <div class="pageTools">
+      <div class="innerbox clearfix">
+        <div class="pull-left">
+          <span>0</span>
+          <!-- <img v-show="" src="../assets/images/article/prev.png" alt="上一页"> -->
+          <img v-show="$route.query.type=='white'" src="../assets/images/article/prev-black.png" alt="上一页">
+          <img  v-show="$route.query.type=='black'" src="../assets/images/article/prev-w.png" alt="上一页">
+        </div>
+        <div class="pull-right">
+          <img v-show="$route.query.type=='white'" src="../assets/images/article/next.png" alt="">
+          <img v-show="$route.query.type=='black'" src="../assets/images/article/next-w.png" alt="下一页"><span>1</span>
+        </div>
+      </div>
+    </div>
   </div>
     <!-- 设置-发表信息 -->
     <div class="sendmsg" v-show="tabcreat==1&&showset" @click.stop="showset=true">
@@ -196,27 +211,32 @@
            </div>
     </div>
     <!-- 左边目录 -->
-      <div class="tree fl" v-show="$route.query.editor=='idea'">
+      <div class="treel fl" v-show="$route.query.editor=='idea'">
       <a href="javaScript:;" >
       <img v-show="utstyle=='white'" class="navimg treeimg" src="../assets/images/editor/175 创作区-目录.png" alt="" @click="getnvetree">
       <img v-show="utstyle=='black'" class="navimg treeimg" src="../assets/images/editor/192 创作区-目录-白.png" alt="" @click="getnvetree">
       </a>
-      <!-- <el-tree v-show="showTree=false" :class="utstyle=='white'?'ut-white':'ut-black'" class="nav-tree" :data="data" :props="defaultProps" @node-click="handleNodeClick"  node-key="id"
-  :default-expand-all="true"   :expand-on-click-node="false">
-  
-    </el-tree> -->
-       <div class="titile" :class="utstyle=='white'?'ut-white1':'ut-black1'">
+    
+       <div class="titile" :class="utstyle=='white'?'ut-white1':'ut-black1'" ref="navTree">
            <div class="line" :class="utstyle=='white'?'navBorder-b pagecolr-black-after':'navBorder-w pagecolr-white-after'"></div>
-            <ul>
-                <li class='bor'>前言</li>
+            <!-- <ul>
+                <li class='bor'><a href='javascript:;'>前言</a> </li>
                
+            </ul> -->
+            <ul v-for="(item, index) in datalist" :key="index">
+                 <li class='bor'><a href='javascript:;' @click="settitile(item.label)">{{item.label}} <i class="navBorder" @click="addnav(datalist,index)">+</i>
+                 <i class="navBorder remove" @click="removenav(datalist,index)">-</i>  </a></li>
+                 <label  v-for="(i, idx) in item.children" :key="idx">
+                 <li class="big-titile">
+                     <a href='javascript:;' @click="settitile(i.label)">{{i.label}}<i class="navBorder" @click="addTitle(item.children,idx)">+</i>
+                     <i class="navBorder remove" @click="removeTitle(item.children,idx)">-</i>   </a> 
+                    
+                 </li>
+                 <li class="small-titile" v-for="(count, id) in i.children" :key="id"><a href='javascript:;' @click="settitile(count.label)">{{count.label}}
+                     <i class="navBorder" @click="addidea(i.children,id)">+</i><i class="navBorder remove" @click="removeidea(i.children,id)">-</i>   </a> </li>
+                 </label>
             </ul>
-            <ul>
-                 <li class='bor'>第一章</li>
-                 <li class="big-titile">标题</li>
-                 <li class="small-titile">小标题</li>
-            </ul>
-            <ul> <li class='bor'>结语</li></ul>
+            <!-- <ul> <li class='bor'><a href='javascript:;'>结语</a> </li></ul> -->
        </div> 
   </div>
   
@@ -355,27 +375,27 @@
                 showbooksay: false,
                 shownote: false,
                 // 目录
-                data: [{
+                datalist: [{
                     label: "前言",
                     id: 0,
                 }, {
-                    label: "一级",
+                    label: "第一章",
                     id: 1,
                     children: [{
-                        label: "二级 2-1",
+                        label: "第一篇",
                         id: 2,
                         children: [{
-                            label: "三级 2-1-1"
+                            label: "第一节"
                         }]
                     }, {
                         id: 3,
-                        label: '一级 2',
+                        label: '第二篇',
                         children: [{
                             id: 5,
-                            label: '二级 2-1'
+                            label: '第一节'
                         }, {
                             id: 6,
-                            label: '二级 2-2'
+                            label: '第二5'
                         }]
                     }]
                 }, {
@@ -394,31 +414,69 @@
                 showclose: true,
                 showopen: false,
                 opentab: 1,
-                toolindex:100,
+                toolindex: 100,
+                titile:'',//标题
             };
         },
-        beforeCreate(){
-             UE.delEditor("container");
+        beforeCreate() {
+            UE.delEditor("container");
         },
         created() {
             this.utstyle = this.$route.query.type;
-              setTimeout(() => {
-                  console.log(document.querySelector('iframe'))
-                if(document.querySelector('iframe')){
-                     if (this.$route.query.type == "black") {
-                   document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "white";
-                } else {
-                    // this.forecolorHandle("#1b1b1b");
-                   document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "black";
+            setTimeout(() => {
+                if (document.querySelector('iframe')) {
+                    if (this.$route.query.type == "black") {
+                        document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "white";
+                    } else {
+                        // this.forecolorHandle("#1b1b1b");
+                        document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "black";
 
+                    }
                 }
-                }
-                   }, 2000);
+            }, 2000);
         },
         methods: {
+            settitile(value){
+               this.titile= value;
+                this.initUeditor(value);
+            },
+            //添加章节
+            addnav(value,index){
+                console.log(value)
+                value.splice(index+1, 0,{label:"第"+(index+1)+"章",  children: [{
+                        label: "第1篇",
+                        id: 2,
+                        children: [{
+                            label: "第1节"
+                        }]}]
+                        });  
+            },
+            addTitle(list,count){
+                  list.splice(count+1, 0,{label:"第"+(count+2)+"篇",  children: [{
+                        label: "第1节",
+                       }]
+                        }); 
+            },
+            addidea(list,index){
+                 list.splice(index+1, 0,{label:"第"+(index+2)+"节"})
+            },
+            //删除章节
+               removenav(value,index){
+                value.splice(index, 1);  
+            },
+            removeTitle(list,count){
+                  list.splice(count, 1); 
+            },
+            removeidea(list,index){
+                 list.splice(index, 1)
+            },
             // 创作背景
             setcreatColor(value) {
                 this.$refs.idea.style.background = "url(" + value + ")";
+                document.querySelector('.edui-editor').style.backgroundColor = 'unset';
+                document.querySelector('.edui-editor-iframeholder').style.backgroundColor = 'unset';
+                document.querySelector('.title').style.backgroundColor = 'unset';
+                this.$refs.navTree.style.backgroundColor = 'unset';
             },
             //是否公开
             openfun(value) {
@@ -464,10 +522,10 @@
                 this.utstyle = color;
                 if (color == "black") {
                     this.forecolorHandle("#F7F7F7");
-                   document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "white";
+                    document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "white";
                 } else {
                     this.forecolorHandle("#1b1b1b");
-                   document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "black";
+                    document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "black";
                 }
             },
             handleNodeClick(data) {
@@ -584,10 +642,10 @@
                     tools.toastWarn("请选择图片文件");
                 }
             },
-            handleTool(key,index) {
+            handleTool(key, index) {
                 this.activeTools = this.activeTools == key ? "" : key;
                 console.log(key);
-                this.toolindex=index;    
+                this.toolindex = index;
                 switch (key) {
                     case "italic":
                         this.editor.execCommand("italic");
@@ -618,50 +676,16 @@
                     path: url
                 });
             },
-            initUeditor() {
-               
-                this.editor = UE.getEditor("container", {
-                    toolbars: [],
-                    focus: true,
-                    initialFrameWidth: 984,
-                    initialFrameHeight: 734,
-                    autoHeightEnabled: false,
-                    enableAutoSave: true,
-                    saveInterval: 5000,
-                    wordCount: false,
-                    elementPathEnabled: false
-                });
-                var editor = this.editor;
-                this.editor.ready(function() {
-                    console.log("ue finish");
-
-                    editor.setContent("<h2>545</h2>");
-                });
-                return;
-                // UE.dom.domUtils.setStyles(this.editor.body, {
-                //   color: "#fff",
-                //   "font-family":
-                //     "'Microsoft Yahei','Helvetica Neue', Helvetica, STHeiTi, Arial, sans-serif",
-                //   "font-size": "14px"
-                // });
-                setInterval(() => {
-                    let data = editor.execCommand("getlocaldata");
-                    console.log(data);
-
-                    // editor.setContent(data);
-
-                    // editor.getContent();
-                }, 5000);
-            }
+          
         },
         watch: {
             "$store.state.utstyle": function(val) {
                 this.utstyle = val;
             }
         },
-        beforeDestroy(){
-            if(typeof(UE.getEditor("container")) !='undefined'){
-                 UE.getEditor("container").destroy();
+        beforeDestroy() {
+            if (typeof(UE.getEditor("container")) != 'undefined') {
+                UE.getEditor("container").destroy();
             }
         },
         mounted() {
@@ -672,7 +696,7 @@
                 _this.height = window.innerHeight;
             };
 
-            this.initUeditor();
+            this.initUeditor('joajeowe');
         }
     };
 </script>
@@ -683,18 +707,10 @@
         width: 100%;
         height: 100%;
         transition: background 0.3s ease;
-        .custom-tree-node {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 14px;
-            padding-right: 8px;
-        }
         .activeset {
             border: 1px solid #e6e6e6;
         }
-        .tree {
+        .treel {
             position: absolute;
             top: 100px;
             left: 35px;
@@ -722,14 +738,50 @@
                     margin-top: 30px;
                     line-height: 30px;
                     padding: 0 20px;
+                    a {
+                        position: relative;
+                        i {
+                            position: absolute;
+                            top: 2px;
+                            right: -50px;
+                            width: 15px;
+                            height: 15px;
+                            line-height: 13px;
+                            border-radius: 50%;
+                            border: 1px solid;
+                            text-align: center;
+                            display: none;
+                            &:hover{
+                                display: inline;
+                            }
+                        }
+                        .remove{
+                            right: -80px;
+                        }
+                        /* &:hover {
+                            i {
+                                
+                            }
+                        } */
+                    }
+                    
+                    li:hover {
+                         i{
+                            display: inline;
+                        }
+                    }
                     .bor {
                         list-style-type: initial;
+                        width: 200px;
                         //  padding-left:10px;
                     }
                     .big-titile {
                         margin-left: 15px;
+                         width: 200px;
                     }
                     .small-titile {
+                         width: 200px;
+                        display: block;
                         margin-left: 30px
                     }
                 }
@@ -1019,8 +1071,8 @@
                     border-color: #e6e6e6;
                 }
             }
-            .iconBorder{
-                  border: 1px solid; 
+            .iconBorder {
+                border: 1px solid;
             }
         }
         .rightTools {
@@ -1232,24 +1284,70 @@
             position: relative;
             h2 {
                 position: absolute;
-                top: -50px;
+                top: -70px;
                 left: 50%;
                 transform: translate(-50%, 0);
-                width: 984px;
+                width: 1000px;
+                height: 100px;
                 margin: 0 auto;
             }
             #container {
-                max-width: 1000px;
+                width: 1000px;
                 height: 750px;
                 overflow: hidden;
                 margin: 100px auto 0;
                 padding-bottom: 16px;
             }
             .title {
-                width: 100%;
+                width: 968px;
                 font-size: 17px;
                 font-weight: 700;
+                height: 50px;
+                padding:0 8px;
+                // text-align: center;
+                /* transform: translateX(-8px); */
             }
+             .pageTools {
+            width: 880px;
+            position: fixed;
+            bottom: 0;
+            padding-bottom: 50px;
+            // background: #fff;
+            height: 25px;
+            line-height: 25px;
+            margin-left: 380px;
+            .innerbox {
+                width: 200px;
+                height: 25px;
+                margin: 0 auto;
+                @include copynone;
+                position: relative;
+                &:after {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    left: 50%;
+                    top: 0;
+                    width: 1px;
+                    height: 100%;
+                    background: #E6E6E6;
+                }
+            }
+            .pull-left,
+            .pull-right {
+                height: 25px;
+                line-height: 25px;
+                @include hand;
+                img {
+                    height: 25px;
+                }
+                span {
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin: 0 10px;
+                }
+            }
+        }
         }
     }
 </style>
