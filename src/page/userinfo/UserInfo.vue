@@ -32,7 +32,13 @@
                 <div class="msg__btn">
                     <div class="btn__line1">
                         <div class="btn__visited">
-                            <img src="../../assets/images/userinfo/108 浏览.png" alt="">
+                            <a href='javascript:;' v-if="showsee"  @click="showsee=false">
+                            <img  src="../../assets/images/userinfo/108 浏览.png" alt="">
+                            </a>
+                            <a href='javascript:;' v-else>
+                            <img v-show="$route.query.type=='black'" src="../../assets/images/article/seeover-w.png" alt="">
+                            <img v-show="$route.query.type=='white'" src="../../assets/images/article/seeover-b.png" alt="">
+                            </a>
                         </div>
                         <div class="btn__message">
                             <a href='javaScript:;'>
@@ -137,6 +143,7 @@
                     nickname: "最好的自己"
                 },
                 imageUrl: '',
+                showsee:true,//是否关注
             };
         },
         methods: {
@@ -211,7 +218,7 @@
                 }
                 .submit {
                     position: absolute;
-                    bottom: 0;
+                    bottom: 20px;
                     right: 0;
                     @include hand;
                 }

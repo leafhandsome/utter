@@ -77,6 +77,7 @@
       <linkIdea></linkIdea>
   </div>
    <router-view></router-view>
+   <!-- <div>sdffd</div> -->
    <!-- <footer></footer> -->
    </div>
 </template>
@@ -115,40 +116,40 @@
         mounted() {},
         methods: {
             // tab hover
-            moveEle(index,dis){
-                var tab=document.querySelector('.active>.pull-left').children[0];
-             var tabElement = document.querySelectorAll('.tab');
-             for(var i=0;i<tabElement.length;i++){
-                 if(tabElement[i]==tab){
-                     var tabi=tab.children[0]
-                    if(dis){
-                     tabi.style.display=dis;
-                }else{
-                      tabi.style.transform='translateX('+100*(index-i)+'px)';
+            moveEle(index, dis) {
+                var tab = document.querySelector('.active>.pull-left').children[0];
+                var tabElement = document.querySelectorAll('.tab');
+                for (var i = 0; i < tabElement.length; i++) {
+                    if (tabElement[i] == tab) {
+                        var tabi = tab.children[0]
+                        if (dis) {
+                            tabi.style.display = dis;
+                        } else {
+                            tabi.style.transform = 'translateX(' + 100 * (index - i) + 'px)';
+                        }
+
+                    }
                 }
-                    
-                 }
-             }
-           
+
             },
-            moveoOut(index,dis){
-               
-                         var tab=document.querySelector('.active>.pull-left').children[0];
-             var tabElement = document.querySelectorAll('.tab');
-             for(var i=0;i<tabElement.length;i++){
-                 if(tabElement[i]==tab){
-                     var tabi=tab.children[0];
-                      if(dis){
-                          setTimeout(() => {
-                                 tabi.style.display=dis;
-                          }, 600);
-                  
+            moveoOut(index, dis) {
+
+                var tab = document.querySelector('.active>.pull-left').children[0];
+                var tabElement = document.querySelectorAll('.tab');
+                for (var i = 0; i < tabElement.length; i++) {
+                    if (tabElement[i] == tab) {
+                        var tabi = tab.children[0];
+                        if (dis) {
+                            setTimeout(() => {
+                                tabi.style.display = dis;
+                            }, 600);
+
+                        }
+                        //   tabi.style.width=tabElement[index].offsetWidth+"px";
+                        tabi.style.transform = 'translateX(0px)';
+                        tabi.style.transtion = 'all 0.1s';
+                    }
                 }
-                    //   tabi.style.width=tabElement[index].offsetWidth+"px";
-                     tabi.style.transform='translateX(0px)';
-                     tabi.style.transtion='all 0.1s';
-                 }
-             }
             },
             //控制右边个人中心显示隐藏
             showhideset() {
@@ -227,7 +228,6 @@
         left: 0;
         padding: 0 30px;
         width: 100vw;
-        min-width: 1350px;
         z-index: 1000;
         @include trans();
         &.black {
@@ -242,7 +242,6 @@
             .middleTab {
                 .tab {
                     color: #b8b8b8;
-                 
                 }
                 // .active {
                 //     .tab {
@@ -322,26 +321,24 @@
             left: 50%;
             transform: translateX(-50%);
             height: 58px;
-            .tab{
+            .tab {
                 //    &:hover{
                 //          &::after{
-                            
                 //             
                 //          }
                 //     }
             }
             .active {
-               .tab{
+                .tab {
                     position: relative;
                     font-weight: bold;
-                      color: #000;
-                     @include trans;
+                    color: #000;
+                    @include trans;
                     //  transition: all 3s;
-                    
-               }
-               .tab-black{
-                  color:white;
-               }
+                }
+                .tab-black {
+                    color: white;
+                }
                 i {
                     width: 100%;
                     position: absolute;
@@ -350,9 +347,8 @@
                     border-bottom: 1px solid #000;
                     transition: all .3s;
                 }
-                .tab-black i{
+                .tab-black i {
                     color: white;
-                    
                     border-bottom: 1px solid white;
                     @include trans;
                 }

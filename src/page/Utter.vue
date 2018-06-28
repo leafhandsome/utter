@@ -32,9 +32,10 @@
 
     <!-- 3个tab -->
     <div class="middleTab clearfix">
-      <div class="item pull-left" :class='{"active":middleType == 1}' @click='middleType = 1'>首推</div>
-      <div class="item pull-left" :class='{"active":middleType == 2}' @click='middleType = 2'>新声</div>
+      <!-- <div class="item pull-left" :class='{"active":middleType == 1}' @click='middleType = 1'>首推</div> -->
       <div class="item pull-left" :class='{"active":middleType == 3}' @click='middleType = 3'>热门</div>
+      <div class="item pull-left" :class='{"active":middleType == 2}' @click='middleType = 2'>新声</div>
+     
     </div>
     <!-- 3个tab -->
 
@@ -85,7 +86,7 @@
 
         data() {
             return {
-                middleType: 1
+                middleType: 3
             }
         },
         methods: {
@@ -145,7 +146,7 @@
         }
         .middleTab {
             margin: 51px auto;
-            width: 522px;
+            width: 352px;
             .item {
                 @include trans();
                 &:hover {

@@ -14,7 +14,7 @@
         v-for='(i,index) in toolsList' :key="index">
 
         <div class="fontsizeTools utBorder" v-if='activeTools == "fontsize" && i.key == "fontsize"'>
-          <div class="item" @click='fontsizeHandle(7 + i)' v-for='i in 21'>{{7 + i}}</div>
+          <div class="item" @click='fontsizeHandle(7 + i)' v-for='i in 21' :key="i">{{7 + i}}</div>
         </div>
 
         <div class="fontfamilyTools utBorder" v-if='activeTools == "fontfamily" && i.key == "fontfamily"'>
@@ -22,17 +22,17 @@
         </div>
 
         <div class="forecolorTools utBorder" v-if='activeTools == "forecolor" && i.key == "forecolor"'>
-          <div class="item" v-for='i in colorList' @click='forecolorHandle(i)'>
+          <div class="item" v-for='i in colorList' @click='forecolorHandle(i)' :key="i">
             <div class="color" :style='{"background-color":i}'></div>
           </div>
         </div>
         
         <div class="fontsizeTools utBorder" v-if='activeTools == "lineheight" && i.key == "lineheight"'>
-          <div class="item" v-for='i in 21' @click='lineheightHandle(7 + i)'>{{7 + i}}</div>
+          <div class="item" v-for='i in 21' @click='lineheightHandle(7 + i)' :key="i">{{7 + i}}</div>
         </div>
 
         <div class="fontsizeTools utBorder" v-if='activeTools == "rowspacing" && i.key == "rowspacing"'>
-          <div class="item" v-for='i in 10'>{{i - 1}}</div>
+          <div class="item" v-for='i in 10' :key="i">{{i - 1}}</div>
         </div>
 
         <div class="linkTools utBorder" v-if='activeTools == "link" && i.key == "link"'>
@@ -41,11 +41,11 @@
         </div>
 
         <div class="draftTools utBorder" v-if='activeTools == "draft" && i.key == "draft"'>
-          <div class="item utBorder" v-for='i in 10'>不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕</div>
+          <div class="item utBorder" v-for='i in 10' :key="i">不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕</div>
         </div>
 
         <div class="ideaTools utBorder" v-if='activeTools == "idea" && i.key == "idea"'>
-          <div class="item utBorder" v-for='i in 5' @click='ideaHandle'>不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕</div>
+          <div class="item utBorder" v-for='i in 5' @click='ideaHandle' :key="i">不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕</div>
         </div>
         
 
@@ -88,9 +88,10 @@
         </ul>
     </div>
   </div>
-
-  <div class="middleView">
-      <h2 :class="utstyle=='white'?'ut-input-white':'ut-input-black'"><input  class="title" type="text" placeholder="请输入标题" v-model="titile"></h2>
+    <!-- 编辑器 -->
+  <div class="middleView" >
+      <h2 :class="utstyle=='white'?'ut-input-white':'ut-input-black'">
+          <input  @keydown="getkeydown" ref="text" class="title" type="text" placeholder="请输入标题" v-model="titile"></h2>
     <div id="container" @click="showset=false"></div>
     <!-- page -->
      <div class="pageTools">
@@ -219,24 +220,24 @@
     
        <div class="titile" :class="utstyle=='white'?'ut-white1':'ut-black1'" ref="navTree">
            <div class="line" :class="utstyle=='white'?'navBorder-b pagecolr-black-after':'navBorder-w pagecolr-white-after'"></div>
-            <!-- <ul>
-                <li class='bor'><a href='javascript:;'>前言</a> </li>
-               
-            </ul> -->
+           
             <ul v-for="(item, index) in datalist" :key="index">
-                 <li class='bor'><a href='javascript:;' @click="settitile(item.label)">{{item.label}} <i class="navBorder" @click="addnav(datalist,index)">+</i>
+                 <li class='bor' :class="navid==item.id?'active-nav':''">
+                     <a href='javascript:;' :class="utstyle=='white'?'nav-treeWhite':'nav-treeBlack'" @click="settitile(item.label,item.id)">{{item.label}}
+                          <i class="navBorder" @click="addnav(datalist,index)">+</i>
                  <i class="navBorder remove" @click="removenav(datalist,index)">-</i>  </a></li>
                  <label  v-for="(i, idx) in item.children" :key="idx">
-                 <li class="big-titile">
-                     <a href='javascript:;' @click="settitile(i.label)">{{i.label}}<i class="navBorder" @click="addTitle(item.children,idx)">+</i>
+                 <li class="big-titile" :class="navid==i.id?'active-nav':''">
+                     <a href='javascript:;' @click="settitile(i.label,i.id)" :class="utstyle=='white'?'nav-treeWhite':'nav-treeBlack'">{{i.label}}
+                         <i class="navBorder" @click="addTitle(item.children,idx)">+</i>
                      <i class="navBorder remove" @click="removeTitle(item.children,idx)">-</i>   </a> 
                     
                  </li>
-                 <li class="small-titile" v-for="(count, id) in i.children" :key="id"><a href='javascript:;' @click="settitile(count.label)">{{count.label}}
-                     <i class="navBorder" @click="addidea(i.children,id)">+</i><i class="navBorder remove" @click="removeidea(i.children,id)">-</i>   </a> </li>
+                 <li class="small-titile" :class="navid==count.id?'active-nav':''" v-for="(count,num) in i.children" :key="num">
+                     <a href='javascript:;' @click="settitile(count.label,count.id)" :class="utstyle=='white'?'nav-treeWhite':'nav-treeBlack'">{{count.label}}
+                     <i class="navBorder" @click="addidea(i.children,num)">+</i><i class="navBorder remove" @click="removeidea(i.children,num)">-</i>   </a> </li>
                  </label>
             </ul>
-            <!-- <ul> <li class='bor'><a href='javascript:;'>结语</a> </li></ul> -->
        </div> 
   </div>
   
@@ -379,13 +380,13 @@
                     label: "前言",
                     id: 0,
                 }, {
-                    label: "第一章",
+                    label: "章节名称",
                     id: 1,
                     children: [{
-                        label: "第一篇",
+                        label: "篇名",
                         id: 2,
                         children: [{
-                            label: "第一节"
+                            label: "标题"
                         }]
                     }, {
                         id: 3,
@@ -402,6 +403,7 @@
                     label: "结语",
 
                 }],
+                navid: 0, //激活id
                 defaultProps: {
                     children: "children",
                     label: "label"
@@ -415,7 +417,7 @@
                 showopen: false,
                 opentab: 1,
                 toolindex: 100,
-                titile:'',//标题
+                titile: '', //标题
             };
         },
         beforeCreate() {
@@ -435,40 +437,64 @@
                 }
             }, 2000);
         },
+     
         methods: {
-            settitile(value){
-               this.titile= value;
+               getkeydown(e){
+                if(e.keyCode==13){
+                    // this.initUeditor(UE.getEditor('container').getContent())
+                UE.getEditor('container').focus();
+                }
+            
+            },
+            settitile(value, id) {
+                this.titile = value;
                 this.initUeditor(value);
+                this.navid = id;
             },
             //添加章节
-            addnav(value,index){
+            addnav(value, index) {
                 console.log(value)
-                value.splice(index+1, 0,{label:"第"+(index+1)+"章",  children: [{
+                value.splice(index + 1, 0, {
+                    id: 'a' + value[index].id++,
+                    label: "第" + (index + 1) + "章",
+                    children: [{
                         label: "第1篇",
-                        id: 2,
+                        id: 'ab' + value[index].id++,
                         children: [{
-                            label: "第1节"
-                        }]}]
-                        });  
+                            label: "第1节",
+                            id: 'abc' + value[index].id++,
+                        }]
+                    }]
+                });
             },
-            addTitle(list,count){
-                  list.splice(count+1, 0,{label:"第"+(count+2)+"篇",  children: [{
+            addTitle(list, count) {
+                console.log(list)
+                list.splice(count + 1, 0, {
+                    id: 'b' + list[count].id++,
+                    label: "第" + (count + 2) + "篇",
+                    children: [{
                         label: "第1节",
-                       }]
-                        }); 
+                        id: 'bc' + list[count].id++,
+
+                    }]
+                });
             },
-            addidea(list,index){
-                 list.splice(index+1, 0,{label:"第"+(index+2)+"节"})
+            addidea(list, index) {
+
+                list.splice(index + 1, 0, {
+                    id: 'c' + list[index].id++,
+                    label: "第" + (index + 2) + "节",
+                })
             },
             //删除章节
-               removenav(value,index){
-                value.splice(index, 1);  
+            removenav(value, index) {
+                value.splice(index, 1);
             },
-            removeTitle(list,count){
-                  list.splice(count, 1); 
+            removeTitle(list, count) {
+                list.splice(count, 1);
             },
-            removeidea(list,index){
-                 list.splice(index, 1)
+            removeidea(list, index) {
+                list.splice(index, 1)
             },
             // 创作背景
             setcreatColor(value) {
@@ -493,30 +519,9 @@
             getnvetree() {
                 // console.log( document.querySelector('.treeimg'))transform: rotate(90deg);
                 this.showTree = !this.showTree;
-                if (this.showTree) {
-                    document.querySelector('.treeimg').style.transform = "rotate(90deg)";
-                } else {
-                    document.querySelector('.treeimg').style.transform = "rotate(0deg)";
-                }
-            },
-            // append(data) {
-            //     const newChild = {
-            //         id: id++,
-            //         label: 'testtest',
-            //         children: []
-            //     };
-            //     if (!data.children) {
-            //         this.$set(data, 'children', []);
-            //     }
-            //     data.children.push(newChild);
-            // },
 
-            // remove(node, data) {
-            //     const parent = node.parent;
-            //     const children = parent.data.children || parent.data;
-            //     const index = children.findIndex(d => d.id === data.id);
-            //     children.splice(index, 1);
-            // },
+            },
+
             //更换背景色
             getreadercolor(color) {
                 this.utstyle = color;
@@ -655,11 +660,14 @@
                         break;
                     case "justifyl":
                         this.editor.execCommand("justify", "left");
+                        this.$refs.text.style.textAlign = 'left';
                         break;
                     case "justifym":
+                        this.$refs.text.style.textAlign = 'center';
                         this.editor.execCommand("justify", "center");
                         break;
                     case "justifyr":
+                        this.$refs.text.style.textAlign = 'right';
                         this.editor.execCommand("justify", "right");
                         break;
                     case "insertimage":
@@ -676,7 +684,7 @@
                     path: url
                 });
             },
-          
+
         },
         watch: {
             "$store.state.utstyle": function(val) {
@@ -714,6 +722,14 @@
             position: absolute;
             top: 100px;
             left: 35px;
+            .active-nav {
+                .nav-treeBlack {
+                    color: white;
+                }
+                .nav-treeWhite {
+                    color: black;
+                }
+            }
             .titile {
                 margin-top: 58px;
                 position: relative;
@@ -740,6 +756,7 @@
                     padding: 0 20px;
                     a {
                         position: relative;
+                        color: #898989;
                         i {
                             position: absolute;
                             top: 2px;
@@ -751,11 +768,11 @@
                             border: 1px solid;
                             text-align: center;
                             display: none;
-                            &:hover{
+                            &:hover {
                                 display: inline;
                             }
                         }
-                        .remove{
+                        .remove {
                             right: -80px;
                         }
                         /* &:hover {
@@ -764,9 +781,8 @@
                             }
                         } */
                     }
-                    
                     li:hover {
-                         i{
+                        i {
                             display: inline;
                         }
                     }
@@ -777,10 +793,10 @@
                     }
                     .big-titile {
                         margin-left: 15px;
-                         width: 200px;
+                        width: 200px;
                     }
                     .small-titile {
-                         width: 200px;
+                        width: 200px;
                         display: block;
                         margin-left: 30px
                     }
@@ -1057,7 +1073,7 @@
             @include hand;
         }
         .toolsView {
-            width: 928px;
+            width: 900px;
             margin: 0 auto;
             .icon {
                 position: relative;
@@ -1303,51 +1319,50 @@
                 font-size: 17px;
                 font-weight: 700;
                 height: 50px;
-                padding:0 8px;
-                // text-align: center;
-                /* transform: translateX(-8px); */
+                padding: 0 8px;
+                margin-right: 54px;
             }
-             .pageTools {
-            width: 880px;
-            position: fixed;
-            bottom: 0;
-            padding-bottom: 50px;
-            // background: #fff;
-            height: 25px;
-            line-height: 25px;
-            margin-left: 380px;
-            .innerbox {
-                width: 200px;
-                height: 25px;
-                margin: 0 auto;
-                @include copynone;
-                position: relative;
-                &:after {
-                    content: '';
-                    display: block;
-                    position: absolute;
-                    left: 50%;
-                    top: 0;
-                    width: 1px;
-                    height: 100%;
-                    background: #E6E6E6;
-                }
-            }
-            .pull-left,
-            .pull-right {
+            .pageTools {
+                width: 880px;
+                position: fixed;
+                bottom: 0;
+                padding-bottom: 50px;
+                // background: #fff;
                 height: 25px;
                 line-height: 25px;
-                @include hand;
-                img {
+                margin-left: 380px;
+                .innerbox {
+                    width: 200px;
                     height: 25px;
+                    margin: 0 auto;
+                    @include copynone;
+                    position: relative;
+                    &:after {
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        left: 50%;
+                        top: 0;
+                        width: 1px;
+                        height: 100%;
+                        background: #E6E6E6;
+                    }
                 }
-                span {
-                    display: inline-block;
-                    vertical-align: middle;
-                    margin: 0 10px;
+                .pull-left,
+                .pull-right {
+                    height: 25px;
+                    line-height: 25px;
+                    @include hand;
+                    img {
+                        height: 25px;
+                    }
+                    span {
+                        display: inline-block;
+                        vertical-align: middle;
+                        margin: 0 10px;
+                    }
                 }
             }
-        }
         }
     }
 </style>

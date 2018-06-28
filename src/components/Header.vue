@@ -4,25 +4,7 @@
     <img v-if='utstyle == "white"' class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
     <img  v-else class='logo' src="../assets/images/utter/logow.png" alt="UTTER">
 
-    <div class="middleTab clearfix" v-if='type'>
-      <div class="pull-left" :class='{"active":tab == 1}' @click='changeTab(1,"modey")'>
-        <div class="tab">首页</div>
-      </div>
-      <div class="pull-left" :class='{"active":tab == 2}' @click='changeTab(2,"myarticle")'>
-        <div class="tab">文章</div>
-      </div>
-      <div class="pull-left" :class='{"active":tab == 3}' @click='changeTab(3,"idea")'>
-        <div class="tab">想法</div>
-      </div>
-      <div class="pull-left" :class='{"active":tab == 4}' @click='changeTab(4,"publish")'>
-        <div class="tab">出版</div>
-      </div>
-      <div class="pull-left" :class='{"active":tab == 5}' @click='changeTab(5,"userinfo")'>
-        <div class="tab">用户名</div>
-      </div>
-    </div>
 
-    <template>
       <div class="rightTools pull-right">
         <div class="item"  @click.stop="getactivenave(1)">
           <img v-show="styleimg.showimg1" src="../assets/images/utter/nav-search.png" alt="搜索">
@@ -37,49 +19,10 @@
         </div>
       </div>
 
-      <!-- // <div class="rightTools pull-right" v-else>
-      //   <div class="item">
-      //     <img src="../assets/images/utter/searchw.png" alt="搜索">
-      //   </div>
-      //   <div class="item" @click='tourl("/login")'>
-      //     <img src="../assets/images/utter/userw.png" alt="个人中心">
-      //   </div>
-      // </div> -->
-    </template>
-<!-- <template v-else>
-      <div class="rightTools pull-right">
-
-        <div class="item" @mouseenter="styleimg.showimg1=false" @mouseleave='styleimg.showimg1=true'>
-          <img v-show="styleimg.showimg1" src="../assets/images/utter/search.png" alt="搜索">
-          <img v-show="!styleimg.showimg1" src="../assets/images/utter/searchw.png" alt="搜索">
-        </div>
-        <div class="item"  @mouseenter="styleimg.showimg2=false" @mouseleave='styleimg.showimg2=true'>
-          <img v-show="styleimg.showimg2" src="../assets/images/utter/create.png" alt="创作">
-          <img v-show="!styleimg.showimg2" src="../assets/images/utter/createw.png" alt="创作">
-        </div>
-        <div class="item"  @mouseenter="styleimg.showimg3=false" @mouseleave='styleimg.showimg3=true'>
-          <img v-show="styleimg.showimg3" src="../assets/images/utter/music.png" alt="音乐">
-          <img v-show="!styleimg.showimg3" src="../assets/images/utter/musicw.png" alt="音乐">
-        </div>
-        <div class="item"  @mouseenter="styleimg.showimg4=false" @mouseleave='styleimg.showimg4=true'>
-          <img v-show="styleimg.showimg4" src="../assets/images/utter/msg.png" alt="消息">
-          <img v-show="!styleimg.showimg4" src="../assets/images/utter/msgw.png" alt="消息">
-        </div>
-        <div class="item"  @mouseenter="styleimg.showimg5=false" @mouseleave='styleimg.showimg5=true'>
-          <img v-show="styleimg.showimg5" src="../assets/images/utter/user.png" @click='tourl("/login")' alt="个人中心">
-          <img v-show="!styleimg.showimg5" src="../assets/images/utter/userw.png" @click='tourl("/login")' alt="个人中心">
-        </div>
-      </div>
-    </template> -->
-
-<div class="personshow" v-show="showPersonal">
-    <personal :UTstyle="utstyle"></personal>
-</div>
 </div>
 </template>
 
 <script>
-    import personal from "./Personal";
     export default {
         data() {
             return {
@@ -138,9 +81,7 @@
                 this.utstyle = val;
             }
         },
-        components: {
-            personal
-        }
+
     };
 </script>
 
@@ -154,7 +95,6 @@
         left: 0;
         padding: 0 30px;
         width: 100vw;
-        min-width: 1350px;
         z-index: 1000;
         @include trans();
         &.black {

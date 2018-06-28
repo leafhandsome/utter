@@ -4,12 +4,13 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import App from './App'
 import router from './router/index'
+import axios from 'axios'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import './assets/css/base.css'
 Vue.use(ElementUI)
 Vue.use(Vuex)
-
+axios.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
 const store = new Vuex.Store({
     state: {
         utstyle: 'white',
@@ -41,6 +42,7 @@ const store = new Vuex.Store({
 //     window.scrollTo(0, 0);
 // });
 Vue.prototype.$store = store;
+Vue.prototype.$http = axios;
 
 Vue.config.productionTip = false
 
