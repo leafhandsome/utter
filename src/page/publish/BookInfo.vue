@@ -73,11 +73,22 @@
                 <div class="comment">
                     <div class="comment__head utBorder">
                         <span>
+                            <a href='javascript:;'>
                             <img v-show="$route.query.type=='white'" src="../../assets/images/publish/116 评论回复-黑.png" alt="">
                             <img v-show="$route.query.type=='black'" src="../../assets//images/publish/111 评论回复.png" alt="">
+                        </a>
                         </span>
                     </div>
-                    <div class="clearfix"></div>
+                    <div class="clearfix">
+                            <div class="mainItem utBorder">
+                                    <textarea :class="$route.query.type=='white'?'ut-white1':'ut-black1 '"  name="name" rows="8" cols="100" placeholder='写下你的评论吧...'></textarea>
+                                    <el-tooltip effect="dark" content="发表" placement="bottom">
+                                            <img v-if="!submitactive" src="../../assets/images/userinfo/112 提交.png" class='submit' @click="sendsub">
+                                            <img v-if="submitactive&&$route.query.type=='white'" src="../../assets/images/editor/issueb.png" class='submit'  @click.stop="submitactive=true">
+                                            <img v-if="submitactive&&$route.query.type=='black'" src="../../assets/images/editor/issuew.png" class='submit'  @click.stop="submitactive=true">
+                                    </el-tooltip>
+                                  </div>
+                    </div>
                     <div class="comment__item utBorder">
                         <div class="tool">
                             <a href='javascript:;' class="maxTop">
@@ -160,19 +171,24 @@
                     }]
                 }, {
                     label: '结语',
-                  
+
                 }],
                 defaultProps: {
                     children: 'children',
                     label: 'label'
                 },
-                navid:0,
+                navid: 0,
+                submitactive: false,
             }
         },
         created() {
-           
+
         },
         methods: {
+            //发表评论
+            sendsub() {
+                this.submitactive = true
+            },
             tourl(url, query) {
                 tools.router.push({
                     path: url,
@@ -197,7 +213,6 @@
 
 <style scoped lang='scss'>
     @import "../../assets/scss/tool.scss";
-   
     .el-tree {
         border: none;
     }
@@ -428,75 +443,85 @@
         /* font-weight: bold; */
         font-size: 14px;
     }
-     .titile {
-               
+    
+    .titile {
+        position: relative;
+        .line {
+            height: 100%;
+            position: absolute;
+            top: 13px;
+            left: 5px;
+            border-left: 1px solid;
+            padding-bottom: 58px;
+        }
+        ul {
+            margin-top: 30px;
+            line-height: 30px;
+            padding: 0 20px;
+            &:nth-last-child(1) {
+                transform: translateY(30px);
+            }
+            a {
                 position: relative;
-                .line {
-                    height: 100%;
+                color: #898989;
+                i {
                     position: absolute;
-                    top: 13px;
-                    left: 5px;
-                    border-left: 1px solid;
-                     padding-bottom: 58px;
-              
+                    top: 2px;
+                    right: -50px;
+                    width: 15px;
+                    height: 15px;
+                    line-height: 13px;
+                    border-radius: 50%;
+                    border: 1px solid;
+                    text-align: center;
+                    display: none;
+                    &:hover {
+                        display: inline;
+                    }
                 }
-              
-                ul {
-                    margin-top: 30px;
-                    line-height: 30px;
-                    padding: 0 20px;
-                      &:nth-last-child(1){
-                    transform: translateY(30px);
+                .remove {
+                    right: -80px;
                 }
-                    a {
-                        position: relative;
-                        color: #898989;
-                        i {
-                            position: absolute;
-                            top: 2px;
-                            right: -50px;
-                            width: 15px;
-                            height: 15px;
-                            line-height: 13px;
-                            border-radius: 50%;
-                            border: 1px solid;
-                            text-align: center;
-                            display: none;
-                            &:hover {
-                                display: inline;
-                            }
-                        }
-                        .remove {
-                            right: -80px;
-                        }
-                        /* &:hover {
+                /* &:hover {
                             i {
                                 
                             }
                         } */
-                    }
-                    li:hover {
-                        i {
-                            display: inline;
-                        }
-                    }
-                    .bor {
-                        list-style-type: initial;
-                        width: 200px;
-                        //  padding-left:10px;
-                    }
-                    .big-titile {
-                        margin-left: 15px;
-                        width: 200px;
-                    }
-                    .small-titile {
-                        width: 200px;
-                        display: block;
-                        margin-left: 30px
-                    }
+            }
+            li:hover {
+                i {
+                    display: inline;
                 }
-               
-                    
-                
+            }
+            .bor {
+                list-style-type: initial;
+                width: 200px;
+                //  padding-left:10px;
+            }
+            .big-titile {
+                margin-left: 15px;
+                width: 200px;
+            }
+            .small-titile {
+                width: 200px;
+                display: block;
+                margin-left: 30px
+            }
+        }
+    }
+    .mainItem {
+                position: relative;
+                border-bottom: 1px solid;
+                textarea {
+                    border: none;
+                    resize: none;
+                    outline: none;
+                }
+                .submit {
+                    position: absolute;
+                    bottom: 20px;
+                    right: 19px;
+                    @include hand;
+                }
             }
 </style>

@@ -37,20 +37,18 @@
     </div>
 
     <div class="list pull-left utBorder" >
-      <div class="item clearfix utBorder" @click='showartice=true' v-for="(item, index) in 3" :key="index">
+      <div class="item clearfix utBorder" @click='showartice=true' v-for="(item, index) in articleList" :key="index">
         <div class="leftSide pull-left">
           <div class="articleTitle">
-            欢迎来到UTTER
+            {{item.title}}
           </div>
-          <div class="articleDesc">
-            我们以简驭繁，只为深度创作<br>
-            在UTTER，你可以创作并发表你的作品，也可以自由出版你的作品。<br>
-            如果有人想要了解你，也许可以给他一个你的UTTER。
+          <div class="articleDesc"v-html="item.text">
+           
           </div>
         </div>
         <div class="rightSide pull-right">
           <div class="time">
-            2017-11-19 / 23:59
+            {{item.lastUpdateTime}}
           </div>
 
           <el-tooltip effect="dark" content="更多" placement="bottom" >
@@ -62,28 +60,28 @@
 
         <div class="itemTools utBorder" v-show="tools[index].showtools" @click.stop="showtools=true">
           <div class="tools utBorder" @click="gettools(1)">
-            <el-tooltip effect="dark" content="分享" placement="right-end">
+            <el-tooltip effect="dark" content="分享" placement="right">
               <img v-if="pagecolor=='white'&&tabactive==1" src="../assets/images/article/share.png" alt="分享">
               <img v-if="pagecolor=='black'&&tabactive==1" src="../assets/images/article/103 分享-白.png" alt="分享">
               <img v-if="tabactive!=1" src="../assets/images/article/87 分享.png" alt="分享">
             </el-tooltip>
           </div>
           <div class="tools utBorder"  @click="gettools(2)">
-            <el-tooltip effect="dark" content="编辑" placement="right-end">
+            <el-tooltip effect="dark" content="编辑" placement="right">
               <img  v-if="pagecolor=='white'&&tabactive==2" src="../assets/images/article/edit.png" alt="编辑">
               <img v-if="pagecolor=='black'&&tabactive==2" src="../assets/images/article/104 编辑-白.png" alt="编辑">
               <img v-if="tabactive!=2" src="../assets/images/article/88 编辑.png" alt="编辑">
             </el-tooltip>
           </div>
           <div class="tools utBorder" @click="gettools(3)">
-            <el-tooltip effect="dark" content="下载" placement="right-end">
+            <el-tooltip effect="dark" content="下载" placement="right">
               <img  v-if="pagecolor=='white'&&tabactive==3" src="../assets/images/article/moredown.png" alt="下载">
               <img  v-if="pagecolor=='black'&&tabactive==3" src="../assets/images/article/105 下载-白.png" alt="下载">
               <img  v-if="tabactive!=3" src="../assets/images/article/89 下载.png" alt="下载">
             </el-tooltip>
           </div>
           <div class="tools utBorder" @click="gettools(4)">
-            <el-tooltip effect="dark" content="删除" placement="right-end">
+            <el-tooltip effect="dark" content="删除" placement="right">
               <img  v-if="pagecolor=='white'&&tabactive==4" src="../assets/images/article/del.png" alt="删除">
               <img  v-if="pagecolor=='black'&&tabactive==4" src="../assets/images/article/105 删除-白.png" alt="删除">
               <img  v-if="tabactive!=4" src="../assets/images/article/90 删除.png" alt="删除">
@@ -150,9 +148,31 @@
                     moreActive: false
                 }, ],
                 morenum: '',
+                articleList:[]
             };
         },
+        created() {
+            this.pagecolor = this.$route.query.type;
+            this.active = this.$route.query.type == "white" ? "active-black" : "active-white";
+            this.getarticle()
+        },
         methods: {
+            //获取列表信息
+            getarticle() {
+                //                 page	string	是	页码		
+                // pageSize	string	是	页大小		
+                // userId
+                let params = {
+                    page: '1',
+                    pageSize: 3,
+                    userId: ''
+                }
+                this.unitAjax('get', 'v1/article/list', params, res => {
+                    if (res.code == 200) {
+                         this.articleList=res.data.rows   
+                    }
+                })
+            },
             // 工具栏
             gettools(value) {
                 this.tabactive = value;
@@ -195,10 +215,7 @@
                 });
             }
         },
-        created() {
-            this.pagecolor = this.$route.query.type;
-            this.active = this.$route.query.type == "white" ? "active-black" : "active-white";
-        },
+
         mounted() {
             var _this = this;
             this.$store.commit("changeFooter", false);

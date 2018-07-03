@@ -183,6 +183,7 @@ textarea {
     border: none;
     resize: none;
     outline: none;
+    font-family: '方正兰亭黑', '微软雅黑', Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 20px;
 }

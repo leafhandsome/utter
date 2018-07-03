@@ -9,7 +9,7 @@
       <input type='file' id='file' ref='file' @change='changeImg' style='width:0;height:0;position:fixed;top:-2000px;'>
 
       <div class="icon utBorder pull-left" :class="index==toolindex?'iconBorder':''"
-        @click.self='handleTool(i.key,index)'
+        @click.stop='handleTool(i.key,index)'
         :style="{'background-image': utstyle == 'white' ? 'url('+ i.bicon +')' : 'url('+ i.wicon +')' }" 
         v-for='(i,index) in toolsList' :key="index">
 
@@ -127,7 +127,7 @@
             </div>
             </div>
             <div class="bottom ut-white1">
-                  <textarea name="name" rows="8" cols="45" placeholder='为文章写一段摘要'></textarea>
+                  <textarea name="name" rows="6.5" cols="45" placeholder='为文章写一段摘要'></textarea>
         <el-tooltip effect="dark" content="发表" placement="bottom">
           <img src="../assets/images/article/submit.png" class='submit' alt="发表">
         </el-tooltip>
@@ -218,23 +218,23 @@
       <img v-show="utstyle=='black'" class="navimg treeimg" src="../assets/images/editor/192 创作区-目录-白.png" alt="" @click="getnvetree">
       </a>
     
-       <div class="titile" :class="utstyle=='white'?'ut-white1':'ut-black1'" ref="navTree">
+       <div class="titile" :class="utstyle=='white'?'ut-white1':'ut-black1'" ref="navTree" v-show="showTree">
            <div class="line" :class="utstyle=='white'?'navBorder-b pagecolr-black-after':'navBorder-w pagecolr-white-after'"></div>
            
-            <ul v-for="(item, index) in datalist" :key="index">
-                 <li class='bor' :class="navid==item.id?'active-nav':''">
-                     <a href='javascript:;' :class="utstyle=='white'?'nav-treeWhite':'nav-treeBlack'" @click="settitile(item.label,item.id)">{{item.label}}
+            <ul v-for="(item, index) in datalist" :key="index" >
+                 <li class='bor active-nav'>
+                     <a href='javascript:;' class="navtab" ref="sd" @click="settitile(item.label,item.id,$event)">{{item.label}}
                           <i class="navBorder" @click="addnav(datalist,index)">+</i>
                  <i class="navBorder remove" @click="removenav(datalist,index)">-</i>  </a></li>
                  <label  v-for="(i, idx) in item.children" :key="idx">
-                 <li class="big-titile" :class="navid==i.id?'active-nav':''">
-                     <a href='javascript:;' @click="settitile(i.label,i.id)" :class="utstyle=='white'?'nav-treeWhite':'nav-treeBlack'">{{i.label}}
+                 <li class="big-titile active-nav">
+                     <a href='javascript:;' class="navtab" ref="sv" @click="settitile(i.label,i.id,$event)" >{{i.label}}
                          <i class="navBorder" @click="addTitle(item.children,idx)">+</i>
                      <i class="navBorder remove" @click="removeTitle(item.children,idx)">-</i>   </a> 
                     
                  </li>
-                 <li class="small-titile" :class="navid==count.id?'active-nav':''" v-for="(count,num) in i.children" :key="num">
-                     <a href='javascript:;' @click="settitile(count.label,count.id)" :class="utstyle=='white'?'nav-treeWhite':'nav-treeBlack'">{{count.label}}
+                 <li class="small-titile active-nav" v-for="(count,num) in i.children" :key="num">
+                     <a href='javascript:;' class="navtab" ref='sn' @click="settitile(count.label,count.id,$event)" >{{count.label}}
                      <i class="navBorder" @click="addidea(i.children,num)">+</i><i class="navBorder remove" @click="removeidea(i.children,num)">-</i>   </a> </li>
                  </label>
             </ul>
@@ -424,6 +424,7 @@
             UE.delEditor("container");
         },
         created() {
+            
             this.utstyle = this.$route.query.type;
             setTimeout(() => {
                 if (document.querySelector('iframe')) {
@@ -437,22 +438,34 @@
                 }
             }, 2000);
         },
-     
+
         methods: {
-               getkeydown(e){
-                if(e.keyCode==13){
+            getkeydown(e) {
+                if (e.keyCode == 13) {
                     // this.initUeditor(UE.getEditor('container').getContent())
-                UE.getEditor('container').focus();
+                    UE.getEditor('container').focus();
                 }
-            
+
             },
-            settitile(value, id) {
+            settitile(value, id,e) {
                 this.titile = value;
                 this.initUeditor(value);
                 this.navid = id;
+                    if(this.showTree=true){
+                       let arr= document.querySelectorAll('.navtab')
+                            for(let i=0;i<arr.length;i++){
+                                  arr[i].className='navtab';
+                            }
+                            if(this.utstyle=='white'){
+                                 e.target.className='nav-treeWhite navtab'
+                            }else{
+                                  e.target.className='nav-treeBlack navtab'
+                            }
+                            
+                   } 
             },
             //添加章节
-            addnav(value, index) {
+            addnav(value, index,e) {
                 console.log(value)
                 value.splice(index + 1, 0, {
                     id: 'a' + value[index].id++,
@@ -519,7 +532,18 @@
             getnvetree() {
                 // console.log( document.querySelector('.treeimg'))transform: rotate(90deg);
                 this.showTree = !this.showTree;
-
+                if(this.showTree){
+                     let arr= document.querySelectorAll('.navtab')
+                            for(let i=0;i<arr.length;i++){
+                                 if(this.utstyle=='white'){
+                                 arr[0].className='nav-treeWhite navtab'
+                            }else{
+                                  arr[0].className='nav-treeBlack navtab'
+                            }
+                            }
+                           
+                }
+                
             },
 
             //更换背景色
@@ -672,6 +696,23 @@
                         break;
                     case "insertimage":
                         this.$refs.file.click();
+                        break;
+                     case "issue":
+                     this.tabcreat=1;
+                     this.showset=true;
+                    //  let params={
+                    //      title:this.titile,
+                    //      text:this.editor.getContent(),
+                    //      open:JSON.stringify(this.opentab==1),
+                    //  }
+                    //     this.unitAjax('post','v1/article/add',params,res=>{
+                    //          if(res.code==200){
+                    //              this.$message({
+                    //                  type: 'success',
+                    //                  message: '发表成功!'
+                    //              })
+                    //          }   
+                    //     })
                         break;
                 }
             },

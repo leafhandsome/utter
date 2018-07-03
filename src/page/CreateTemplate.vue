@@ -39,7 +39,13 @@ export default {
     },
   	tourl(url,query){
       url=url=='/modey'?'/whiterow'+url:'/whitecol'+url
-      tools.router.push({path:url,query:query});
+      this.unitAjax('post','v1/me/themeSetting',{theme:url},res=>{
+        if(res.code==200){
+           tools.router.push({path:url,query:query});
+        }else{
+          this.$message.error(res.msg);
+        }
+      })
       //window.open('#/modey?type=black')
     }
   },

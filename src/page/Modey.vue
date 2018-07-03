@@ -234,7 +234,8 @@
                 imageUrl5: "",
                 imageUrl: {},
                 styleindex: 0,
-                imgindex: 0
+                imgindex: 0,
+                point: [],
             };
         },
         watch: {
@@ -252,42 +253,6 @@
             this.stylecolor = this.$route.query.type;
         },
         methods: {
-            // 上传图片
-            // handleAvatarSuccess(res,file) {
-            //     console.log(res,file)
-            //     if(file){
-            //             if(this.styleindex==1){
-            //         this.imageUrl1= URL.createObjectURL(file.raw);
-            //     }else if(this.styleindex==2){
-            //         if(this.imgindex==0){
-            //             this.imageUrl2 = URL.createObjectURL(file.raw);
-            //         }else{
-            //             this.imageUrl3 = URL.createObjectURL(file.raw);
-            //         }
-
-            //     }else{
-            //           if(this.imgindex==0){
-            //             this.imageUrl4 = URL.createObjectURL(file.raw);
-            //         }else{
-            //             this.imageUrl5 = URL.createObjectURL(file.raw);
-            //         }
-            //     }
-            //     }
-
-            // },
-            // beforeAvatarUpload(file) {
-            //   const isJPG = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
-            //   const isLt2M = file.size / 1024 / 1024 < 2;
-
-            //   if (!isJPG) {
-            //     this.$message.error("上传头像图片只能是 JPG/jpg 格式!");
-            //   }
-            //   if (!isLt2M) {
-            //     this.$message.error("上传头像图片大小不能超过 2MB!");
-            //   }
-            //   return isJPG && isLt2M;
-            // },
-
             changeImg(e) {
                 //图片change回调
                 var file = e.target.files[0];
@@ -337,7 +302,13 @@
                 this.$refs.content.style.fontSize = value + "px";
             },
             settingfun() {
-                this.showset = true;
+                this.showset = !this.showset;
+                this.gettitleactiveimg()
+                    //保存设置
+                if (this.showset == false) {
+                    this.setting()
+                }
+
                 if (this.stylecolor == "white") {
                     for (
                         let i = 0; i < document.querySelectorAll(".el-slider__bar").length; i++
@@ -367,7 +338,8 @@
                         this.$refs.modey.style.background = "#1b1b1b";
                     }
                 } else {
-                    this.$refs.modey.style.background = "url(" + value + ")";
+                    this.$refs.modey.style.backgroundImage = "url(" + value + ")";
+                    this.$refs.modey.style.backgroundSize = "100%";
                 }
             },
             gettitleactiveimg(num) {
@@ -382,8 +354,32 @@
                 this.settitleimgshow = true;
                 this.rightimgshow = true;
             },
+            setting() {
+               this.point= JSON.stringify(this.point).replace(/\"/g,"'")
+                let params = {
+                    siteName: "独立出版",
+                    siteInfoDetail: "签名",
+                    siteInfoShowMode: this.point,
+                    siteInfoXPoint: this.fontvalue,
+                    siteInfoYPoint:this.fontvalue2,
+                    siteNameSize: Number(this.titlevalue),
+                    siteDetailSize: Number(this.contentvalue),
+                }
+                this.unitAjax('post', 'v1/me/siteInfoSetting', params, res => {
+                    if (res.code == 200) {
+                        this.$message({
+                            message: '设置成功',
+                            type: 'success'
+                        });
+                    } else {
+                        this.$message.error(res.msg)
+                    }
+                })
+            },
             //设置横排对齐方式
             setrowalign(align, col) {
+                this.point[0] = align;
+                this.point[1] = col;
                 if (col) {
                     this.rowcol = "col";
                     this.$refs.titile.style.transform = "translateY(0)";
@@ -421,49 +417,6 @@
                     this.mincontent = 10;
                 }
 
-                // if (px) {
-                //     this.$refs.align.style.marginTop = "100px";
-                //     this.$refs.align.style.width = "100px";
-                //     this.$refs.align.style.height = "600px";
-
-                //     this.$refs.titile.style.width = px;
-
-                //     //  this.$refs.titile.style.height="400px";
-                //     this.$refs.titile.style.float = "right";
-                //     this.$refs.content.style.float = "right";
-                //     this.$refs.content.style.width = "10px";
-                //     this.$refs.content.style.content = "400px";
-                //     this.$refs.content.style.marginRight = "40px";
-                //     if (align == "center") {
-                //         //  this.$refs.align.style.top = "50%";
-                //         this.$refs.titile.style.transform = "translateY(75%)";
-                //         this.$refs.content.style.transform = "translateY(100%)";
-                //     } else if (align == "top") {
-                //         this.$refs.titile.style.transform = "translateY(0%)";
-                //         this.$refs.content.style.transform = "translateY(0%)";
-                //         this.$refs.content.style.height = "initial";
-                //         this.$refs.titile.style.height = "initial";
-                //     } else if (align == "bottom") {
-                //         this.$refs.titile.style.transform = "translateY(133%)";
-                //         this.$refs.content.style.transform = "translateY(180%)";
-                //         this.$refs.content.style.height = "initial";
-                //         this.$refs.titile.style.height = "initial";
-                //     }
-                // } else {
-                //     this.$refs.align.style.margin = "auto";
-                //     this.$refs.align.style.textAlign = align;
-                //     this.$refs.content.style.marginRight = "0";
-                //     this.$refs.align.style.width = "1200px";
-                //     // this.$refs.titile.style.transform = "translateY(0%)";
-                //     // this.$refs.content.style.transform = "translateY(0%)";
-                //     this.$refs.align.style.height = "98px";
-                //     this.$refs.align.style.top = "0";
-                //     this.$refs.titile.style.height = "42px";
-                //     this.$refs.titile.style.width = "100%";
-                //     this.$refs.titile.style.marginBottom = "32px";
-                //     this.$refs.content.style.height = "24px";
-                //     this.$refs.content.style.width = "100%";
-                // }
             },
             // 风格样式
             setstyle(num) {

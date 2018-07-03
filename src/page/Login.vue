@@ -1,5 +1,8 @@
 <template lang="html">
-  <div class="login">
+  <div class="login"  v-loading="loading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)">
 
 
     <div class="header clearfix">
@@ -14,7 +17,7 @@
 
     <!-- <button style='margin-top:100px;' type="button" name="button" @click='changeType'>changeType</button> -->
     <!-- 登录 -->
-    <div class="main" :class='{"active":type == 1}'>
+    <div class="main" :class='{"active":type == 1}' @keydown="loginDown">
       <img class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
       <div class="say">写下你的一生</div>
       <div class="message">
@@ -22,7 +25,7 @@
       <p class="err" v-text="err.login">*错误提示</p>
         </div> 
       <div class="message">
-      <input type="text" placeholder='输入密码…' maxlength="20" @focus="loginPwdFs" v-model="login.password">
+      <input type="password" placeholder='输入密码…' maxlength="20" @focus="loginPwdFs" v-model="login.password">
       <a href='javascript:;' class="loginPass" @click="type=5">忘记密码</a>
       <p class="err" v-text="err.loginpwd">*错误提示</p>
       </div>
@@ -39,11 +42,11 @@
     </div>
 
     <!-- 注册 -->
-    <div class="main" :class='{"active":type == 2}'>
+    <div class="main" :class='{"active":type == 2}' @keydown="regDown">
       <img class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
       <div class="say">写下你的一生</div>
         <div class="mobile">
-      <input type="text" placeholder='请输入常用邮箱…' maxlength="24" v-model="register.email"  @focus="$refs.msg1.style.top='-3px'" @blur="$refs.msg1.style.top='0px'">
+      <input type="text" placeholder='请输入常用邮箱…' maxlength="24" v-model="register.email"  @focus="regFs" @blur="$refs.msg1.style.top='0px'">
       <a href='javascript:;' class="msg" ref="msg1" >
       <span  @click="sendMsg" v-show="showkuaijie" class="getcode">发送验证</span>
       <span v-show="!showkuaijie" :class="{success:!showkuaijie}" class="getcode">{{countkuaijie}}s</span>
@@ -51,7 +54,7 @@
     <p class="err" v-if="type == 2" v-text="err.regEmail">*错误提示</p>
     </div>
         <div class="message">
-      <input type="text" placeholder='输入验证码' maxlength="6" @focus="$refs.msg.style.top='-3px'" @blur="$refs.msg.style.top='0px'" v-model="register.msgCode">
+      <input type="text" placeholder='输入验证码' maxlength="6" @focus="regCodeFs" @blur="$refs.msg.style.top='0px'" v-model="register.msgCode">
          <a href='javascript:;' class="msg" ref="msg"  @click="nextmsg">验证</a>
          <p class="err" v-if="type == 2" v-text="err.msfCode">*错误提示</p>   
     </div>    
@@ -67,69 +70,72 @@
       </div>
     </div>
     <!-- 设置密码 -->
-      <div class="main2" :class='{"active":type == 3}'>
+      <div class="main2" :class='{"active":type == 3}' @keydown="setpwdDown">
         <div class="title">
             设置密码
         </div>
         <div class="message">
-        <input type="password" placeholder='密码' maxlength="20">
-        <p class="err">*错误提示</p>
+        <input type="password" placeholder='密码' maxlength="20" v-model="password.pwd" @focus="err.pwd=''">
+        <p class="err" v-text="err.pwd">*错误提示</p>
         </div> 
         <div class="message">   
-        <input type="password" placeholder='确认密码' maxlength="20">
-        <p class="err">*错误提示</p>
+        <input type="password" placeholder='确认密码' maxlength="20" v-model="password.confirm"  @focus="err.confirm=''">
+        <p class="err" v-text="err.confirm">*错误提示</p>
         </div>     
         <button @click='setpassword' type="button" name="button" class='create'>确&nbsp;&nbsp;定</button>
     </div>
 
   <!-- 设置新密码 -->
-  <div class="main2" :class='{"active":type == 6}'>
+  <div class="main2" :class='{"active":type == 6}' @keydown="setnewspwdDown">
         <div class="title">
             设置新密码
         </div>
         <div class="message">
-        <input type="password" placeholder='新密码' maxlength="20">
-        <p class="err">*错误提示</p>
+        <input type="password" placeholder='新密码' maxlength="20" v-model="password.newspwd" @focus="err.newspwd=''">
+        <p class="err" v-text="err.newspwd">*错误提示</p>
         </div> 
         <div class="message">
-        <input type="password" placeholder='确认密码' maxlength="20">
-        <p class="err">*错误提示</p>
+        <input type="password" placeholder='确认密码' maxlength="20" v-model="password.newsconfirm"  @focus="err.newsconfirm=''">
+        <p class="err" v-text="err.newsconfirm">*错误提示</p>
         </div>  
-        <button @click='type=1' type="button" name="button" class='create'>确&nbsp;&nbsp;定</button>
+        <button @click='setnewsPwd' type="button" name="button" class='create'>确&nbsp;&nbsp;定</button>
     </div>
 
      <!-- 找回密码 -->
-     <div class="main2 main" :class='{"active":type == 5}'>
+     <div class="main2 main" :class='{"active":type == 5}' @keydown="fondpwdDown">
             <div class="title">
                 找回密码
             </div>
     
             <div class="mobile">
-                    <input type="text" placeholder='输入注册邮箱…' maxlength="24"  @focus="$refs.msg2.style.top='-3px'" @blur="$refs.msg2.style.top='0px'">
+                    <input type="text" placeholder='输入注册邮箱…' maxlength="24" v-model="fond.email" @focus="fondpwdFs" @blur="$refs.msg2.style.top='0px'">
                     <a href='javascript:;' class="msg" ref="msg2">
                             <span  @click="sendMsgPass" v-show="showtime" class="getcode">发送验证</span>
                             <span v-show="!showtime" :class="{success:!showtime}" class="getcode">{{count}}s</span>
                     </a>
-                    <p class="err">*错误提示</p>
+                    <p class="err" v-text="err.fondEmail">*错误提示</p>
             </div> 
             <div class="message">
-                    <input type="text" placeholder='输入验证码' maxlength="8">
+                    <input type="text" placeholder='输入验证码' maxlength="8" v-model="fond.code" @focus="fondcodeFs">
                        <!-- <a href='javascript:;' class="msg" @click="nextmsg">验证</a>    -->
-                    <p class="err">*错误提示</p>  
+                    <p class="err" v-text="err.fondCode">*错误提示</p>  
                   </div> 
             <button @click='fondpassword' type="button" name="button" class='create'>下&nbsp;&nbsp;一&nbsp;&nbsp;步</button>
         </div>
 
-    <div class="main2" :class='{"active":type == 4}'>
+    <div class="main2" :class='{"active":type == 4}' @keydown="setnameDown">
         <div class="title">
           以简驭繁，只为<b>深度创造</b>
         </div>
-
-        <input type="text" placeholder='笔名' maxlength="12">
-
-        <input type="text" placeholder='站名' maxlength="15">
-
-        <button @click='tourl("/createtemplate")' type="button" name="button" class='create'>创&nbsp;&nbsp;建</button>
+        <div class="message">
+        <input type="text" placeholder='笔名' maxlength="12" v-model="username" @focus="err.penName=''">
+          <p class="err" v-text="err.penName">*错误提示</p>  
+        </div> 
+        <div class="message">
+        <input type="text" placeholder='站名' maxlength="15" v-model="nickname"  @focus="err.siteName=''">
+          <p class="err" v-text="err.siteName">*错误提示</p>  
+         </div> 
+        <button @click='setname' type="button" name="button" class='create'>创&nbsp;&nbsp;建</button>
     </div>
 
   </div>
@@ -147,125 +153,272 @@
                 showtime: true,
                 register: {
                     email: '',
-                    msgCode:'',
+                    msgCode: '',
                 },
                 err: {
                     reg: '',
-                    loginpwd:'',
-                    login:'',
-                    msfCode:'',
-                    regEmail:'',
+                    loginpwd: '',
+                    login: '',
+                    msfCode: '',
+                    regEmail: '',
+                    fondCode: '',
+                    fondEmail: '',
+                    newspwd: '',
+                    newsconfirm: '',
+                    siteName: '',
+                    penName: '',
+                    pwd: '',
+                    confirm: '',
                 },
-                login:{
-                    email:'',
-                    password:'',
-                    }
+                login: {
+                    email: '',
+                    password: '',
+                },
+                password: {
+                    pwd: '',
+                    confirm: '',
+                    newsconfirm: "",
+                    newspwd: '',
+                },
+                fond: {
+                    email: '',
+                    code: '',
+                },
+                nickname: '',
+                username: '',
+                loading: false,
             }
         },
         created() {
-            document.querySelector("body").style.background = 'white'
+            document.querySelector("body").style.background = 'white';
+            if (this.$route.query.penName) {
+                if (this.$route.query.penName == 'false') {
+                    this.type = 4
+                }
+            }
+
         },
         methods: {
+
+            //设置笔名站名
+            setname() {
+                let parms = {
+                    penName: this.username,
+                    siteName: this.nickname
+                }
+                if(/[\u4e00-\u9fa5]/.test(this.username)&&this.username.length>6){
+                    this.err.penName = "中文笔名只能输入1-6个字符" 
+                }else{
+
+                }
+                if (this.username && this.nickname) {
+                    this.unitAjax('post', 'v1/me/userNameSetting', parms, res => {
+                        if (res.code == 200) {
+                            this.tourl("/createtemplate")
+                        } else {
+                            this.err.siteName = res.msg
+                        }
+                    })
+                } else {
+                    if (this.nickname == "") {
+                        this.err.siteName = '站名不能为空'
+                    }
+                     if (!this.username) {
+                        this.err.penName = "笔名不能为空"
+                    }
+                }
+
+            },
+
+            //设置新密码
+            setnewsPwd() {
+                let parms = {
+                    email: this.fond.email,
+                    code: this.fond.code,
+                    confirmPassword: this.password.newsconfirm,
+                    password: this.password.newspwd,
+                }
+                if (/^[a-zA-Z0-9]{6,20}$/.test(this.password.newspwd) && this.password.newsconfirm == this.password.newspwd) {
+                    this.unitAjax('post', 'v1/user/resetPassword', parms, res => {
+                        if (res.code == 200) {
+                            this.type = 1;
+                        } else {
+                            this.err.newsconfirm = res.msg
+                        }
+                    })
+                } else {
+                    if (this.password.newsconfirm != this.password.newspwd) {
+                        this.err.newsconfirm = '两次密码输入不一致'
+                    } else if (!/^[a-zA-Z0-9]{6,20}$/.test(this.password.newspwd)) {
+                        this.err.newsconfirm = '请输入6-20密码和数字'
+                    }
+                }
+
+            },
             // 找回密码
             fondpassword() {
-                this.type = 6;
+                let parms = {
+                    email: this.fond.email,
+                    code: this.fond.code
+                }
 
+                if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.fond.email) && this.fond.code) {
+                    this.unitAjax('post', 'v1/verify/verifyCode', parms, res => {
+                        if (res.code == 200) {
+                            this.type = 6;
+                        } else {
+                            this.err.fondCode = res.msg
+                        }
+                    })
+                } else {
+                    if (this.fond.code == "") {
+                        this.err.fondCode = '验证码不能为空'
+                    } else if (!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.fond.email)) {
+                        this.err.fondEmail = "请输入正确的邮箱地址"
+                    } else if (this.fond.email == '') {
+                        this.err.fondEmail = "邮箱不能为空"
+                    }
+                }
             },
             // 找回密码发送验证码
             sendMsgPass() {
-                if (!this.timer) {
-                    this.count = TIME_COUNT;
-                    this.showtime = false;
-                    this.timer = setInterval(() => {
-                        if (this.count > 0 && this.count <= TIME_COUNT) {
-                            this.count--;
-                        } else {
-                            this.showtime = true;
-                            clearInterval(this.timer);
-                            this.timer = null;
-                        }
-                    }, 1000)
+                let parms = {
+                    email: this.fond.email
                 }
+                if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.fond.email)) {
+                    this.unitAjax('post', 'v1/verify/registerSendCode', parms, res => {
+                        if (res.code == 200) {
+                            if (!this.timer) {
+                                this.count = TIME_COUNT;
+                                this.showtime = false;
+                                this.timer = setInterval(() => {
+                                    if (this.count > 0 && this.count <= TIME_COUNT) {
+                                        this.count--;
+                                    } else {
+                                        this.showtime = true;
+                                        clearInterval(this.timer);
+                                        this.timer = null;
+                                    }
+                                }, 1000)
+                            }
+                        } else {
+                            this.err.fondEmail = res.msg
+                        }
+                    })
+                } else {
+                    if (!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.fond.email)) {
+                        this.err.fondEmail = "请输入正确的邮箱地址"
+                    } else if (this.fond.email == '') {
+                        this.err.fondEmail = "邮箱不能为空"
+                    }
+                }
+
+
+            },
+            fondpwdFs() {
+                this.$refs.msg2.style.top = '-3px';
+                this.err.fondEmail = ''
+            },
+            fondcodeFs() {
+                this.err.fondCode = ''
             },
             setpassword() {
-                this.type = 4;
-                 this.unitAjax('post',"v1/user/register",{email:"422702209@qq.com",password:"123456",confirmPassword:"",verifyCode:"811859"},res=>{
-                        
-                        console.log(3242)
+
+                if (/^[a-zA-Z0-9]{6,20}$/.test(this.password.pwd) && this.password.confirm == this.password.pwd) {
+                    let params = {
+                        email: this.register.email,
+                        password: this.password.pwd,
+                        confirmPassword: this.password.confirm,
+                        verifyCode: this.register.msgCode
+                    }
+                    this.unitAjax('post', "v1/user/register", params, res => {
+                        if (res.code == 200) {
+                            this.type = 4;
+                        } else {
+                            this.err.confirm = res.msg
+                        }
+
                     })
+                } else {
+                    if (!/^[a-zA-Z0-9]{6,20}$/.test(this.password.pwd)) {
+                        this.err.pwd = '请输入6-20位字母和数字'
+                    } else if (this.password.confirm != this.password.pwd) {
+                        this.err.confirm = '两次密码输入不一致'
+                    }
+                }
             },
             //注册验证
             nextmsg() {
-                this.type = 3;
-                if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.register.email)&&this.register.msgCode) {
-                   this.unitAjax('post',"v1/verify/verifyCode",{email:this.register.email||'422702209@qq.com',code:this.register.msgCode||'811859'},res=>{
-                        
-                        console.log(3242)
+
+                if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.register.email) && this.register.msgCode) {
+                    this.unitAjax('post', "v1/verify/verifyCode", {
+                        email: this.register.email,
+                        code: this.register.msgCode
+                    }, res => {
+
+                        if (res.code == 200) {
+                            this.type = 3;
+                        } else {
+                            this.err.msfCode = res.msg;
+                        }
                     })
-                }else{
-                  if(this.register.msgCode==""){
-                      this.err.msfCode='验证码不能为空'
-                  }else if(!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.register.email)){
-                      this.err.regEmail="请输入正确的邮箱"
-                  }else if(this.register.email==''){
-                       this.err.regEmail="邮箱不能为空"
-                  }  
+                } else {
+                    if (this.register.msgCode == "") {
+                        this.err.msfCode = '验证码不能为空'
+                    } else if (!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.register.email)) {
+                        this.err.regEmail = "请输入正确的邮箱地址"
+                    } else if (this.register.email == '') {
+                        this.err.regEmail = "邮箱不能为空"
+                    }
                 }
             },
             //发送注册验证码
             sendMsg() {
 
                 if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.register.email)) {
-                   
-                        this.$http.post("v1/user/verifyUserExists", JSON.stringify({
-                                email: this.register.email
-                            }) ).then((res) => {
-                                if(res.data.code==404){
-                                     this.sendemail()
-                                }else{
-                                     this.err.reg=res.data.msg
-                                }
-                               
-                            })
-                            .catch((err) => {
-                               this.err.reg=err;
-                            })
+                    this.unitAjax("post", "v1/user/verifyUserExists", {
+                        email: this.register.email
+                    }, (res) => {
+                        if (res.code == 404) {
+                            this.sendemail()
+                        } else {
+                            if (res.code == 200) {
+                                this.err.regEmail = res.data
+                            } else {
+                                this.err.regEmail = res.msg
+                            }
 
-                    
+                        }
+
+                    })
+
                 } else {
-                    this.err.reg = '请输入正确的邮箱'
+                    this.err.regEmail = '请输入正确的邮箱地址'
                 }
             },
             //发到邮箱code
             sendemail() {
-                
-                this.unitAjax('post',"v1/verify/registerSendCode",{
-                                email: this.register.email
-                            },(res) => {
-                                console.log(res)
-                       if(res.status==200){
-                             if (!this.timerkuaijie) {
-                        this.countkuaijie = TIME_COUNT;
-                        this.showkuaijie = false;
-                        this.timerkuaijie = setInterval(() => {
-                            if (this.countkuaijie > 0 && this.countkuaijie <= TIME_COUNT) {
-                                this.countkuaijie--;
-                            } else {
-                                this.showkuaijie = true;
-                                clearInterval(this.timerkuaijie);
-                                this.timerkuaijie = null;
-                            }
-                        }, 1000)}
-                       }
 
-                    })
-            },
-            changeType() {
-                if (this.type % 2 == 1) {
-                    this.type = 2;
-                } else {
-                    this.type = 1;
-                }
+                this.unitAjax('post', "v1/verify/registerSendCode", {
+                    email: this.register.email
+                }, (res) => {
+                    if (res.code == 200) {
+                        if (!this.timerkuaijie) {
+                            this.countkuaijie = TIME_COUNT;
+                            this.showkuaijie = false;
+                            this.timerkuaijie = setInterval(() => {
+                                if (this.countkuaijie > 0 && this.countkuaijie <= TIME_COUNT) {
+                                    this.countkuaijie--;
+                                } else {
+                                    this.showkuaijie = true;
+                                    clearInterval(this.timerkuaijie);
+                                    this.timerkuaijie = null;
+                                }
+                            }, 1000)
+                        }
+                    }
+
+                })
             },
             reg() {
                 this.type = 2;
@@ -273,31 +426,87 @@
             },
             //登录
             getlogin() {
-                this.type = 1;
-                    if(/^[a-zA-Z0-9]{6,21}$/.test(this.login.password)&&/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.login.email)){
-                            console.log(34)
-                    }else{
-                        if(!(/^[a-zA-Z0-9]{6,21}$/.test(this.login.password))){
-                             this.err.loginpwd='请输入6-20位字母和数字'
+
+                if (/^[a-zA-Z0-9]{6,21}$/.test(this.login.password) && /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.login.email)) {
+                    this.loading = true;
+                    this.unitAjax('post', "v1/user/login", {
+                        email: this.login.email,
+                        password: this.login.password
+                    }, res => {
+                        this.loading = false;
+                        if (res.code == 200) {
+                            this.$router.push({
+                                path: '/whiterow/modey',
+                                query: {
+                                    type: 'white'
+                                }
+                            })
+                        } else {
+                            this.err.loginpwd = res.msg
                         }
-                         if(!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.login.email)){
-                            this.err.login='请输入正确的邮箱地址'
-                        }
-                       
-                    }
-                    this.unitAjax('post',"v1/verify/registerSendCode",{email:'422702209@qq.com'},res=>{
-                        
-                        console.log(3242)
                     })
+                } else {
+                    if (!(/^[a-zA-Z0-9]{6,21}$/.test(this.login.password))) {
+                        this.err.loginpwd = '请输入6-20位字母和数字'
+                    }
+                    if (!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.login.email)) {
+                        this.err.login = '请输入正确的邮箱地址'
+                    }
+
+                }
+
             },
-            loginFs(){
-               this.err.login='' 
+            loginDown(e) {
+                if (e.keyCode == 13) {
+                    this.getlogin()
+                }
             },
-            loginPwdFs(){
-                this.err.loginpwd=''
+            regDown(e) {
+                if (e.keyCode == 13) {
+                    this.nextmsg()
+                }
+            },
+            setpwdDown(e) {
+                if (e.keyCode == 13) {
+                    this.setpassword()
+                }
+            },
+
+            setnameDown(e) {
+                if (e.keyCode == 13) {
+                    this.setname()
+                }
+            },
+            fondpwdDown(e) {
+                if (e.keyCode == 13) {
+                    this.fondpassword()
+                }
+            },
+            setnewspwdDown(e) {
+                if (e.keyCode == 13) {
+                    this.setnewsPwd()
+                }
+            },
+            regCodeFs() {
+                this.$refs.msg.style.top = '-3px';
+                this.err.msfCode = "";
+            },
+            regFs() {
+                this.$refs.msg1.style.top = '-3px';
+                this.err.regEmail = "";
+            },
+            loginFs() {
+                this.err.login = ''
+            },
+            loginPwdFs() {
+                this.err.loginpwd = ''
             },
             back() {
-                window.history.back()
+                if (this.type == 1) {
+                    window.history.back()
+                } else {
+                    this.type = 1
+                }
             },
             tourl(url) {
                 tools.router.push({
