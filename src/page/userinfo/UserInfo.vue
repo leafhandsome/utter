@@ -30,14 +30,14 @@
             </div>
             <div class="user__msg" :class="$route.query.type=='white'?'ut-input-white':'ut-input-black'">
                 <div class="msg__btn">
-                    <div class="btn__line1">
+                    <div class="btn__line1" v-show="$route.query.userId">
                         <div class="btn__visited">
-                            <a href='javascript:;' v-if="showsee"  @click="showsee=false">
+                            <a href='javascript:;' v-if="showsee"  @click="addFollow(1)">
                             <img  src="../../assets/images/userinfo/108 浏览.png" alt="">
                             </a>
                             <a href='javascript:;' v-else>
-                            <img v-show="$route.query.type=='black'" src="../../assets/images/article/seeover-w.png" alt="">
-                            <img v-show="$route.query.type=='white'" src="../../assets/images/article/seeover-b.png" alt="">
+                            <img v-show="$route.query.type=='black'" src="../../assets/images/article/seeover-w.png" alt="" @click="removeFollow(1)">
+                            <img v-show="$route.query.type=='white'" src="../../assets/images/article/seeover-b.png" alt="" @click="removeFollow(1)">
                             </a>
                         </div>
                         <div class="btn__message">
@@ -48,47 +48,47 @@
                             </a>
                         </div>
                         <div class="btn__add">
-                             <a href='javaScript:;'>
+                             <a href='javaScript:;' @click="addfriend(1)">
                             <img src="../../assets/images/userinfo/140 用户-加好友.png" alt="">
                             </a>
                         </div>
                     </div>
 
-                    <div class="btn__edit">
+                    <div class="btn__edit"  v-show="!$route.query.userId">
                         <img v-show="showidea" src="../../assets/images/editor/88 编辑.png" alt="" @click='showidea=false'>
                         <img class="img" v-show='!showidea' src="../../assets/images/userinfo/112 提交.png" alt=""  @click='setusermsg'>
                         
                     </div>
                 </div>
                 <div :class='showidea?"usermsg":"bordermsg"' ref="usermsg">
-                <div class="msg__name"> <input class="msg__name" type="text" v-model="user.name" placeholder='' :readonly='showidea'></div>
-                <div class="msg__occupation" v-show="!showidea"> <input class="msg__adress" type="text" v-model="user.adress" placeholder='' :readonly='showidea'>
+                <div class="msg__name"> <input class="msg__name" type="text" v-model="user.penName" placeholder='' :readonly='showidea'></div>
+                <div class="msg__occupation" v-show="!showidea"> <input class="msg__adress" type="text" v-model="user.area" placeholder='' :readonly='showidea'>
                
-                   <input class="msg__adress" type="text" v-model="user.adress" placeholder='' :readonly='showidea'></div>
+                   <input class="msg__adress" type="text" v-model="user.job" placeholder='' :readonly='showidea'></div>
                    <div class="msg__occupation" v-show="showidea">
-                       <span>{{user.name}}</span>
+                       <span>{{user.area}}</span>
                         <i class='adress1'></i> 
-                        <span>{{user.adress}}</span>
+                        <span>{{user.job}}</span>
                    </div>
-                <div class="msg__identifier">00000009</div>
-                <div class="msg__publish">  <input class="" type="text" v-model="user.nickname" placeholder='' :readonly='showidea'></div>
+                <div class="msg__identifier"></div>
+                <div class="msg__publish">  <input class="" type="text" v-model="user.userSiteName" placeholder='' :readonly='showidea'></div>
                 </div>
             </div>
             <div class="user__correlation">
                 <div class="correlation__item utBorder">
-                    <strong>6110</strong>
+                    <strong>{{user.hotCount}}</strong>
                     <span>人气</span>
                 </div>
                 <div class="correlation__item utBorder">
-                    <strong>6110</strong>
+                    <strong>{{user.friendCount}}</strong>
                     <span>好友</span>
                 </div>
                 <div class="correlation__item utBorder">
-                    <strong>6110</strong>
+                    <strong>{{user.followCount}}</strong>
                     <span>关注</span>
                 </div>
                 <div class="correlation__item utBorder">
-                    <strong>6110</strong>
+                    <strong>{{user.readerCount}}</strong>
                     <span>读者</span>
                 </div>
             </div>
@@ -103,26 +103,26 @@
             </div>
             <div class="addup__total utBorder">
                 <div class="total__time">
-                    2017.11.17
+                    {{userInfo.startTime}}
                     <br>
                     <span :class="$route.query.type=='white'?'pagecolr-black':'pagecolr-white'"></span>
-                    2018.01.09
+                    {{userInfo.endTime}}
                 </div>
                 <div class="total__list">
-                    <div class="total__item utBorder">
+                    <div class="total__item utBorder fr">
                         <span>文章</span>
                         <span></span>
-                        <strong>6</strong>
+                        <strong>{{userInfo.articleCount}}</strong>
                     </div>
-                    <div class="total__item utBorder">
+                    <div class="total__item utBorder fr">
                         <span>想法</span>
                         <span></span>
-                        <strong>34</strong>
+                        <strong>{{userInfo.ideaCount}}</strong>
                     </div>
-                    <div class="total__item utBorder">
+                    <div class="total__item utBorder fr">
                         <span>书籍</span>
                         <span></span>
-                        <strong>34</strong>
+                        <strong>{{userInfo.bookCount}}</strong>
                     </div>
                 </div>
             </div>
@@ -138,15 +138,62 @@
                 showmsg: false,
                 showidea: true,
                 user: {
-                    adress: "广州",
-                    name: "utter",
-                    nickname: "最好的自己"
+                    area: "地点",
+                    penName: "笔名",
+                    userSiteName: "个性签名",
+                    job: '职业',
                 },
                 imageUrl: '',
-                showsee:true,//是否关注
+                showsee: true, //是否关注
+                userInfo: {},
             };
         },
+        created() {
+            this.getuserInfo()
+        },
         methods: {
+            // 取消关注
+            removeFollow(id) {
+                this.unitAjax('delete', 'v1/me/deleteFollow', {
+                    userId: Number(id)
+                }, res => {
+                    if (res.code == 200) {
+                        this.showsee = true
+                    }
+                })
+            },
+            // 添加关注
+            addFollow(id) {
+
+                this.unitAjax('post', 'v1/me/addFollow', {
+                    userId: Number(id)
+                }, res => {
+                    if (res.code == 200) {
+                        this.showsee = false;
+                    }
+                })
+            },
+            // 添加好友
+            addfriend(userid) {
+                this.unitAjax('post', 'v1/user/friend/add', {
+                    userId: Number(userid)
+                }, res => {
+                    if (res.code == 200) {
+                        this.$message('申请成功')
+                    }
+                })
+            },
+            // 用户信息
+            getuserInfo() {
+                this.unitAjax('get', 'v1/user/info', {
+                    userId:this.$route.query.userId|| this.getValue('userId')
+                }, res => {
+                    if (res.code == 200) {
+                        this.user = res.data;
+                        this.userInfo = res.data.writtenRecord
+                    }
+                })
+            },
             //上传头像
             handleAvatarSuccess(res, file) {
                 this.imageUrl = URL.createObjectURL(file.raw);
@@ -167,11 +214,30 @@
             },
             gethostory(value) {
                 this.recordIndex = value
+                if (value == 0) {
+                    this.userInfo = this.user.writtenRecord
+                } else if (value == 1) {
+                    this.userInfo = this.user.visitRecord
+                } else if (value == 2) {
+                    this.userInfo = this.user.readRecord
+                }
             },
             //保存用户信息
             setusermsg() {
-                console.log(this.$refs.usermsg);
-                this.showidea = true;
+                let params = {
+                    siteName: this.user.userSiteName, //string	是	站名		
+                    penName: this.user.penName, //	string	是	笔名		
+                    job: this.user.job, //	string	是	职业		
+                    area: this.user.area, //	string	是	区域  
+                }
+                this.unitAjax('post', 'v1/me/userInfoSetting', params, res => {
+                    if (res.code == 200) {
+                        this.showidea = true;
+                    } else {
+                        this.$message(res.msg)
+                    }
+                })
+
             },
             tourl(url, query) {
                 tools.router.push({
@@ -272,7 +338,7 @@
                 margin-left: 40px;
             }
             .btn__edit {
-                padding-top: 40px;
+                // padding-top: 40px;
                 float: right;
                 img {
                     cursor: pointer;
@@ -325,6 +391,7 @@
         .msg__identifier {
             margin-top: 10px;
             color: #A7A7A7;
+            height: 15px;
         }
         .msg__publish {
             margin-top: 20px;
@@ -418,7 +485,6 @@
     
     .total__item {
         width: 660px;
-        float: left;
         border-bottom: 1px solid #e6e6e6;
         span,
         strong {

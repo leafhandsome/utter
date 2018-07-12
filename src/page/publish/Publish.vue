@@ -1,19 +1,29 @@
 <template lang="html">
     <div class='container'>
-    <div class="publish" v-show='!showboks&&!showapply'>
+    <div class="publish" v-show='!showboks&&!$store.state.showapply'>
         <div class="tab">
             <a href='javaScript:;' class="tab__item utBorder" :class="tabIndex==0?($route.query.type=='white'?'tab__item--active':'tab__item--active-w'):''" @click="changeTab(0)">作品</a>
             <a href='javaScript:;' class="tab__item utBorder"  :class="tabIndex==1?($route.query.type=='white'?'tab__item--active':'tab__item--active-w'):''" @click="changeTab(1)">已购</a>
             <a href='javaScript:;' class="tab__item lastitem"  :class="tabIndex==2?($route.query.type=='white'?'tab__item--active':'tab__item--active-w'):''" @click="changeTab(2)">收藏</a>
         </div>
         <div class="mywriting" v-show="tabIndex==0">
-            <a href="javaScript:;" class="mywriting__btn" :class="$route.query.type=='white'?'ut-black1':'ut-white1'" v-if="isApplyBtn=true" @click='setshowtab'>
+            <a href="javaScript:;" class="mywriting__btn" :class="$route.query.type=='white'?'ut-black1':'ut-white1'" v-if="isApplyBtn=true" @click='setshowtab(true)'>
                 申请独立出版
             </a>
             <div class="list clearfix">
                 <div class="list__item" v-for="(item,idx) in mywritingBooks">
-                    <div class="list__img cursor" @click="toBookInfo">
+                    <div class="list__img cursor" @click="toBookInfo(item.id)">
                         <img src="" alt="">
+                        <div class="comment">
+                            <img class="fr" src="../../assets/images/article/90 删除.png" alt="" @click.stop="deletebook(item.id)">
+                            <!-- <h1>{{item.cover}}</h1>
+                            <div class="book">{{item.introduce}}</div> -->
+                        </div>
+                        <div class="idea"  >
+                            <router-link :to="{path:'/editor',query:{editor:'idea',type:$route.query.type,id:item.id}}">
+                            <img src="../../assets/images/article/idea.png" alt="">
+                            </router-link>
+                        </div>
                     </div>
                     <div class="list__bottom utBorder">
                         <div class="list__icon"  @click="gettools1">
@@ -22,24 +32,25 @@
                                 <!-- <img v-show="$route.query.type=='white'" src="../../assets/images/publish/129 书架-独立出版-黑.png" alt="">
                                 <img v-show="$route.query.type=='black'" src="../../assets/images/publish/133 书架-独立出版-白.png" alt=""> -->
                             </strong>
-                            <span>独立出版</span>
+                            <span>{{item.publishUserId?"独立出版":"草稿"}}</span>
                         </div>
-                        <div class="list__icon"  @click="gettools2()">
+                        <div class="list__icon" >
                             <a href='javascript:;'>
                             <strong>
                                 <!-- //saved收藏过 -->
-                                <span v-if="!saved">
-                                <img v-show="!tools.save" src="../../assets/images/publish/126 书架-收藏.png" alt="">
+                                <span v-if="!item.favority">
+                                <img v-show="!tools.save" src="../../assets/images/publish/126 书架-收藏.png" alt="" @click="addfavority(item.id)">
                             </span>
                             <span else>
-                                <img v-show="$route.query.type=='white'&&(tools.save||saved)" src="../../assets/images/publish/130 书架-收藏-黑.png" alt="">
-                                <img  v-show="$route.query.type=='black'&&(tools.save||saved)" src="../../assets/images/publish/134 书架-收藏-白.png" alt="">
+                                <img v-show="$route.query.type=='white'&&(tools.save||item.favority)" src="../../assets/images/publish/130 书架-收藏-黑.png" alt="">
+                                <img  v-show="$route.query.type=='black'&&(tools.save||item.favority)" src="../../assets/images/publish/134 书架-收藏-白.png" alt="">
                             </span>
                             </strong>
-                           <span :class="!(tools.save||saved)?'fontColor':$route.query.type=='white'?'ut-white1':'ut-black1'">6546</span>
+                           <span v-show="!tools.save" :class="!(tools.save||item.favority)?'fontColor':$route.query.type=='white'?'ut-white1':'ut-black1'">{{item.favorityCount}}</span>
+                           <span v-show="tools.save" :class="!(tools.save||item.favority)?'fontColor':$route.query.type=='white'?'ut-white1':'ut-black1'">{{Number(item.favorityCount)+1}}</span>
                         </a>
                         </div>
-                        <div class="list__icon"  @click="gettools3">
+                        <div class="list__icon"  @click="gettools3(item.id)">
                                 <a href='javascript:;'>
                             <strong>
                                 <img v-show="!tools.details" src="../../assets/images/article/more-w.png" alt="">
@@ -56,7 +67,7 @@
                                 <img v-show="$route.query.type=='white'&&tools.car" src="../../assets/images/publish/132 书架-购物车-黑.png" alt="">
                                 <img  v-show="$route.query.type=='black'&&tools.car" src="../../assets/images/publish/136 书架-购物车-白.png" alt="">
                             </strong>
-                            <span>23.00￥</span>
+                            <span>{{Number(item.price).toFixed(2)}}￥</span>
                         </a>
                         </div>
                     </div>
@@ -105,6 +116,13 @@
                 <div class="list__item" v-for="(item,idx) in collectionBooks">
                     <div class="list__img">
                         <img src="" alt="">
+                         <div class="comment">
+                             <a href='javascript:;'>
+                            <img class="fr" src="../../assets/images/article/90 删除.png" alt="" @click.stop="deletefavority(item.id)">
+                        </a>
+                            <!-- <h1>{{item.cover}}</h1>
+                            <div class="book">{{item.introduce}}</div> -->
+                        </div>
                     </div>
                     <div class="list__bottom utBorder">
                         <div class="list__icon">
@@ -117,9 +135,9 @@
                             <strong>
                                 <img src="../../assets/images/publish/130 书架-收藏-黑.png" alt="">
                             </strong>
-                            <span>收藏</span>
+                            <span>{{item.favorityCount}}</span>
                         </div>
-                        <div class="list__icon">
+                        <div class="list__icon"  @click="gettools3(item.id)">
                             <strong>
                                 <img src="../../assets/images/publish/131 书架-更多-黑.png" alt="">
                             </strong>
@@ -129,15 +147,15 @@
                             <strong>
                                 <img src="../../assets/images/publish/132 书架-购物车-黑.png" alt="">
                             </strong>
-                            <span>23.00￥</span>
+                            <span>￥{{Number(item.price).toFixed(2)}}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <bookinfo v-show='showboks'></bookinfo>
-    <apply v-show='showapply'></apply>
+    <bookinfo v-show='showboks' :book="bookId"></bookinfo>
+    <apply v-show='$store.state.showapply' @showbox="setshowtab"></apply>
     </div>
 </template>
 <script>
@@ -150,7 +168,7 @@
                 tabIndex: 0,
                 isApplyBtn: false,
                 mywritingBooks: [],
-                purchasedBooks: [],
+                purchasedBooks: 5,
                 collectionBooks: [],
                 showboks: false,
                 showapply: false,
@@ -160,33 +178,131 @@
                     details: false,
                     car: false,
                 },
-                saved: true,
+                bookId: '',
             }
         },
+        // watch: {
+        //     'showapply': function() {
+        //         return this.$store.state.showapply
+        //     }
+        // },
         created() {
-            this.showboks = this.$route.query.other == 'books' ? true : false
+            this.showboks = this.$route.query.other == 'books' ? true : false;
+            this.getbooklist()
+            this.getfavority()
         },
         methods: {
+            //收藏
+            addfavority(id) {
+                this.unitAjax('post', "v1/book/favority/add", {
+                    bookId: Number(id)
+                }, res => {
+                    if (res.code == 200) {
+                        this.tools.save = true;
+                        this.$message('收藏成功')
+                    } else {
+                        this.$message(res.msg)
+                    }
+                })
+            },
+            //删除收藏
+            deletefavority(id) {
+                this.$confirm('此操作将永久删除该书籍, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.unitAjax('delete', 'v1/book/favority/delete', {
+                        bookId: id
+                    }, res => {
+                        if (res.code == 200) {
+                            this.$message('删除成功')
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+            },
+            // 删除书籍
+            deletebook(id) {
+                this.$confirm('此操作将永久删除该书籍, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.unitAjax('delete', 'v1/book/deleteBook', {
+                        bookId: id
+                    }, res => {
+                        if (res.code == 200) {
+                            this.$message('删除成功')
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+            },
+            //收藏书籍列表
+            getfavority() {
+                this.unitAjax('get', 'v1/book/favority/list', {
+                    page: 1,
+                    pageSize: 20,
+                    userId: this.getValue('userId')
+                }, res => {
+                    if (res.code == 200) {
+                        this.collectionBooks = res.data.rows
+                    }
+                })
+            },
+            //跳转编辑
+            linkto(id) {
+                this.$router.push({
+                    path: "/editor",
+                    query: {
+                        editor: 'idea',
+                        type: this.$route.query.type,
+                        id: id
+                    }
+                })
+            },
+            getbooklist() {
+                this.unitAjax('get', 'v1/book/list', {
+                    page: 5,
+                    pageSize: 20
+                }, res => {
+                    if (res.code == 200) {
+                        this.mywritingBooks = res.data.rows
+                    }
+                })
+            },
+
             // 工具栏
             //  出版   
             gettools1() {
                 this.tools.publish = true;
             },
-            // 收藏
-            gettools2() {
 
-                this.tools.save = true;
-            },
             // 详情
-            gettools3() {
+            gettools3(id) {
                 this.tools.details = true;
+                this.toBookInfo(id)
             },
             // 购物车
             gettools4() {
                 this.tools.car = true;
             },
-            setshowtab() {
-                this.showapply = true;
+            setshowtab(flog) {
+                window.scrollTo(0, 0);
+                this.$store.commit('showbox', flog)
 
             },
             tourl(url, query) {
@@ -198,8 +314,14 @@
             changeTab(idx) {
                 this.tabIndex = idx;
                 // this.tourl('/publish', { tab: 4, index: idx });
+                // if(idx==2){
+
+                // }
             },
-            toBookInfo() {
+            toBookInfo(id) {
+                this.$store.commit('getbookId', id)
+                this.$store.commit('getlist', id)
+                this.bookId = id
                 this.showboks = true;
                 if (this.showboks) {
                     window.scrollTo(0, 0);
@@ -212,13 +334,13 @@
             this.$store.state.utstyle = 'white';
             this.$store.state.showFooter = false;
             this.tabIndex = this.$route.query && this.$route.query.index || 0;
-            let arr = []
-            for (let i = 0; i < 10; i++) {
-                arr.push(i)
-            }
-            this.mywritingBooks = arr
-            this.purchasedBooks = arr
-            this.collectionBooks = arr
+            // let arr = []
+            // for (let i = 0; i < 10; i++) {
+            //     arr.push(i)
+            // }
+            // this.mywritingBooks = arr
+            // this.purchasedBooks = arr
+            // this.collectionBooks = arr
         },
         components: {
             bookinfo,
@@ -303,6 +425,36 @@
         width: 100%;
         height: 414px;
         background-color: #898989;
+        cursor: pointer;
+        position: relative;
+        .comment {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            img {
+                width: unset;
+                height: unset;
+                margin: 30px 30px 0 0;
+            }
+        }
+        .idea {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20%;
+            background-color: rgba($color: #000000, $alpha: .3);
+            text-align: center;
+            line-height: 80px;
+            z-index: 3;
+            img {
+                width: unset;
+                height: unset;
+            }
+        }
     }
     
     .list__img img {
@@ -322,13 +474,17 @@
     
     .list__icon {
         text-align: center;
-        padding: 0 16px;
+        /* padding: 0 16px; */
+        width: 25%;
+        img {
+            cursor: pointer;
+        }
         strong,
         span {
             display: block;
         }
-        .fontColor{
-             color: #aaa;
+        .fontColor {
+            color: #aaa;
         }
         strong {
             padding-bottom: 10px;

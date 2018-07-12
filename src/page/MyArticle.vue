@@ -3,15 +3,16 @@
   <div class="myarticle clearfix" v-show='!showartice'>
     <div class="leftCate pull-left utBorder" :style='height'>
       <div class="cateList utBorder">
-        <div class="utBorder" :class="tab==1?'cate '+active:'cate '" @click='tab=1'>
-          默认分类
+        <div class="utBorder" :class="tab==index?'cate '+active:'cate '" @click='gettype(index,item.id)' v-for="(item, index) in typeList" :key="index">
+          {{item.type}}
+          <i class="fr delete" @click.stop="removetype(item.id)">+</i>
         </div>
-        <div class="utBorder" :class="tab==2?'cate '+active:'cate '" @click='tab=2'>
+        <!-- <div class="utBorder" :class="tab==2?'cate '+active:'cate '" @click='tab=2'>
           我的草稿
         </div>
         <div class="utBorder" :class="tab==3?'cate '+active:'cate '" @click='tab=3'>
           我的收藏
-        </div>
+        </div> -->
         <div class="tools utBorder clearfix">
           <div class="pull-left utBorder"  @click='openfun(1)'>
             <el-tooltip effect="dark" content="公开" placement="bottom">
@@ -37,7 +38,8 @@
     </div>
 
     <div class="list pull-left utBorder" >
-      <div class="item clearfix utBorder" @click='showartice=true' v-for="(item, index) in articleList" :key="index">
+      <div class="item clearfix utBorder" @click='articleInfo(item)' v-for="(item, index) in articleList" :key="index"  v-show="item.open==(opentab==1)">
+        
         <div class="leftSide pull-left">
           <div class="articleTitle">
             {{item.title}}
@@ -51,14 +53,14 @@
             {{item.lastUpdateTime}}
           </div>
 
-          <el-tooltip effect="dark" content="更多" placement="bottom" >
-            <img v-if="!more[index].moreActive" src="../assets/images/article/more-w.png" alt="更多" @click.stop="getmoretools(index)">
-            <img v-if="pagecolor=='black'&&more[index].moreActive" src="../assets/images/article/135 书架-更多-白.png" alt="更多" @click.stop="getmoretools(index)">
-            <img v-if="pagecolor=='white'&&more[index].moreActive" src="../assets/images/article/more.png" alt="更多" @click.stop="getmoretools(index)">
+          <el-tooltip effect="dark" content="更多" placement="bottom" v-if="!$route.query.userId">
+            <img v-if="moreActive!=index" src="../assets/images/article/more-w.png" alt="更多" @click.stop="getmoretools(index)">
+            <img v-if="pagecolor=='black'&&moreActive==index" src="../assets/images/article/135 书架-更多-白.png" alt="更多">
+            <img v-if="pagecolor=='white'&&moreActive==index" src="../assets/images/article/more.png" alt="更多" >
           </el-tooltip>
         </div>
 
-        <div class="itemTools utBorder" v-show="tools[index].showtools" @click.stop="showtools=true">
+        <div class="itemTools utBorder" v-show="showtools==index" @click.stop="showtools=index">
           <div class="tools utBorder" @click="gettools(1)">
             <el-tooltip effect="dark" content="分享" placement="right">
               <img v-if="pagecolor=='white'&&tabactive==1" src="../assets/images/article/share.png" alt="分享">
@@ -66,7 +68,7 @@
               <img v-if="tabactive!=1" src="../assets/images/article/87 分享.png" alt="分享">
             </el-tooltip>
           </div>
-          <div class="tools utBorder"  @click="gettools(2)">
+          <div class="tools utBorder"  @click="gettools(2,item)">
             <el-tooltip effect="dark" content="编辑" placement="right">
               <img  v-if="pagecolor=='white'&&tabactive==2" src="../assets/images/article/edit.png" alt="编辑">
               <img v-if="pagecolor=='black'&&tabactive==2" src="../assets/images/article/104 编辑-白.png" alt="编辑">
@@ -80,7 +82,7 @@
               <img  v-if="tabactive!=3" src="../assets/images/article/89 下载.png" alt="下载">
             </el-tooltip>
           </div>
-          <div class="tools utBorder" @click="gettools(4)">
+          <div class="tools utBorder" @click="gettools(4,item)">
             <el-tooltip effect="dark" content="删除" placement="right">
               <img  v-if="pagecolor=='white'&&tabactive==4" src="../assets/images/article/del.png" alt="删除">
               <img  v-if="pagecolor=='black'&&tabactive==4" src="../assets/images/article/105 删除-白.png" alt="删除">
@@ -95,20 +97,25 @@
     <div class="pageTools">
       <div class="innerbox clearfix">
         <div class="pull-left">
-          <span>0</span>
-          <!-- <img v-show="" src="../assets/images/article/prev.png" alt="上一页"> -->
-          <img v-show="pagecolor=='white'" src="../assets/images/article/prev-black.png" alt="上一页">
-          <img  v-show="pagecolor=='black'" src="../assets/images/article/prev-w.png" alt="上一页">
-        </div>
-        <div class="pull-right">
-          <img v-show="pagecolor=='white'" src="../assets/images/article/next.png" alt="">
-          <img v-show="pagecolor=='black'" src="../assets/images/article/next-w.png" alt="下一页"><span>1</span>
-        </div>
+            <!-- <span>{{ideapage}}</span> -->
+            <img v-show="ideapage==1" src="../assets/images/article/prev.png" alt="上一页">
+            <img v-show="$route.query.type=='white'&&ideapage!=1" src="../assets/images/article/prev-black.png" alt="上一页" @click="prepage">
+            <img  v-show="$route.query.type=='black'&&ideapage!=1" src="../assets/images/article/prev-w.png" alt="上一页" @click="prepage">
+          </div>
+          <div class="pageindex">{{ideapage}}</div>
+          <div class="pull-right">
+              <a href='javascript:;'>
+              <img v-show="ideapage >=Math.ceil(this.ideaTotal / 3)" src="../assets/images/article/next-a.png" alt="">
+            <img v-show="$route.query.type=='white'&&ideapage <Math.ceil(this.ideaTotal / 3)" src="../assets/images/article/next.png" alt=""  @click="nextpage">
+            <img v-show="$route.query.type=='black'&&ideapage <Math.ceil(this.ideaTotal / 3)" src="../assets/images/article/next-w.png" alt="下一页" @click="nextpage">
+            <!-- <span>{{Math.ceil(this.ideaTotal / 2)}}</span> -->
+          </a>
+          </div>
       </div>
     </div>
 
     </div>
-    <articleinfo v-show='showartice'></articleinfo>
+    <articleinfo v-show='showartice' :message="itemInfo"></articleinfo>
   </div>
 </template>
 
@@ -126,75 +133,193 @@
                 },
                 pagecolor: "white",
                 showartice: false,
-                tab: 1,
+                tab: 0,
                 active: "",
                 showclose: true,
                 showopen: false,
                 opentab: 1,
-                tools: [{
-                    showtools: false
-                }, {
-                    showtools: false
-                }, {
-                    showtools: false
-                }, ],
+                tools: [],
 
                 tabactive: 0,
-                more: [{
-                    moreActive: false
-                }, {
-                    moreActive: false
-                }, {
-                    moreActive: false
-                }, ],
-                morenum: '',
-                articleList:[]
+                moreActive: -1,
+                showtools: -1,
+                articleList: [],
+                typeList: [],
+                typeid: '',
+                itemInfo: {},
+                deleteIcon: -1,
+                ideapage: 1,
+                ideaTotal: 1,
             };
         },
         created() {
             this.pagecolor = this.$route.query.type;
             this.active = this.$route.query.type == "white" ? "active-black" : "active-white";
-            this.getarticle()
+            this.gettypeList()
+
+
         },
         methods: {
+            // 文章翻页
+            nextpage() {
+                console.log(this.ideapage,this.ideaTotal)
+                this.ideapage++
+                    this.getarticle()
+
+            },
+            prepage() {
+                if (this.ideapage > 1) {
+                    this.ideapage--;
+                    this.getarticle()
+                } else {
+                    this.ideapage = 1
+                }
+
+            },
+            removetype(id) {
+                this.$confirm('此操作将永久删除该分类, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.unitAjax('delete', 'v1/article/type/delete', {
+                        id: id
+                    }, res => {
+                        if (res.code == 200) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.gettypeList()
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            //详情
+            articleInfo(item) {
+                this.showartice = true;
+                this.itemInfo = item;
+            },
+            //分类列表
+            gettypeList() {
+                this.unitAjax('get', 'v1/article/type/list', {}, res => {
+                    if (res.code == 200) {
+                        this.typeList = res.data;
+                        this.typeid = res.data[0].id;
+                        if (res.data.length == 2) {
+                            this.creatdefaultType()
+                        }
+                        if (this.typeid) {
+                            this.getarticle()
+                        }
+
+                    }
+                })
+            },
+            creatdefaultType() {
+                this.unitAjax('post', 'v1/article/type/add', {
+                    type: "默认分类",
+                    isDefault: true
+                }, res => {
+                    if (res.code == 200) {
+                        //调用
+                        this.gettypeList()
+                    }
+                })
+            },
+            gettype(index, id) {
+                this.ideapage = 1;
+                this.tab = index;
+                this.typeid = id;
+                this.getarticle()
+            },
             //获取列表信息
             getarticle() {
-                //                 page	string	是	页码		
-                // pageSize	string	是	页大小		
-                // userId
                 let params = {
-                    page: '1',
+                    page: this.ideapage,
                     pageSize: 3,
-                    userId: ''
+                    typeId: this.typeid,
+                    // userId: '',
                 }
                 this.unitAjax('get', 'v1/article/list', params, res => {
                     if (res.code == 200) {
-                         this.articleList=res.data.rows   
+                        this.articleList = res.data.rows;
+                        this.ideaTotal = res.data.total;
                     }
                 })
             },
             // 工具栏
-            gettools(value) {
+            gettools(value, item) {
                 this.tabactive = value;
+                if (value == 2) {
+                    // this.$store.state.articleText=item
+                    this.$store.commit("articleText", item);
+                    this.$router.push({
+                        path: '/editor',
+                        query: {
+                            editor: 'publish',
+                            type: this.$route.query.type,
+                            id: item.identify,
+                            typeId: item.typeId
+                        }
+                    })
+                }
+                if (value == 4) {
+                    //删除文章
+                    this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.unitAjax('delete', 'v1/article/delete', {
+                            articleId: item.id
+                        }, res => {
+                            if (res.code == 200) {
+                                if (res.code == 200) {
+                                    this.$message({
+                                        type: 'success',
+                                        message: '删除成功!'
+                                    });
+                                    this.getarticle()
+                                }
+                            }
+                        })
+
+                    }).catch(() => {
+
+                        this.moreActive = -1;
+                        this.showtools = -1;
+                        this.tabactive = 0;
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
+
+
+                }
             },
             getmoretools(index) {
                 if (this.morenum != index) {
-                    this.more[this.morenum].moreActive = false;
-                    this.tools[this.morenum].showtools = false;
+                    this.moreActive = -1;
+                    this.showtools = -1;
+                    this.tabactive = 0;
                 }
                 this.morenum = index;
-                this.more[index].moreActive = true;
-                this.tools[index].showtools = true;
+                this.moreActive = index;
+                this.showtools = index;
 
             },
             //关闭页面
             closepage() {
-                for (let i = 0; i < this.tools.length; i++) {
-                    this.tools[i].showtools = false;
-                }
-                for (let i = 0; i < this.more.length; i++) {
-                    this.more[i].moreActive = false;
-                }
+                this.showtools = -1;
+                this.moreActive = -1;
                 this.tabactive = 0;
             },
             //是否公开
@@ -260,6 +385,17 @@
                 height: 100%;
                 border-top: 1px solid #e6e6e6;
                 position: relative;
+                .delete {
+                    position: absolute;
+                    right: 0;
+                    width: 30px;
+                    font-size: 30px;
+                    transform: rotate(45deg);
+                    display: none
+                }
+                .cate:hover i {
+                    display: inline;
+                }
                 .cate {
                     height: 80px;
                     border-bottom: 1px solid #e6e6e6;
@@ -395,7 +531,7 @@
                 margin: 0 auto;
                 @include copynone;
                 position: relative;
-                &:after {
+                /* &:after {
                     content: "";
                     display: block;
                     position: absolute;
@@ -404,7 +540,7 @@
                     width: 1px;
                     height: 100%;
                     background: #e6e6e6;
-                }
+                } */
             }
             .pull-left,
             .pull-right {

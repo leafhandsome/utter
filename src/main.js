@@ -5,11 +5,21 @@ import Vuex from 'vuex'
 import App from './App'
 import router from './router/index'
 import axios from 'axios'
+
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import './assets/css/base.css'
 Vue.use(ElementUI)
 Vue.use(Vuex)
+
+//methods.js导入自定义方法(/变量)用于全局方法
+import methods from './common/common.js';
+//方法挂靠全局
+Object.keys(methods).forEach((key) => {
+    Vue.prototype[key] = methods[key];
+})
+import message from './common/tool.js'
+Vue.prototype.$message = message;
 axios.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
 const store = new Vuex.Store({
     state: {
@@ -17,7 +27,13 @@ const store = new Vuex.Store({
         showHeader: true,
         showFooter: true,
         useType: '',
-        prevModule: null
+        prevModule: null,
+        articleText: null,
+        showapply: false,
+        bookid: 0,
+        bookInfo: null,
+        bookbuylist: [],
+        commentList: [],
     },
     mutations: {
         changeStyle(state, data) {
@@ -35,7 +51,48 @@ const store = new Vuex.Store({
         },
         changeType(state, data) {
             state.useType = data;
-        }
+        },
+        articleText(state, data) {
+            state.articleText = data;
+        },
+        showbox(state, data) {
+            state.showapply = data
+        },
+        getbookId(state, data) {
+            state.bookid = data
+            methods.unitAjax('get', 'v1/book/bookDetail', {
+                bookId: state.bookid
+            }, res => {
+                if (res.code == 200) {
+                    state.bookInfo = res.data
+                }
+            })
+        },
+        getbookBuy(state, data) {
+            state.bookid = data
+            methods.unitAjax('get', 'v1/book/booklist/list', {
+                page: 1,
+                pageSize: 10
+            }, res => {
+                if (res.code == 200) {
+                    state.bookbuylist = res.data
+                }
+            })
+        },
+        //获取评论列表
+        getlist(state, data) {
+            let params = {
+                page: 1,
+                pageSize: 50,
+                bookId: data
+            }
+            methods.unitAjax('get', 'v1/book/comment/list', params, res => {
+                if (res.code == 200) {
+                    state.commentList = res.data.rows
+                    console.log(state.commentList)
+                }
+            })
+        },
     }
 });
 // router.afterEach((to, from, next) => {
@@ -44,19 +101,14 @@ const store = new Vuex.Store({
 Vue.prototype.$store = store;
 Vue.prototype.$http = axios;
 
+
 Vue.config.productionTip = false
 
 window.tools = {};
 window.tools.vue = Vue;
 window.tools.router = router;
 
-//methods.js导入自定义方法(/变量)用于全局方法
-import methods from './common/common.js';
-//方法挂靠全局
-Object.keys(methods).forEach((key) => {
-        Vue.prototype[key] = methods[key];
-    })
-    /* eslint-disable no-new */
+/* eslint-disable no-new */
 window.vm = new Vue({
     el: '#app',
     render: h => h(App),

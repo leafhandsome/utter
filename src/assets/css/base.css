@@ -295,3 +295,9 @@ tooltip__popper .popper__arrow,
 .borderblack .navBorder {
     border-color: black;
 }
+
+.pageindex {
+    position: absolute;
+    top: 0;
+    right: 50%;
+}

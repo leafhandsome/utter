@@ -33,52 +33,82 @@
     <!-- 3个tab -->
     <div class="middleTab clearfix">
       <!-- <div class="item pull-left" :class='{"active":middleType == 1}' @click='middleType = 1'>首推</div> -->
-      <div class="item pull-left" :class='{"active":middleType == 3}' @click='middleType = 3'>热门</div>
-      <div class="item pull-left" :class='{"active":middleType == 2}' @click='middleType = 2'>新声</div>
+      <div class="item pull-left" :class='{"active":middleType == 3}' @click='getnewsbook(3)'>热门</div>
+      <div class="item pull-left" :class='{"active":middleType == 2}' @click='getnewsbook(2)'>新声</div>
      
     </div>
     <!-- 3个tab -->
 
     <!-- 书 -->
-    <div class="books clearfix">
-      <div class="item pull-left" v-for='i in 8'>
+    <div v-show="middleType == 3" class="books clearfix">
+      <div class="item pull-left" v-for='item in hotlist'>
 
-        <div class="forBook" v-if='i % 2 == 1' @click='bookspage'>
+        <div class="forBook" v-if='item.type==1' @click='bookspage'>
           <div class="title">
-            写下你的一生
+           {{item.name}}
           </div>
-          <div class="desc">
-            写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生
-
-            写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生
-
-            写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生写下你的一生
+          <div class="desc">{{item.cover}}
           </div>
         </div>
-        <div class="isBook" v-else>
-          <img src="../assets/images/demo/book.jpg" alt="">
+        <div class="isBook" v-if="item.type==2">
+          <img :src="item.cover" alt="">
         </div>
 
         <div class="user clearfix">
-        <router-link to="/whiterow/modey?type=white">
-          <div class="cover pull-left"></div>
+        <router-link :to="'/whiterow/userinfo'+'?type=white&userId='+item.userId">
+          <div class="cover pull-left">
+              <img :src="item.userAvatar" alt="">
+          </div>
           
-          <div class="nickName pull-left">墨石</div>
+          <div class="nickName pull-left">{{item.userName}}</div>
         </router-link>
           <div class="good pull-right">
             <!-- <img src="../assets/images/utter/good.png" alt="点赞">  -->
             <img src="../assets/images/publish/110 赞扬.png" alt="点赞"> 
-            28
+           {{item.favorityCount}}
           </div>
 
           <div class="like pull-right">
-            <img src="../assets/images/utter/like.png" alt="收藏"> 33
+            <img src="../assets/images/utter/like.png" alt="收藏"> {{item.favorityCount}}
           </div>
         </div>
       </div>
     </div>
     <!-- 书 -->
-
+    <div v-show="middleType == 2" class="books clearfix">
+            <div class="item pull-left" v-for='item in newslist'>
+      
+              <div class="forBook" v-if='item.type==1' @click='bookspage'>
+                <div class="title">
+                 {{item.name}}
+                </div>
+                <div class="desc">{{item.cover}}
+                </div>
+              </div>
+              <div class="isBook" v-if="item.type==2">
+                <img :src="item.cover" alt="">
+              </div>
+      
+              <div class="user clearfix">
+              <router-link :to="'/whiterow/userinfo'+'?type=white&userId='+item.userId">
+                <div class="cover pull-left">
+                    <img :src="item.userAvatar" alt="">
+                </div>
+                
+                <div class="nickName pull-left">{{item.userName}}</div>
+              </router-link>
+                <div class="good pull-right">
+                  <!-- <img src="../assets/images/utter/good.png" alt="点赞">  -->
+                  <img src="../assets/images/publish/110 赞扬.png" alt="点赞"> 
+                 {{item.favorityCount}}
+                </div>
+      
+                <div class="like pull-right">
+                  <img src="../assets/images/utter/like.png" alt="收藏"> {{item.favorityCount}}
+                </div>
+              </div>
+            </div>
+          </div>
   </div>
 </template>
 <script>
@@ -86,16 +116,50 @@
 
         data() {
             return {
-                middleType: 3
+                middleType: 3,
+                hotlist: [],
+                newslist: [],
             }
         },
+
+        created() {
+            document.querySelector("body").style.background = 'white';
+            this.getbooks()
+        },
+        mounted() {
+            var _this = this;
+            this.$store.commit('changeFooter', true)
+            this.$store.commit('changeHeader', true)
+            this.$store.commit('changeType', '');
+
+        },
         methods: {
+            getnewsbook(num) {
+                this.middleType = num;
+                if (this.middleType == 2) {
+                    this.unitAjax('get', 'v1/index/new', {}, res => {
+                        if (res.code == 200) {
+                            this.newslist = res.data
+                        }
+                    })
+                }
+                //    else if(this.middleType ==3){
+                //        this.getbooks()
+                //    }
+            },
+            getbooks() {
+                this.unitAjax('get', 'v1/index/hot', {}, res => {
+                    if (res.code == 200) {
+                        this.hotlist = res.data;
+                    }
+                })
+            },
             bookspage() {
                 this.$router.push({
                     path: '/whiterow/publish',
                     query: {
                         type: "white",
-                        other: 'books'
+                        userId: '1'
                     }
                 })
             },
@@ -104,16 +168,6 @@
                     path: url
                 })
             }
-        },
-        created() {
-            document.querySelector("body").style.background = 'white'
-        },
-        mounted() {
-            var _this = this;
-            this.$store.commit('changeFooter', true)
-            this.$store.commit('changeHeader', true)
-            this.$store.commit('changeType', '');
-
         },
         components: {}
     }

@@ -51,19 +51,26 @@
             <div class="person__buyplan" v-show="personTab == 0">
               <div class="buyplan__books">
                 <el-carousel class="books__list"  trigger="click" height="160px" indicator-position="none">
-                        <el-carousel-item v-for="(item, index) in 5" :key="index">
+                        <el-carousel-item v-for="(item, index) in bookbuy.rows" :key="index">
                   <div class="books__item fl">
+                        
+                    <div class="books__img">
+                            <a href='javascript:;' class="fr del" @click="delbook(item.bookId)">
+                                <img src="../assets/images/userinfo/del-msg.png" alt="">
+                                </a>
+                      <img :src="item.cover" alt="">
+                    </div>
+                    <div class="books__name">{{bookbuy.rows[index].bookName||'无书名'}}</div>
+                  </div>
+                  <!-- <div class="books__item fr" v-if="bookbuy.rows[index+1]">
+                       <a href='javascript:;' class="fr del" @click="delbook(item.bookId)">
+                                <img src="../assets/images/userinfo/del-msg.png" alt="">
+                        </a>
                     <div class="books__img">
                       <img src="" alt="">
                     </div>
-                    <div class="books__name">沉默的青春</div>
-                  </div>
-                  <div class="books__item fr">
-                    <div class="books__img">
-                      <img src="" alt="">
-                    </div>
-                    <div class="books__name">沉默的青春</div>
-                  </div>
+                    <div class="books__name">{{bookbuy.rows[index+1].bookName||'无书名'}}</div>
+                  </div> -->
                 </el-carousel-item>
                 </el-carousel>
               </div>
@@ -76,19 +83,19 @@
                 <div class="tab__item" :class="{'tab__item--active':lastvisitedTab==2}" @click="changeLastVisitTab(2)">用户</div>
               </div>
               <div class="lastvisited__list" v-show="lastvisitedTab==0">
-                <div class="list__item" v-for="(item, index) in 8" :key="index">
-                  <div class="list__name">青海之行</div>
-                  <div class="list__author">一笑而过</div>
+                <div class="list__item" v-for="(item, index) in articlelist" :key="index">
+                  <div class="list__name">{{item.visitUserName}}</div>
+                  <div class="list__author">{{item.targetName}}</div>
                 </div>
               </div>
               <div class="lastvisited__list" v-show="lastvisitedTab==1">
                 <el-carousel class="books__list"  trigger="click"  height="160px" indicator-position="none">
-                    <el-carousel-item v-for="(item, index) in 3" :key="index">
+                    <el-carousel-item v-for="(item, index) in booklist" :key="index">
                   <div class="books__item fl">
                     <div class="books__img">
-                      <img src="" alt="">
+                      <img :src="item.visitAvatar" alt="">
                     </div>
-                    <div class="books__name">沉默的青春</div>
+                    <div class="books__name">{{item.visitUserName}}</div>
                   </div>
                   <div class="books__item fr">
                     <div class="books__img">
@@ -100,13 +107,13 @@
                 </el-carousel>
               </div>
               <div class="lastvisited__list" v-show="lastvisitedTab==2">
-                <div class="lastvisited__show">
+                <div class="lastvisited__show" v-for="(item, index) in userlist" :key="index">
                   <div class="show__item">
                     <div class="item__userphoto">
-                      <img src="" alt="">
+                      <img :src="item.visitAvatar" alt="">
                     </div>
-                    <div class="item__username">一笑而过</div>
-                    <div class="item__usermsg">石头的话</div>
+                    <div class="item__username">{{item.visitUserName}}</div>
+                    <div class="item__usermsg">{{item.targetName}}</div>
                   </div>
                 </div>
               </div>
@@ -156,20 +163,20 @@
             <div class="person__btnitem" :class="{'person__btnitem--active':personTab==3}" @click="changePersonTab(3)">密码设置</div>
             <div class="person__pwdset" v-show="personTab == 3">
               <div class="pwdset__item">
-                <input type="text" placeholder="新密码" class="pwdset__input">
+                <input type="password" placeholder="新密码" class="pwdset__input" v-model="password" :maxlength="20">
               </div>
               <div class="pwdset__item">
-                <input type="text" placeholder="旧密码" class="pwdset__input">
+                <input type="password" placeholder="确认密码" class="pwdset__input" v-model="confirmPassword" :maxlength="20">
               </div>
 
-              <div class="pwdset__item">
+              <!-- <div class="pwdset__item">
                 <input type="text" placeholder="验证手机或邮箱" class="pwdset__input">
-              </div>
+              </div> -->
               <div class="pwdset__yzm">
-                <div class="pwdset__code">
+                <!-- <div class="pwdset__code">
                   <input type="text" placeholder="验证码" class="pwdset__input">
-                </div>
-                <div class="pwdset__btn">确认提交</div>
+                </div> -->
+                <div class="pwdset__btn" @click="setpassword">确认提交</div>
               </div>
             </div>
             <div class="person__btnend">
@@ -240,11 +247,65 @@
                 personTab: -1,
                 lastvisitedTab: 0,
                 accountTab: -1,
-                statusBtn: 0
+                statusBtn: 0,
+                password: '',
+                confirmPassword: '',
+                articlelist: [],
+                booklist: [],
+                userlist: [],
             };
         },
         props: ["UTstyle"],
+        computed: {
+            bookbuy() {
+                return this.$store.state.bookbuylist
+            }
+        },
         methods: {
+            //删除书籍
+            delbook(id) {
+                console.log(id)
+                this.$confirm('删除书单, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.unitAjax('delete', 'v1/book/booklist/delete', {
+                        bookId: Number(id)
+                    }, res => {
+                        if (res.code == 200) {
+                            this.$store.commit("getbookBuy")
+                            this.$message('删除成功')
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+            },
+            // 修改密码
+            setpassword() {
+                if (this.password == this.confirmPassword && /^[a-zA-Z0-9]{6,20}$/.test(this.password)) {
+                    this.unitAjax('post', 'v1/me/passwordSetting', {
+                        password: this.password,
+                        confirmPassword: this.confirmPassword
+                    }, res => {
+                        if (res.code == 200) {
+                            this.$message('修改成功')
+                        }
+                    })
+                } else {
+                    if (!/^[a-zA-Z0-9]{6,20}$/.test(this.password)) {
+                        this.$message('请输入数字和字母6-20位')
+                    } else if (this.password != this.confirmPassword) {
+                        this.$message('两次密码输入不一致')
+                    }
+                }
+
+            },
             change() {
                 this.$store.commit("changeStyle");
             },
@@ -271,10 +332,36 @@
                             type: this.$route.query.type
                         }
                     })
+                } else if (idx == 0) {
+                    this.$store.commit("getbookBuy")
+                } else if (idx == 1) {
+                    this.unitAjax('get', 'v1/visit/article/list', {
+                        page: 1,
+                        pageSize: 50
+                    }, res => {
+                        if (res.code == 200) {
+                            this.articlelist = res.data.rows
+                        }
+                    })
                 }
             },
             changeLastVisitTab(idx) {
                 this.lastvisitedTab = idx;
+                if(idx==1){
+                    this.unitAjax('get','v1/visit/book/list',{ page: 1,
+                        pageSize: 50},res=>{
+                        if(res.code==200){
+                            this.booklist=res.data.rows    
+                        }
+                    })
+                }if(idx==2){
+                     this.unitAjax('get','v1/visit/user/list',{ page: 1,
+                        pageSize: 50},res=>{
+                        if(res.code==200){
+                            this.userlist=res.data.rows    
+                        }
+                    })
+                }
             },
             changeAccountTab(idx) {
                 this.accountTab = idx;
@@ -597,11 +684,15 @@
             .books__item {
                 width: 108px;
                 overflow: hidden;
+                margin: 0 auto;
                 /* margin-right: 24px; */
                 .books__img {
                     width: 100%;
                     height: 134px;
                     background: #ccc;
+                    .del {
+                        margin: 10px;
+                    }
                 }
                 .books__name {
                     padding-top: 10px;

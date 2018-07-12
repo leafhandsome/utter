@@ -5,41 +5,60 @@
       <img v-show="readcolor=='white'" class="navimg " src="../../assets/images/editor/175 创作区-目录.png" alt="" @click="getnvetree">
       <img v-show="readcolor=='black'" class="navimg " src="../../assets/images/editor/192 创作区-目录-白.png" alt="" @click="getnvetree">
       </a>
-      <el-tree v-show="showTree" :class="readcolor=='white'?'ut-white1':'ut-black1'" class="nav-tree" :data="data" :props="defaultProps" @node-click="handleNodeClick"  node-key="id"
-  :default-expand-all="true"></el-tree>
+      <div class="show__cataloglist">
+            <div class="titile" :class="$route.query.type=='white'?'ut-white1':'ut-black1'" ref="navTree">
+                <div class="line" :class="$route.query.type=='white'?'navBorder-b pagecolr-black-after':'navBorder-w pagecolr-white-after'"></div>
+                
+                 <ul v-for="(item, index) in bookInfo.catalogues" :key="index">
+                      <li class='bor' :class="navid==item.id?'active-nav':''">
+                          <a href='javascript:;' :class="$route.query.type=='white'?'nav-treeWhite':'nav-treeBlack'" @click="settitile(item.name,item.id,$event)">{{item.name}}
+                             </a></li>
+                      <label  v-for="(i, idx) in item.children" :key="idx">
+                      <li class="big-titile" :class="navid==i.id?'active-nav':''">
+                          <a href='javascript:;' @click="settitile(i.name,i.id,$event)" :class="$route.query.type=='white'?'nav-treeWhite':'nav-treeBlack'">{{i.name}}
+                               </a> 
+                         
+                      </li>
+                      <li class="small-titile" :class="navid==count.id?'active-nav':''" v-for="(count,num) in i.children" :key="num">
+                          <a href='javascript:;' @click="settitile(count.name,count.id,$event)" :class="$route.query.type=='white'?'nav-treeWhite':'nav-treeBlack'">{{count.name}}
+                          </a> </li>
+                      </label>
+                 </ul>
+            </div> 
+        </div>
   </div>
   <div class="back fr" @click="$router.go(-1)">
    <a href="javascript:;"><img src="../../assets//images//editor/backa.png" alt=""></a>
   </div>
   <div class="content">
-      <h3>写下你的一生</h3>
-      <div class="reader-content">
-        心的角落，没有垃圾桶怎么容下她微尘。<br>
-        心的角落，没有垃圾桶怎么容下她微尘。<br>
-        心的角落，没有垃圾桶怎么容下她微尘。<br>
-        心的角落，没有垃圾桶怎么容下她微尘。<br>
+      <h3>{{titile}}</h3>
+      <div class="reader-content" v-html="textcontent.text">
+       
       </div>
-      <div class="reader-content">
-         心的角落，没有垃圾桶怎么容下她微尘。 心的角落，没有垃圾桶怎么容下她微尘。 心的角落，没有垃圾桶怎么容下她微尘。 心的角落，没有垃圾桶怎么容下她微尘。 心的角落，没有垃圾桶怎么容下她微尘。
-      </div>
+     
   </div>
       <div class="footer">
          <div class="innerbox clearfix">
-              <div class="pull-left">
-                <span>0</span>  <!-- <img v-show="" src="../assets/images/article/prev.png" alt="上一页"> -->
-          <img v-show="readcolor=='white'" src="../../assets/images/article/prev-black.png" alt="上一页">
-          <img  v-show="readcolor=='black'" src="../../assets/images/article/prev-w.png" alt="上一页">
+             <div class="pull-left">
+                <span>{{ideapage}}</span>  
+        <img v-show="ideapage==1" src="../../assets/images/article/prev.png" alt="上一页">
+          <img v-show="$route.query.type=='white'&&ideapage!=1" src="../../assets/images/article/prev-black.png" alt="上一页" @click="prepage">
+          <img  v-show="$route.query.type=='black'&&ideapage!=1" src="../../assets/images/article/prev-w.png" alt="上一页" @click="prepage">
               </div>
               <a href='javaScript:;'  @click.stop="showmore=true">
               <img v-show="readcolor=='white'" class="more" src="../../assets/images/article/more.png" alt="" @click.stop="showmore=true">
               <img v-show="readcolor=='black'" class="more" src="../../assets/images/article/more-w.png" alt="" @click.stop="showmore=true">
               </a>
-              <div class="pull-right" v-show="readcolor=='white'">
-                <img src="../../assets/images/article/next.png" alt="下一页"><span>1</span>
-              </div>
-               <div class="pull-right" v-show="readcolor=='black'">
-                <img src="../../assets/images/article/next-w.png" alt="下一页"><span>1</span>
-              </div>
+               <div class="pull-right" >
+                
+                <img v-show="ideapage ==ideaTotal||ideaTotal==0" src="../../assets/images/article/next-a.png" alt="">
+                  <a href='javascript:;' v-if="ideaTotal!=0">
+            <img v-show="$route.query.type=='white'&&ideapage !=ideaTotal" src="../../assets/images/article/next.png" alt=""  @click="nextpage">
+            <img v-show="$route.query.type=='black'&&ideapage !=ideaTotal" src="../../assets/images/article/next-w.png" alt="下一页" @click="nextpage">
+        
+            </a>
+                <span>{{ideaTotal}}</span>
+              </div> 
               <div class="more-set" v-show="showmore" @click.stop="showmore=true">
                   <a href="javaScript:;">
                     <img v-show="readcolor=='black'" src="../../assets/images/editor/173 创作区背景-白.png" alt="" @click="getreadercolor('white')">
@@ -63,54 +82,85 @@
     export default {
         data() {
             return {
-                data: [{
-                    label: "一级 1",
-                    children: [{
-                        label: "二级 1-1",
-                        children: [{
-                            label: "三级 1-1-1"
-                        }]
-                    }]
-                }, {
-                    label: "一级 2",
-                    children: [{
-                        label: "二级 2-1",
-                        children: [{
-                            label: "三级 2-1-1"
-                        }]
-                    }, {
-                        label: "二级 2-2",
-                        children: [{
-                            label: "三级 2-2-1"
-                        }]
-                    }]
-                }, {
-                    label: "一级 3",
-                    children: [{
-                        label: "二级 3-1",
-                        children: [{
-                            label: "三级 3-1-1"
-                        }]
-                    }, {
-                        label: "二级 3-2",
-                        children: [{
-                            label: "三级 3-2-1"
-                        }]
-                    }]
-                }],
+                data: [],
                 defaultProps: {
                     children: "children",
                     label: "label"
                 },
                 showTree: false,
                 showmore: false,
-                readcolor: 'white'
+                readcolor: 'white',
+                navid: 0,
+                textcontent: {},
+                contentList: [],
+                ideapage: 1,
+                ideaTotal: 1,
+                titile: '',
             };
         },
         created() {
+            this.$store.commit('getbookId', this.$route.query.bookId)
             this.readcolor = this.$route.query.type;
+            this.navid = this.$store.state.bookInfo.catalogues[0].id;
+            this.titile = this.$store.state.bookInfo.catalogues[0].name;
+        },
+        computed: {
+            bookInfo() {
+                return this.$store.state.bookInfo;
+            }
         },
         methods: {
+            settitile(value, id, e) {
+                this.navid = id;
+                this.ideapage = 1;
+                this.titile = value;
+                if (this.showTree = true) {
+                    let arr = document.querySelectorAll('.navtab')
+                    for (let i = 0; i < arr.length; i++) {
+                        arr[i].className = 'navtab';
+                    }
+                    if (this.$route.query.type == 'white') {
+                        e.target.className = 'nav-treeWhite navtab'
+                    } else {
+                        e.target.className = 'nav-treeBlack navtab'
+                    }
+
+                }
+                this.getbooksContent()
+            },
+            getbooksContent() {
+                if (this.navid != 0) {
+                    this.unitAjax('get', 'v1/book/listChapter', {
+                        bookId: Number(this.$route.query.bookId),
+                        catalogueId: this.navid
+                    }, res => {
+                        if (res.code == 200) {
+                            // this.editor.execCommand("getlocaldata")
+                            this.contentList = res.data
+                            this.ideaTotal = res.data.length
+                            if (res.data.length > 0) {
+                                this.textcontent = res.data[0]
+                            }
+                        }
+                    })
+                }
+            },
+
+            // 书籍翻页
+            nextpage() {
+                this.ideapage++;
+                this.textcontent = this.contentList[this.ideapage - 1]
+
+            },
+            prepage() {
+                if (this.ideapage > 1) {
+                    this.ideapage--;
+                    this.textcontent = this.contentList[this.ideapage - 1]
+                } else {
+                    this.ideapage = 1
+                }
+
+            },
             getnvetree() {
                 this.showTree = true;
             },
@@ -131,10 +181,77 @@
             margin: 30px;
         }
         .tree {
-            width: 300px;
             margin: 100px 0 0 50px;
-            .navimg {}
-            .nav-tree {}
+        }
+        .show__cataloglist {
+            margin-top: 28px;
+            margin-left: 20px;
+        }
+        .titile {
+            position: relative;
+            .line {
+                height: 100%;
+                position: absolute;
+                top: 13px;
+                left: 4.5px;
+                border-left: 1px solid;
+                padding-bottom: 58px;
+                width: 2px;
+            }
+            ul {
+                margin-top: 30px;
+                line-height: 30px;
+                padding: 0 20px;
+                &:nth-last-child(1) {
+                    transform: translateY(30px);
+                }
+                a {
+                    position: relative;
+                    color: #898989;
+                    i {
+                        position: absolute;
+                        top: 2px;
+                        right: -50px;
+                        width: 15px;
+                        height: 15px;
+                        line-height: 13px;
+                        border-radius: 50%;
+                        border: 1px solid;
+                        text-align: center;
+                        display: none;
+                        &:hover {
+                            display: inline;
+                        }
+                    }
+                    .remove {
+                        right: -80px;
+                    }
+                    /* &:hover {
+                            i {
+                                
+                            }
+                        } */
+                }
+                li:hover {
+                    i {
+                        display: inline;
+                    }
+                }
+                .bor {
+                    list-style-type: initial;
+                    width: 200px;
+                    //  padding-left:10px;
+                }
+                .big-titile {
+                    margin-left: 15px;
+                    width: 200px;
+                }
+                .small-titile {
+                    width: 200px;
+                    display: block;
+                    margin-left: 30px
+                }
+            }
         }
         .innerbox {
             width: 200px;

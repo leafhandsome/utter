@@ -10,7 +10,7 @@
         <div class="cate utBorder" :class="cateTab==0?($route.query.type=='white'? ' active':' active-w'):''" @click='catefun(0)'>
           想法
         </div>
-        <div class="cate utBorder" :class="cateTab==1?($route.query.type=='white'? ' active':' active-w'):''" @click='catefun(1)'>
+        <div v-show="!$route.query.userId" class="cate utBorder" :class="cateTab==1?($route.query.type=='white'? ' active':' active-w'):''" @click='catefun(1)'>
           灵感
         </div>
 
@@ -18,7 +18,7 @@
     </div>
     <!-- 想法 -->
     <div class="list pull-left utBorder" v-show="cateTab==0" >
-      <div class="mainItem utBorder" v-show="!showsay">
+      <div class="mainItem utBorder" v-show="!$route.query.userId">
         <textarea :class="$route.query.type=='white'?'ut-white1':'ut-black1 '" name="name" rows="8" cols="100" auto-complete="off"
         placeholder='写下你的想法吧...' v-model="ideaUserInfo"></textarea>
         <el-tooltip effect="dark" content="发表" placement="bottom">
@@ -77,7 +77,7 @@
                  <span>{{item.likeCount}}</span>
               </div>
             </div>
-            <el-tooltip effect="dark" content="更多" placement="bottom" class="toolright tools">
+            <el-tooltip effect="dark" content="更多" placement="bottom" class="toolright tools" v-show="!$route.query.userId">
             <img v-if="!moreActive" src="../assets/images/article/more-w.png" alt="更多" @click.stop="getmoretools(index)">
             <img v-if="pagecolor=='black'&&moreActive" src="../assets/images/article/135 书架-更多-白.png" alt="更多" @click.stop="getmoretools(index)">
             <img v-if="pagecolor=='white'&&moreActive" src="../assets/images/article/more.png" alt="更多" @click.stop="getmoretools(index)">
@@ -103,7 +103,7 @@
         </div>
 
           <!-- 评论 -->
-      <div class="mainItem utBorder" v-show="showsay">
+      <div class="mainItem utBorder" >
         <textarea :class="$route.query.type=='white'?'ut-white1':'ut-black1 '" name="name" rows="8" cols="100" v-focus="showsay"
          placeholder='写下你的评论吧...' v-model="commentText"></textarea>
         <el-tooltip effect="dark" content="发表" placement="bottom">
@@ -117,7 +117,7 @@
         <div class="comments" v-for="(item, index) in sayList" :key="index">
           <div class="comment utBorder">
             <el-tooltip effect="dark" content="删除" placement="bottom" class="fr">
-                 <img v-if="" src="../assets/images/article/90 删除.png" alt="删除" class='del' @click="removeSay(item.id)">
+                 <img v-if="!$route.query.userId" src="../assets/images/article/90 删除.png" alt="删除" class='del' @click="removeSay(item.id)">
               <!-- <img  v-if="$route.query.type=='white'" src="../assets/images/article/del.png" class='del' alt="删除">
               <img else src="../assets/images/article/105 删除-白.png" alt="删除" class='del'> -->
             </el-tooltip>
@@ -137,23 +137,19 @@
                 {{item.createTime}}
               </div>
 
-              <div class="tools toolright">
-                <!-- <div class="tool">
-                  <img src="../assets/images/article/see.png" alt="关注">
-                   <img src="../assets/images/publish/108 浏览.png" alt="关注">
-                   <span>99</span>
-                </div> -->
+              <!-- <div class="tools toolright">
+            
                 <div class="tool">
-                  <!-- <img src="../assets/images/article/comments.png" alt="评论"> -->
-                   <img src="../assets/images/publish/111 评论回复.png" alt="评论" @click="showsay=true">
+                  <img src="../assets/images/article/comments.png" alt="评论">
+                   <img src="../assets/images/publish/111 评论回复.png" alt="评论">
                    <span>03</span>
                 </div>
                 <div class="tool">
-                  <!-- <img src="../assets/images/article/good.png" alt="点赞">  -->
+                  <img src="../assets/images/article/good.png" alt="点赞"> 
                   <img src="../assets/images/publish/110 赞扬.png" alt="点赞"> 
                   <span>28</span>
                 </div>
-              </div>
+              </div> -->
 
               <!-- <el-tooltip effect="dark" content="更多" placement="bottom">
                 <img v-if="$route.query.type=='white'" src="../assets/images/article/more.png" class='more' alt="更多">
@@ -167,16 +163,18 @@
      <div class="pageTools">
       <div class="innerbox clearfix">
         <div class="pull-left">
-          <span>{{ideapage}}</span>
+          <!-- <span>{{ideapage}}</span> -->
           <img v-show="ideapage==1" src="../assets/images/article/prev.png" alt="上一页">
           <img v-show="$route.query.type=='white'&&ideapage!=1" src="../assets/images/article/prev-black.png" alt="上一页" @click="prepage">
           <img  v-show="$route.query.type=='black'&&ideapage!=1" src="../assets/images/article/prev-w.png" alt="上一页" @click="prepage">
         </div>
+         <div class="pageindex">{{ideapage}}</div>
         <div class="pull-right">
             <a href='javascript:;'>
             <img v-show="ideapage ==ideaTotal" src="../assets/images/article/next-a.png" alt="">
           <img v-show="$route.query.type=='white'&&ideapage !=ideaTotal" src="../assets/images/article/next.png" alt=""  @click="nextpage">
-          <img v-show="$route.query.type=='black'&&ideapage !=ideaTotal" src="../assets/images/article/next-w.png" alt="下一页" @click="nextpage"><span>{{ideaTotal}}</span>
+          <img v-show="$route.query.type=='black'&&ideapage !=ideaTotal" src="../assets/images/article/next-w.png" alt="下一页" @click="nextpage">
+          <!-- <span>{{ideaTotal}}</span> -->
         </a>
         </div>
       </div>
@@ -184,7 +182,7 @@
     </div>
     
         <!-- 灵感 -->
-        <div class="list pull-left utBorder" v-show="cateTab==1">
+        <div class="list pull-left utBorder" v-show="cateTab==1&&getValue('userId')!==''">
             <div class="mainItem utBorder">
               <textarea :class="$route.query.type=='white'?'ut-white1':'ut-black1 '" v-model="inspirationTex" name="name" rows="8" cols="100" placeholder='写下你的灵感吧...'></textarea>
               <el-tooltip effect="dark" content="发表" placement="bottom">
@@ -244,15 +242,17 @@
        <div class="pageTools">
       <div class="innerbox clearfix">
         <div class="pull-left">
-          <span>{{pageinspriation}}</span>
+          <!-- <span>{{pageinspriation}}</span> -->
           <img v-show="pageinspriation==1" src="../assets/images/article/prev.png" alt="上一页">
           <img v-show="$route.query.type=='white'&&pageinspriation!=1" src="../assets/images/article/prev-black.png" @click="prevIndex" alt="上一页">
           <img  v-show="$route.query.type=='black'&&pageinspriation!=1" src="../assets/images/article/prev-w.png" @click="prevIndex" alt="上一页">
         </div>
+            <div class="pageindex">{{pageinspriation}}</div>
         <div class="pull-right">
             <img v-show="pageinspriation ==Math.ceil(pageIndex/2)" src="../assets/images/article/next-a.png" alt="">
           <img v-show="$route.query.type=='white'&&pageinspriation !=Math.ceil(pageIndex/2)" src="../assets/images/article/next.png" alt="" @click='nextPageindex'>
-          <img v-show="$route.query.type=='black'&&pageinspriation !=Math.ceil(pageIndex/2)" src="../assets/images/article/next-w.png" alt="下一页" @click='nextPageindex'><span>{{ Math.ceil(pageIndex/2)}}</span>
+          <img v-show="$route.query.type=='black'&&pageinspriation !=Math.ceil(pageIndex/2)" src="../assets/images/article/next-w.png" alt="下一页" @click='nextPageindex'>
+          <!-- <span>{{ Math.ceil(pageIndex/2)}}</span> -->
         </div>
       </div>
     </div>
@@ -300,7 +300,7 @@
                 pageinspriation: 1,
                 pageIndex: '',
                 setactive: -1,
-                ideaText:'',
+                ideaText: '',
             }
         },
         created() {
@@ -308,13 +308,15 @@
 
         },
         directives: {
-             focus: {
-                update: function (el, {value}) {
+            focus: {
+                update: function(el, {
+                    value
+                }) {
                     if (value) {
-                    el.focus()
+                        el.focus()
                     }
                 }
-                }
+            }
         },
         methods: {
             //下一页灵感
@@ -355,21 +357,21 @@
 
             },
             // 编辑灵感
-            setinspiration(text,id){
-                
+            setinspiration(text, id) {
+
                 if (this.ideaText) {
                     this.submitactive = true
                     this.unitAjax('post', 'v1/inspiration/edit', {
-                        inspirationId:id,
+                        inspirationId: id,
                         text: this.ideaText
                     }, res => {
                         this.submitactive = false
                         if (res.code == 200) {
-                            this.setactive=-1;
+                            this.setactive = -1;
                             // 更多
-                            this.moreActive=false;
+                            this.moreActive = false;
                             // tools
-                            this.showtools=-1;
+                            this.showtools = -1;
                             this.getinspiration()
                         } else {
                             this.$message.error(res.msg)
@@ -409,7 +411,7 @@
             //想法先赞
             setgood(id) {
                 this.unitAjax('post', 'v1/idea/like/add', {
-                    ideaId: id
+                    ideaId: Number(id)
                 }, res => {
                     if (res.code == 200) {
                         this.showgood = true
@@ -457,9 +459,10 @@
                 if (this.ideaUserInfo) {
                     this.submitactive = true
                     this.unitAjax('post', 'v1/idea/add', {
-                        idea: this.ideaUserInfo
+                        idea: this.ideaUserInfo,
+                        open: this.opentab == 1,
                     }, res => {
-                        this.ideaUserInfo=""
+                        this.ideaUserInfo = ""
                         this.submitactive = false
                         if (res.code == 200) {
                             this.getidea()
@@ -478,16 +481,15 @@
                 // commentText
                 if (this.commentText) {
                     let params = {
-                        ideaId: this.ideaId,
-                        replyUserId: '1',
+                        ideaId: Number(this.ideaId),
+                        replyUserId: '',
                         commentText: this.commentText
                     }
 
                     this.unitAjax('post', 'v1/idea/comment/add', params, res => {
-                        this.showsay = false
                         if (res.code == 200) {
                             this.commentText = "";
-                            this.showsay = false;
+                            // this.showsay = false;
                             this.getsaylist()
                         } else {
                             this.$message.error(res.msg)
@@ -496,7 +498,7 @@
 
                 }
             },
-            gettools(value, id,text) {
+            gettools(value, id, text) {
                 this.toolactive = value;
                 if (value == 2) {
 
@@ -504,7 +506,7 @@
                 // 灵感编辑
                 if (value == 3) {
                     this.setactive = id;
-                   this.ideaText=text 
+                    this.ideaText = text
                 }
                 //删除想法
                 if (value == 4) {
@@ -513,25 +515,25 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                         this.unitAjax('delete', 'v1/inspiration/delete', {
-                        inspirationId: id
-                    }, res => {
-                        if (res.code == 200) {
-                             this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
-                            this.getinspiration()
-                        }
-                    })
-                       
+                        this.unitAjax('delete', 'v1/inspiration/delete', {
+                            inspirationId: id
+                        }, res => {
+                            if (res.code == 200) {
+                                this.$message({
+                                    type: 'success',
+                                    message: '删除成功!'
+                                });
+                                this.getinspiration()
+                            }
+                        })
+
                     }).catch(() => {
                         this.$message({
                             type: 'info',
                             message: '已取消删除'
                         });
                     });
-                   
+
                 }
             },
             removeSay(id) {
@@ -541,25 +543,25 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                      this.unitAjax('delete', 'v1/idea/comment/delete', {
-                    commentId: id
-                }, res => {
-                    if (res.code == 200) {
-                         this.$message({
-                        type: 'success',
-                        message: '删除成功!'
-                    });
-                        this.getsaylist()
-                    }
-                })
-                   
+                    this.unitAjax('delete', 'v1/idea/comment/delete', {
+                        commentId: id
+                    }, res => {
+                        if (res.code == 200) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getsaylist()
+                        }
+                    })
+
                 }).catch(() => {
                     this.$message({
                         type: 'info',
                         message: '已取消删除'
                     });
                 });
-              
+
             },
             closeshow() {
                 this.moreActive = false;
@@ -788,9 +790,7 @@
                     }
                 }
                 .rightSide {
-                    .inpiration{
-
-                    }
+                    .inpiration {}
                 }
                 .comment {
                     height: auto;
@@ -814,16 +814,16 @@
             margin: 0 auto;
             @include copynone;
             position: relative;
-            &:after {
-                content: '';
-                display: block;
-                position: absolute;
-                left: 50%;
-                top: 0;
-                width: 1px;
-                height: 100%;
-                background: #E6E6E6;
-            }
+            // &:after {
+            //     content: '';
+            //     display: block;
+            //     position: absolute;
+            //     left: 50%;
+            //     top: 0;
+            //     width: 1px;
+            //     height: 100%;
+            //     background: #E6E6E6;
+            // }
         }
         .pull-left,
         .pull-right {

@@ -206,9 +206,9 @@
                     penName: this.username,
                     siteName: this.nickname
                 }
-                if(/[\u4e00-\u9fa5]/.test(this.username)&&this.username.length>6){
-                    this.err.penName = "中文笔名只能输入1-6个字符" 
-                }else{
+                if (/[\u4e00-\u9fa5]/.test(this.username) && this.username.length > 6) {
+                    this.err.penName = "中文笔名只能输入1-6个字符"
+                } else {
 
                 }
                 if (this.username && this.nickname) {
@@ -223,7 +223,7 @@
                     if (this.nickname == "") {
                         this.err.siteName = '站名不能为空'
                     }
-                     if (!this.username) {
+                    if (!this.username) {
                         this.err.penName = "笔名不能为空"
                     }
                 }
@@ -435,6 +435,10 @@
                     }, res => {
                         this.loading = false;
                         if (res.code == 200) {
+                            this.setValue({
+                                name: 'userId',
+                                value: res.data.uid
+                            })
                             this.$router.push({
                                 path: '/whiterow/modey',
                                 query: {

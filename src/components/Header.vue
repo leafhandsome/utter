@@ -51,7 +51,17 @@
                 if (num == 5) {
                     this.styleimg.showimg5 = false;
                     // 如果没有登录
-                    this.$router.push('/login')
+                    if (this.getValue('userId')) {
+                        this.$router.push({
+                            path: "/whiterow/modey",
+                            query: {
+                                type: 'white'
+                            }
+                        })
+                    } else {
+                        this.$router.push('/login')
+                    }
+
                 } else if (num == 1) {
                     this.styleimg.showimg1 = false;
 

@@ -6,27 +6,27 @@
     <img @click='change' v-else class='logo' src="../../assets/images/utter/logow.png" alt="UTTER">
 
     <div class="middleTab clearfix">
-      <router-link :to="{path:'/whiterow/modey',query:{type:pagecolr}}">
+      <router-link :to="{path:'/whiterow/modey',query:{type:pagecolr,userId:$route.query.userId}}" :class="$route.path=='/whiterow/modey'?'active':''">
       <div class="pull-left"  @mouseover="moveEle(0)" @mouseout="moveoOut(0)" @mousedown="moveEle(0,'none')" @click="moveoOut(0,'block')">
         <div :class="pagecolr=='white'?'tab':'tab tab-black'">首页<i></i></div>
       </div>
       </router-link>
-        <router-link :to="{path:'/whiterow/myarticle',query:{type:pagecolr}}">
+        <router-link :to="{path:'/whiterow/myarticle',query:{type:pagecolr,userId:$route.query.userId}}" :class="$route.path=='/whiterow/myarticle'?'active':''">
       <div class="pull-left"  @mouseover="moveEle(1)" @mouseout="moveoOut(1)"  @mousedown="moveEle(1,'none')" @mouseup="moveoOut(1,'block')">
         <div :class="pagecolr=='white'?'tab':'tab tab-black'">文章<i></i></div>
       </div>
        </router-link>
-        <router-link :to="{path:'/whiterow/idea',query:{type:pagecolr}}">
+        <router-link :to="{path:'/whiterow/idea',query:{type:pagecolr,userId:$route.query.userId}}" :class="$route.path=='/whiterow/idea'?'active':''">
       <div class="pull-left" @mouseover="moveEle(2)"  @mouseout="moveoOut(2)"  @mousedown="moveEle(2,'none')" @mouseup="moveoOut(2,'block')">
         <div :class="pagecolr=='white'?'tab':'tab tab-black'">想法<i></i></div>
       </div>
        </router-link>
-        <router-link  :to="{path:'/whiterow/publish',query:{type:pagecolr}}">
+        <router-link  :to="{path:'/whiterow/publish',query:{type:pagecolr,userId:$route.query.userId}}" :class="$route.path=='/whiterow/publish'?'active':''">
       <div class="pull-left" @mouseover="moveEle(3)" @mouseout="moveoOut(3)"  @mousedown="moveEle(3,'none')" @mouseup="moveoOut(3,'block')">
         <div :class="pagecolr=='white'?'tab':'tab tab-black'" >书籍<i></i></div>
       </div>
        </router-link>
-        <router-link  :to="{path:'/whiterow/userinfo',query:{type:pagecolr}}">
+        <router-link  :to="{path:'/whiterow/userinfo',query:{type:pagecolr,userId:$route.query.userId}}" :class="$route.path=='/whiterow/userinfo'?'active':''">
       <div class="pull-left"  @mouseover="moveEle(4)" @mouseout="moveoOut(4)"  @mousedown="moveEle(4,'none')" @mouseup="moveoOut(4,'block')">
         <div :class="pagecolr=='white'?'tab':'tab tab-black'">用户名<i></i></div>
       </div>
@@ -104,6 +104,7 @@
                 tabactive: 0,
                 pagecolr: "white", //背景颜色
                 showlink: false,
+                tabnum:0,
             };
         },
         props: ["type", "activeTab"],
@@ -112,12 +113,14 @@
             document.querySelector("body").style.background = this.pagecolr == "white" ? "" : "black";
             document.querySelector("#app").style.color = this.pagecolr == "white" ? "black" : "white";
             // document.querySelector("#app").style.borderColor = this.pagecolr == "white" ? "#dcdddd" : "#1b1b1b";
+            console.log(document.querySelector('.active'))
         },
         mounted() {},
         methods: {
             // tab hover
             moveEle(index, dis) {
-                var tab = document.querySelector('.active>.pull-left').children[0];
+                     var tab = document.querySelector('.active>.pull-left').children[0];
+               
                 var tabElement = document.querySelectorAll('.tab');
                 for (var i = 0; i < tabElement.length; i++) {
                     if (tabElement[i] == tab) {
@@ -133,7 +136,9 @@
 
             },
             moveoOut(index, dis) {
-
+                if (dis) {
+                    this.$store.commit('showbox', false)
+                }
                 var tab = document.querySelector('.active>.pull-left').children[0];
                 var tabElement = document.querySelectorAll('.tab');
                 for (var i = 0; i < tabElement.length; i++) {
@@ -172,6 +177,7 @@
                 } else if (num == 4) {
                     this.showmsg = true;
                 } else if (num == 5) {
+
                     this.showPersonal = true;
                     this.utstyle = this.$route.query.type;
                 }

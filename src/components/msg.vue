@@ -10,13 +10,9 @@
       </div>
       <div class="msglist">
         <ul>
-          <li>
-            <p class="title"><span class="user-name">会飞的鱼</span><span class="time">13:26</span></p>
-            <p>hi,书的封面怎么样了</p>
-          </li>
-           <li>
-            <p class="title"><span class="user-name">会飞的鱼-me</span><span class="time">13:26</span></p>
-            <p>sfdajofjj阿道夫盘口上看放松的风控的水平大幅是控释肥</p>
+          <li v-for="(item, index) in msgDetail" :key="index">
+            <p class="title"><span class="user-name">{{item.sendPenName}}</span><span class="time">{{item.createTime}}</span></p>
+            <p>{{item.message}}</p>
           </li>
         </ul>
        
@@ -33,24 +29,50 @@
     <!-- 消息列表 -->
       <div class="Info" v-show="showfirend">
         <ul>
-            <a href="javaScript:;" @click="showfirend=false">
-          <li class="utBorder"><span class="imgbox"><img src="../assets/images/utter/userw.png" alt=""></span><span class="name">天空sdfs是否</span><span class="fr msgcontent">书的封面怎么样了适当放松的水电费第三方水电费</span></li>
+            <a href="javaScript:;" @click.stop="friendMsgInfo(item.userId)" v-for="(item, index) in friendMsglist" :key="index">
+          <li class="utBorder"><span class="imgbox">
+              <img v-if="item.avatar" src="item.avatar" alt="">
+              <img v-if="!item.avatar" src="../assets/images/utter/userw.png" alt="">
+              </span>
+          <span class="name">{{item.penName}}</span>
+          <span class="fr msgcontent">{{item.message}}</span></li>
           </a>
         </ul>
     </div>
     <!-- 通知 -->
     <div class="Info" v-show="checkTab==2">
-        <ul>
-          <li class="utBorder"><span class="imgbox"><img src="../assets/images/utter/userw.png" alt=""></span><span class="name">天空</span><span class="fr msgcontent">评论了您的消息</span></li>
-          <li class="utBorder">
+        <ul v-show="!showMsgDetail">
+            
+            <a href='javascript:;' v-for="(item, index) in msglist" :key="index">
+          <li  class="utBorder" @click="getMsgDetail(item.id)">
             <span class="imgbox"><img src="../assets/images/utter/userw.png" alt=""></span><span class="name">咖啡</span>
-            <a href="javascript:;" class="fr istrue"> 
+            <a href="javascript:;" v-if="item.type==2" class="fr istrue" @click="setfriend(item.id)" > 
               <img v-show="stylecolor=='white'" src="../assets/images/article/submit.png" alt="">
           <img v-show="stylecolor=='black'" src="../assets/images/editor/issuew.png" alt="">
           </a>
-          <span class="fr msgcontent firend">申请成为您的好友</span>
+          <span class="fr msgcontent firend">{{item.title}}</span>
+          </li>
+        </a>
+        </ul>
+        <!-- 通知详情 -->
+        <div v-show="showMsgDetail">
+        <div class="header utBorder"  @click="showMsgDetail=false">
+        <a href="javaScript:;">
+        <img v-show="$route.query.type=='white'" src="../assets/images/editor/backb.png" alt="">
+        <img v-show="$route.query.type=='black'" src="../assets/images/editor/backw.png" alt="">
+        </a>
+      </div>
+      <div class="msglist">
+        <ul>
+          <li v-for="(item, index) in noticeDetail" :key="index">
+            <p class="title"><span class="user-name">{{item.sendPenName}}</span><span class="time">{{item.createTime}}</span></p>
+            <p>{{item.message}}</p>
           </li>
         </ul>
+       
+        
+      </div>
+      </div>
     </div>
     <!-- 底部 -->
     <div class="footer utBorder">
@@ -77,23 +99,128 @@
                 checkTab: 1,
                 showmsg: false,
                 showinfo: true,
-                showfirend: true
+                showfirend: true,
+                msglist: [],
+                friendMsglist: [],
+                msgDetail: [],
+                showMsgDetail:false,//通知详情显示
+                noticeDetail:{},
             };
         },
         created() {
             this.stylecolor = this.$route.query.type;
+            // this.getmsg();
+            // this.get
+        },
+        mounted() {
+            this.getfriendMsg();
+            this.getmsg();
         },
         methods: {
+            getMsgDetail(id){
+                this.showMsgDetail=true
+                this.unitAjax('get','v1/me/alert/notice/detail',{id:Number(id)},res=>{
+                    if(res.code==200){
+                       this.noticeDetail=res.data     
+                    }
+                })
+            },
+            //同意好友
+            setfriend(id) {
+                this.$confirm("是否同意成为好友?", "提示", {
+                        confirmButtonText: "同意",
+                        cancelButtonText: "拒绝",
+                        type: "warning"
+                    })
+                    .then(() => {
+                        this.unitAjax(
+                            "post",
+                            "v1/user/friend/confirmFriend", {
+                                id: id,
+                                confirm: true
+                            },
+                            res => {
+                                if (res.code == 200) {
+                                    //   this.$message('添加成功')
+                                }
+                            }
+                        );
+                    })
+                    .catch(() => {
+                        this.unitAjax(
+                            "post",
+                            "v1/user/friend/confirmFriend", {
+                                id: id,
+                                confirm: false
+                            },
+                            res => {
+                                if (res.code == 200) {}
+                            }
+                        );
+                        //   this.$message({
+                        //     type: "info",
+                        //     message: "已ju"
+                        //   });
+                    });
+            },
+            // 消息对话
+            friendMsgInfo(id) {
+                this.showfirend = false;
+                this.unitAjax(
+                    "get",
+                    "v1/me/alert/message/detail", {
+                        userId: id,
+                        page: 1,
+                        pageSize: 50
+                    },
+                    res => {
+                        if (res.code == 200) {
+                            this.msgDetail = res.data.rows;
+                        }
+                    }
+                );
+            },
+            getfriendMsg() {
+                this.unitAjax(
+                    "get",
+                    "v1/me/alert/messages", {
+                        page: 1,
+                        pageSize: 10
+                    },
+                    res => {
+                        if (res.code == 200) {
+                            this.friendMsglist = res.data.rows;
+                        }
+                    }
+                );
+            },
+            // 获取通知
+            getmsg() {
+                this.unitAjax(
+                    "get",
+                    "v1/me/alert/notices", {
+                        page: 1,
+                        pageSize: 10
+                    },
+                    res => {
+                        if (res.code == 200) {
+                            this.msglist = res.data.rows;
+                        }
+                    }
+                );
+            },
             //消息切换
             checkmsg(value) {
                 this.checkTab = value;
                 this.showmsg = false;
                 this.showinfo = true;
+                this.showfirend = true;
             },
             checkinfo(value) {
                 this.checkTab = value;
                 this.showmsg = true;
                 this.showinfo = false;
+                this.showfirend = false;
             }
         }
     };
@@ -105,13 +232,15 @@
         border: 1px solid #dcdddd;
         font-size: 14px;
         position: relative;
-        opacity: .9;
+        opacity: 0.9;
         .activecolor {
             font-weight: 700;
         }
         .msg {
             height: 100%;
-            .header {
+          
+        }
+          .header {
                 height: 50px;
                 line-height: 50px;
                 text-align: center;
@@ -152,7 +281,6 @@
                     vertical-align: middle;
                 }
             }
-        }
         .Info {
             li {
                 // height: 80px;

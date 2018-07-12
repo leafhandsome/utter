@@ -36,16 +36,16 @@
         </div>
 
         <div class="linkTools utBorder" v-if='activeTools == "link" && i.key == "link"'>
-          <input placeholder='请输入内容…' v-model='linkObj.textValue'>
+          <input placeholder='请输入内容…' v-model='linkObj.textValue' @click.stop="activeTools = 'link'">
           <input placeholder='输入超链接地址…' v-model='linkObj.url' @keydown.enter='linkHandle'>
         </div>
 
         <div class="draftTools utBorder" v-if='activeTools == "draft" && i.key == "draft"'>
-          <div class="item utBorder" v-for='i in 10' :key="i">不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕</div>
+          <div class="item utBorder" v-for="(item, index) in ideaList"  @click.stop='ideaHandle(item.idea)' :key="index">{{item.idea}}</div>
         </div>
 
         <div class="ideaTools utBorder" v-if='activeTools == "idea" && i.key == "idea"'>
-          <div class="item utBorder" v-for='i in 5' @click='ideaHandle' :key="i">不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕不问远征 无关朝夕</div>
+          <div class="item utBorder" v-for='(item,index) in insparitionList' @click.stop='ideaHandle(item.inspiration)' :key="index">{{item.inspiration}}</div>
         </div>
         
 
@@ -64,7 +64,7 @@
       <div class="back pull-left" :class='{b:utstyle == "white",w:utstyle != "white"}' @click="back"></div>
         <!-- 右边设置 -->
         <ul class="right-set" v-show="showset" @click.stop="showset=true">
-          <li class="clearfix"><span class="fl borderbox utBorder"  @click='openfun(1)'>
+          <li class="clearfix" v-if="$route.query.editor=='publish'"><span class="fl borderbox utBorder"  @click='openfun(1)'>
                 <img v-show='showopen' src="../assets/images/article/open-c.png" alt="公开">
               <img v-show='(!showopen||opentab==1)&&utstyle=="white"'  src="../assets/images/article/open.png" alt="公开">
               <img v-show='(!showopen||opentab==1)&&utstyle=="black"'  src="../assets/images/article/open-w.png" alt="公开">
@@ -80,10 +80,10 @@
           <li class="creatColor"><span class="fl borderbox utBorder" @click="getreadercolor('white')"><img src="../assets/images/editor/173 创作区背景-白.png" alt=""></span>
           <span class="fl"  @click="getreadercolor('black')"><img src="../assets/images/editor/174 创作区背景-黑.png" alt=""></span>
           </li>
-          <li class="creatimg"><img src="../../static/img/1.jpg" alt="" @click="setcreatColor('../../static/img/1.jpg')"></li>
-          <li  class="creatimg"><img src="../../static/img/2.jpg" alt=""  @click="setcreatColor('../../static/img/2.jpg')"></li>
-          <li  class="creatimg"><img src="../../static/img/3.jpg" alt=""  @click="setcreatColor('../../static/img/3.jpg')"></li>
-          <li  class="creatimg"><img src="../../static/img/4.jpg" alt=""  @click="setcreatColor('../../static/img/4.jpg')"></li>
+          <li class="creatimg"><img src="../../static/img/1.jpg" alt="" @click="setcreatColor('../../static/img/1.jpg','white')"></li>
+          <li  class="creatimg"><img src="../../static/img/2.jpg" alt=""  @click="setcreatColor('../../static/img/2.jpg','white')"></li>
+          <li  class="creatimg"><img src="../../static/img/3.jpg" alt=""  @click="setcreatColor('../../static/img/3.jpg','black')"></li>
+          <li  class="creatimg"><img src="../../static/img/4.jpg" alt=""  @click="setcreatColor('../../static/img/4.jpg','black')"></li>
           </label>
         </ul>
     </div>
@@ -91,20 +91,23 @@
     <!-- 编辑器 -->
   <div class="middleView" >
       <h2 :class="utstyle=='white'?'ut-input-white':'ut-input-black'">
-          <input  @keydown="getkeydown" ref="text" class="title" type="text" placeholder="请输入标题" v-model="titile"></h2>
+          <input  @keydown.enter="getkeydown" ref="text" class="title" type="text" placeholder="请输入标题" v-model="titile"></h2>
     <div id="container" @click="showset=false"></div>
     <!-- page -->
      <div class="pageTools">
       <div class="innerbox clearfix">
         <div class="pull-left">
-          <span>0</span>
-          <!-- <img v-show="" src="../assets/images/article/prev.png" alt="上一页"> -->
-          <img v-show="$route.query.type=='white'" src="../assets/images/article/prev-black.png" alt="上一页">
-          <img  v-show="$route.query.type=='black'" src="../assets/images/article/prev-w.png" alt="上一页">
+          <!-- <span>1</span> -->
+          <img v-show="pageIndex==1" src="../assets/images/article/prev.png" alt="上一页">
+          <img v-show="$route.query.type=='white'&&pageIndex!=1" src="../assets/images/article/prev-black.png" alt="上一页"  @click="removepage">
+          <img  v-show="$route.query.type=='black'&&pageIndex!=1" src="../assets/images/article/prev-w.png" alt="上一页" @click="removepage">
         </div>
+        <div class="page">{{pageIndex}}</div>
         <div class="pull-right">
-          <img v-show="$route.query.type=='white'" src="../assets/images/article/next.png" alt="">
-          <img v-show="$route.query.type=='black'" src="../assets/images/article/next-w.png" alt="下一页"><span>1</span>
+             <!-- <img v-show="publishPageL ==ideaTotal" src="../assets/images/article/next-a.png" alt=""> -->
+          <img v-show="$route.query.type=='white'" src="../assets/images/article/next.png" alt="" @click="addpage">
+          <img v-show="$route.query.type=='black'" src="../assets/images/article/next-w.png" alt="下一页"  @click="addpage">
+          <!-- <span>1</span> -->
         </div>
       </div>
     </div>
@@ -115,21 +118,25 @@
         <div class="send " v-show="$route.query.editor=='publish'">
             <div class="clearfix">
             <div class="left fl ut-white1">
-                <div class="row utBorder" v-show="showcreat"><input type="text"></div>
+                <div class="row utBorder" v-show="showcreat"><input type="text" v-model="typeText" v-focus="showcreat==true"></div>
                 <ul>
-                  <li :class="tabActive==index?'ut-black1':''" v-for="(item,index) in 4" :key='index' @click="tabActive=index">默认分类{{index}}</li>
+                  <li :class="tabActive==item.id?'ut-black1':''" v-for="(item,index) in typeList" :key='index' @click="settabactive(item)">
+                     <span v-show="tabActive!=item.id||!showidea"> {{item.type}}</span>
+                     <input class="ut-black1" v-show="tabActive==item.id&&showidea" type="text" v-model="sortValue" @click.stop="setidea(item.type)">
+                    </li>
                 </ul>
             </div>
           
             <div class="right fr">
-                <div class="creat fr ut-white1" @click="showcreat=true"><a href="javaScript:;" class="ut-white1">创建类别</a></div>
-                <div class="istrue ut-white1"><a href="javaScript:;" class="ut-white1">确认</a></div>
+                <div class="creat fr ut-white1" v-show="!showcreat" @click="showcreat=true"><a href="javaScript:;" class="ut-white1">创建类别</a></div>
+                <div class="creat fr top ut-white1" v-show="ideaisShow&&!showcreat" @click="setsort"><a href="javaScript:;" class="ut-white1">修改类别</a></div>
+                <div class="istrue ut-white1" v-show="showcreat"><a  href="javaScript:;" class="ut-white1" @click="creatType">确认</a></div>
             </div>
             </div>
             <div class="bottom ut-white1">
-                  <textarea name="name" rows="6.5" cols="45" placeholder='为文章写一段摘要'></textarea>
+                  <textarea name="name" rows="6.5" cols="45" placeholder='为文章写一段摘要' v-model="importantText"></textarea>
         <el-tooltip effect="dark" content="发表" placement="bottom">
-          <img src="../assets/images/article/submit.png" class='submit' alt="发表">
+          <img src="../assets/images/article/submit.png" class='submit' alt="发表" @click="publishArticle(false)">
         </el-tooltip>
             </div>
         </div>
@@ -141,8 +148,10 @@
                  <div class="poper-header">utter/墨海</div>
                  <div class="frend utBorder">
                    <ul class="utBorder">
-                     <li class="utBorder" :class="poperTab==index?'poperActive':''" @click="poperTab=index" v-for="(item,index) in 3" :key="index">
-                       <p class="frend-left fl"><span class="imgbox"><img src="../assets/images/utter/userw.png" alt=""></span><span>一笑而过</span></p>
+                     <li class="utBorder" :class="poperTab==index?'poperActive':''" @click="poperTab=index" v-for="(item,index) in friendlist" :key="index">
+                       <p class="frend-left fl"><span class="imgbox">
+                           <img v-if="!item.friendAvatar" src="../assets/images/utter/userw.png" alt="">
+                           <img v-if="item.friendAvatar" :src="item.friendAvatar" alt=""></span><span>{{item.friendPenName}}</span></p>
                         <p class="frend-right fl" v-show="poperTab==index"><span><input :autofocus="poperTab==index" type="text">%</span>
                         <a class="fr" href="javaScript:;"><img src="../assets/images/userinfo/112 提交.png" alt=""></a></p>
                    </li>
@@ -161,8 +170,8 @@
             <!-- 书本介绍 -->
               <div class="" v-show="showbooksay">
                <div class="poper-content">
-                   <textarea name="booksay" id="" cols="56" rows="14" placeholder="为书本写一段介绍"></textarea>
-                    <a class="fr saysumbmit" href="javaScript:;"> <img src="../assets/images/article/submit.png" alt="发表"></a>
+                   <textarea name="booksay" id="" cols="56" rows="11" placeholder="为书本写一段介绍" v-model="introduce"></textarea>
+                    <a class="fr saysumbmit" href="javaScript:;" @click="backindex"> <img src="../assets/images/article/submit.png" alt="发表"></a>
                  </div> 
             <div class="idea-btn">
                <div class="btn-center">
@@ -173,7 +182,7 @@
             </div>
             <!-- 协议 -->
             <div class="note" v-show="shownote">
-                <ul>
+                <ul v-html="agreement">
                   <li>作者可获得80%的作品销售收益(联合出版同上);</li>
                   <li>每条销售数据实时展示，上个月收益结算后可随时体现。</li>
                   <li>作者必须保证其作品的原创性;</li>
@@ -190,14 +199,12 @@
             <div class="left fl bookimg">
                
             </div>
-          
+          <div class="fl cover"><p>封面尺寸:w:880 h:1080</p>  <p>封面格式:jpg、png</p></div>
             <div class="right idea fr">
-                <div class="creat fr ut-white1" @click="showcreat=true"><a href="javaScript:;" class="ut-white1">设置封面</a></div>
-                <div class="fr cover"><p>封面尺寸:w:150 h:180</p>  <p>封面格式:jpg、png</p></div>
-               
+                <div class="creat fr ut-white1" style="paddingLeft:10px" @click="showcreat=true"><input type="text" class="ut-white1" v-model="bookname" placeholder="请输入书名"></div>
                  <div class="istrue booksay ut-white1"><a href="javaScript:;" class="ut-white1" @click="setbooksay">书本介绍</a></div>
-                <div class="istrue money ut-white1"><input type="text" class="ut-white1" v-model=" 0.21">￥</div>
-                <div class="istrue thiry"><input type="checkbox"><a href="javaScript:;" @click="readyNote">我已阅读接受此协议</a></div>
+                <div class="istrue money ut-white1"><input type="number" class="ut-white1" placeholder="请输入金额" v-model="money">￥</div>
+                <div class="istrue thiry"><input type="checkbox" v-model="check" @click="check=!check"><a href="javaScript:;" @click="readyNote">我已阅读接受此协议</a></div>
             </div>
             </div>
          
@@ -223,19 +230,19 @@
            
             <ul v-for="(item, index) in datalist" :key="index" >
                  <li class='bor active-nav'>
-                     <a href='javascript:;' class="navtab" ref="sd" @click="settitile(item.label,item.id,$event)">{{item.label}}
-                          <i class="navBorder" @click="addnav(datalist,index)">+</i>
-                 <i class="navBorder remove" @click="removenav(datalist,index)">-</i>  </a></li>
+                     <a href='javascript:;' class="navtab" ref="sd" @click="settitile(item.name,item.id,$event)">{{item.name}}
+                          <i class="navBorder" @click.stop="addnav(datalist,index,'')">+</i>
+                 <i class="navBorder remove" @click.stop="removenav(datalist,index)">-</i>  </a></li>
                  <label  v-for="(i, idx) in item.children" :key="idx">
                  <li class="big-titile active-nav">
-                     <a href='javascript:;' class="navtab" ref="sv" @click="settitile(i.label,i.id,$event)" >{{i.label}}
-                         <i class="navBorder" @click="addTitle(item.children,idx)">+</i>
-                     <i class="navBorder remove" @click="removeTitle(item.children,idx)">-</i>   </a> 
+                     <a href='javascript:;' class="navtab" ref="sv" @click="settitile(i.name,i.id,$event)" >{{i.name}}
+                         <i class="navBorder" @click.stop="addTitle(item.children,idx,item.id)">+</i>
+                     <i class="navBorder remove" @click.stop="removeTitle(item.children,idx)">-</i>   </a> 
                     
                  </li>
                  <li class="small-titile active-nav" v-for="(count,num) in i.children" :key="num">
-                     <a href='javascript:;' class="navtab" ref='sn' @click="settitile(count.label,count.id,$event)" >{{count.label}}
-                     <i class="navBorder" @click="addidea(i.children,num)">+</i><i class="navBorder remove" @click="removeidea(i.children,num)">-</i>   </a> </li>
+                     <a href='javascript:;' class="navtab" ref='sn' @click="settitile(count.name,count.id,$event)" >{{count.name}}
+                     <i class="navBorder" @click.stop="addidea(i.children,num,i.id)">+</i><i class="navBorder remove" @click.stop="removeidea(i.children,num)">-</i>   </a> </li>
                  </label>
             </ul>
        </div> 
@@ -250,6 +257,7 @@
     import "../../static/ue/ueditor.all.min.js";
     import "../../static/ue/lang/zh-cn/zh-cn.js";
     let id = 1000;
+    let arr = [];
     export default {
         data() {
             return {
@@ -376,37 +384,11 @@
                 showbooksay: false,
                 shownote: false,
                 // 目录
-                datalist: [{
-                    label: "前言",
-                    id: 0,
-                }, {
-                    label: "章节名称",
-                    id: 1,
-                    children: [{
-                        label: "篇名",
-                        id: 2,
-                        children: [{
-                            label: "标题"
-                        }]
-                    }, {
-                        id: 3,
-                        label: '第二篇',
-                        children: [{
-                            id: 5,
-                            label: '第一节'
-                        }, {
-                            id: 6,
-                            label: '第二5'
-                        }]
-                    }]
-                }, {
-                    label: "结语",
-
-                }],
+                datalist: [],
                 navid: 0, //激活id
                 defaultProps: {
                     children: "children",
-                    label: "label"
+                    name: "name"
                 },
                 showTree: false,
                 // showmore: false,
@@ -418,14 +400,42 @@
                 opentab: 1,
                 toolindex: 100,
                 titile: '', //标题
+                typeText: '',
+                typeList: [],
+                importantText: '',
+                articletext: [],
+                showidea: true,
+                ideaisShow: false,
+                sortValue: '',
+                defaultType: false,
+                pageIndex: 1, //文章页码
+                articleList: [],
+                insparitionList: [],
+                ideaList: [], //想法
+                booksid: "",
+                beforeid: "",
+                creatTitle: ['前言', '章节', "结语"],
+                parentId: '',
+                oldid: "",
+                friendlist: [],
+                introduce:'',//书籍介绍
+                autherId:'',
+                bookname:'',
+                cover:'',
+                money:'',
+               check:false,
+               agreement:"作者可获得80%的作品销售收益(联合出版同上);每条销售数据实时展示，上个月收益结算后可随时体现。作者必须保证其作品的原创性;作者出版免费书籍时作品中部能出现插图; 联合出版的图书请提前确定好每位联合作者的收益占比; 联合出版的图书在上架后会自动在每位联合作者的站点同时上架;正式出版的图书暂时不可随意下架，作者可进行图书修订。",
             };
         },
         beforeCreate() {
-            UE.delEditor("container");
+            // UE.delEditor("container");
+            //  if (typeof(UE.getEditor("container")) != 'undefined') {
+            //     UE.getEditor("container").destroy();
+            // }
         },
         created() {
-            
             this.utstyle = this.$route.query.type;
+
             setTimeout(() => {
                 if (document.querySelector('iframe')) {
                     if (this.$route.query.type == "black") {
@@ -435,87 +445,583 @@
                         document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "black";
 
                     }
+                    //读取
+                    if (this.getValue('background')) {
+                        this.$refs.idea.style.background = "url(" + this.getValue('background') + ")";
+                        this.$refs.idea.style.backgroundSize = "100%";
+                        document.querySelector('.edui-editor').style.backgroundColor = 'unset';
+                        document.querySelector('.edui-editor-iframeholder').style.backgroundColor = 'unset';
+                        document.querySelector('.title').style.backgroundColor = 'unset';
+                        this.$refs.navTree.style.backgroundColor = 'unset';
+                        this.getreadercolor(this.getValue('color'));
+                    }
                 }
+
             }, 2000);
-        },
+            // this.getbookDetail()
+            if (this.$route.query.editor == 'publish') {
+                this.getidea()
+                this.gettypeList()
+                    // console.log(this.editor, 122)
+                    // this.initUeditor("");
+            }
+            this.getinspration()
+            this.getideaList()
+                //添加草稿书籍
+            if (this.$route.query.editor == 'idea') {
+                if (this.$route.query.id) {
 
-        methods: {
-            getkeydown(e) {
-                if (e.keyCode == 13) {
-                    // this.initUeditor(UE.getEditor('container').getContent())
-                    UE.getEditor('container').focus();
+                    this.booksid = this.$route.query.id;
+                    this.getnav(true)
+
+                } else {
+
+                    this.getbook(true)
                 }
+                this.getfriend()
+            }
 
+        },
+        //自定指令
+        directives: {
+            focus: {
+                update: function(el, {
+                    value
+                }) {
+                    if (value) {
+                        el.focus()
+                    }
+                }
+            }
+        },
+        methods: {
+            //出版书籍
+            sendbook(){
+                if(this.bookname){
+                    if(this.check){
+                      let params={
+                    id:Number(this.booksid),//	string	是			
+                    bookName:this.bookname,//	string	是			
+                    introduce:this.introduce,//	string	是			
+                    cover:this.cover,//	string	是			
+                    price:this.money,//	string	是			
+                    agreement:this.agreement,//
+                }
+                this.unitAjax('post','v1/book/publishBook',params,res=>{
+                    if(res.code==200){
+                        this.showset=false
+                        this.$message('出版成功')
+                    }
+                })
+                }else{
+                    this.$message('请先阅读协议')
+                }
+                }else if(this.bookname==''){
+                    this.$message('请填写书名')
+                }
+              
             },
-            settitile(value, id,e) {
-                this.titile = value;
-                this.initUeditor(value);
-                this.navid = id;
-                    if(this.showTree=true){
-                       let arr= document.querySelectorAll('.navtab')
-                            for(let i=0;i<arr.length;i++){
-                                  arr[i].className='navtab';
-                            }
-                            if(this.utstyle=='white'){
-                                 e.target.className='nav-treeWhite navtab'
-                            }else{
-                                  e.target.className='nav-treeBlack navtab'
-                            }
-                            
-                   } 
-            },
-            //添加章节
-            addnav(value, index,e) {
-                console.log(value)
-                value.splice(index + 1, 0, {
-                    id: 'a' + value[index].id++,
-                    label: "第" + (index + 1) + "章",
-                    children: [{
-                        label: "第1篇",
-                        id: 'ab' + value[index].id++,
-                        children: [{
-                            label: "第1节",
-                            id: 'abc' + value[index].id++,
-                        }]
-                    }]
-                });
-            },
-            addTitle(list, count) {
-                console.log(list)
-                list.splice(count + 1, 0, {
-                    id: 'b' + list[count].id++,
-                    label: "第" + (count + 2) + "篇",
-                    children: [{
-                        label: "第1节",
-                        id: 'bc' + list[count].id++,
-
-                    }]
-                });
-            },
-            addidea(list, index) {
-
-                list.splice(index + 1, 0, {
-                    id: 'c' + list[index].id++,
-                    label: "第" + (index + 2) + "节",
+            //获取好友
+            getfriend() {
+                let params = {
+                    page: 1,
+                    pageSize: 100,
+                    userId: Number(this.getValue('userId'))
+                }
+                this.unitAjax('get', 'v1/user/friend/list', params, res => {
+                    if (res.code == 200) {
+                        this.friendlist = res.data.rows
+                    }
                 })
             },
-            //删除章节
-            removenav(value, index) {
-                value.splice(index, 1);
+            //查询书籍内容
+            getbooksContent() {
+
+                if (this.navid != 0) {
+                    this.unitAjax('get', 'v1/book/listChapter', {
+                        bookId: this.booksid,
+                        catalogueId: this.navid
+                    }, res => {
+                        if (res.code == 200) {
+                            // this.editor.execCommand("getlocaldata")
+                            let newArr = []
+                            if (res.data.length > 0) {
+                                this.initUeditor(res.data[0].text);
+                                for (let key in res.data) {
+                                    newArr.push(res.data[key].text)
+                                }
+                                this.articleList = newArr;
+                            } else {
+                                this.initUeditor("");
+                            }
+
+                        }
+                    })
+                } else {
+
+                }
+
             },
-            removeTitle(list, count) {
-                list.splice(count, 1);
+            //编辑书籍     
+            setbook(flog) {
+                this.articletext = this.articleList
+                this.articletext[this.pageIndex - 1] = this.editor.getContent()
+                if (flog) {
+                    this.articleList = this.articletext
+                }
+                let params = {
+                    bookId: Number(this.booksid),
+                    catalogueId: Number(this.navid),
+                    title: this.titile,
+                    text: this.articletext,
+                }
+                this.unitAjax('post', 'v1/book/editChapter', params, res => {
+                    if (res.code == 200) {
+
+                    }
+                })
+            },
+            //添加书籍目录
+            setCatalogue(id, parentid, name, flog) {
+                let params = {
+                    bookId: Number(this.booksid),
+                    parentId: Number(parentid) == 0 ? '' : Number(parentid),
+                    beforeId: Number(id) == 0 ? '' : Number(id),
+                    title: name,
+                }
+                this.unitAjax('post', 'v1/book/addCatalogue', params, res => {
+                    if (res.code == 200) {
+                        // this.oldid = res.data.id
+                        if (flog) {
+                            if (flog == "addnav") {
+                                this.setCatalogue("", res.data.id, "新加篇名", "addTitle")
+                            } else {
+                                this.setCatalogue("", res.data.id, "新加小节", "")
+                            }
+
+                        }
+                        this.getnav()
+
+                    }
+                })
+            },
+            //获取书籍目录
+            getnav(flag) {
+                this.unitAjax('get', 'v1/book/listCatalogue', {
+                    bookId: this.booksid
+                }, res => {
+                    if (res.code == 200) {
+                        this.datalist = res.data;
+
+                        if (this.$route.query.id && flag) {
+                            this.navid = res.data[0].id;
+                            this.titile = res.data[0].name
+                            this.getbooksContent()
+                        }
+                    }
+                })
+            },
+            //添加草稿书籍
+            getbook(flag) {
+                let arr = [{
+                    "name": "前言"
+                }, {
+                    "children": [{
+                        "children": [{
+                            "name": "小节"
+                        }, {
+                            "name": "小节"
+                        }],
+                        "name": "篇名"
+                    }],
+                    "name": "章节"
+                }, {
+                    "name": "结语"
+                }]
+                this.unitAjax('post', 'v1/book/addBook', {
+                    data: JSON.stringify(arr)
+                }, res => {
+                    if (res.code == 200) {
+                        this.booksid = res.data.catalogue[0].bookId;
+                        this.datalist = res.data.catalogue;
+                        this.navid = res.data.catalogue[0].id;
+                        if (flag) {
+                            this.initUeditor("")
+                        }
+                        if (this.booksid) {
+                            // this.setCatalogue()
+                            // this.getnav()
+                        }
+
+                    }
+                })
+            },
+            //重新编辑文章
+            ArticleRest() {
+                let params = {
+                    title: this.titile,
+                    open: this.opentab == 1,
+                    text: this.articletext,
+                    open: this.opentab == 1,
+                    typeId: Number(this.$route.query.typeId || this.tabActive),
+                    identify: this.$route.query.id,
+                    abstractText: this.importantText,
+                }
+                this.unitAjax('post', 'v1/article/edit', params, res => {
+                    if (res.code == 200) {
+                        this.showset = false;
+                        // this.$message({
+                        //     type: 'success',
+                        //     message: '发表成功!'
+                        // })
+                    }
+                })
+            },
+            //获取文章详情
+            getidea() {
+                // if (this.$route.query.id) {
+                this.unitAjax('get', "v1/article/detail", {
+                        identify: this.$route.query.id
+                    }, res => {
+                        if (res.code == 200) {
+                            this.articleList = res.data.pages;
+                            arr = res.data.pages;
+                            if (this.articleList) {
+                                this.titile = this.articleList[this.pageIndex - 1].title;
+                                this.initUeditor(this.articleList[this.pageIndex - 1].text);
+                            } else if (this.pageIndex > this.articleList.length) {
+                                this.initUeditor('');
+                            }
+                        } else {
+                            this.initUeditor('');
+                        }
+
+                    })
+                    // } else {
+                    //     console.log(747)
+                    //         //  if (typeof(UE.getEditor("container")) != 'undefined') {
+                    //         // UE.getEditor("container").destroy();
+                    //     console.log(UE.getEditor("container"), 655)
+                    //         // this.initUeditor('');
+                    //         //  }
+                    //         //  location.reload()
+                    // }
+
+            },
+            //添加文章page
+            addpage() {
+
+                this.articletext[this.pageIndex - 1] = this.editor.getContent()
+                if (this.articletext[this.pageIndex - 1]) {
+                    //内容是否有变化
+                    // if (this.articletext[this.pageIndex - 1] != arr[this.pageIndex - 1]) {
+                    if (this.$route.query.editor == "publish") {
+                        if (this.$route.query.id) {
+                            this.ArticleRest()
+                        } else {
+                            //    this.publishArticle(true) 
+                        }
+
+                    } else if (this.$route.query.editor == "idea") {
+                        this.setbook('flog')
+                    }
+
+                    // }
+
+                    this.pageIndex++;
+                    if (this.$route.query.editor == "publish" && this.$route.query.id) {
+                        this.getidea()
+                    }
+
+                    // this.getbooksContent()
+
+                    if (this.articleList[this.pageIndex - 1]) {
+                        this.initUeditor(this.articleList[this.pageIndex - 1]);
+                    } else {
+                        this.initUeditor('');
+                    }
+                } else {
+                    this.$message.error('请编写内容')
+                }
+
+                UE.getEditor('container').focus();
+            },
+            removepage() {
+                if (this.$route.query.editor == "publish") {
+
+                    if (this.$route.query.id) {
+                        this.ArticleRest()
+                        this.getidea()
+                    } else {
+                        this.articleList = this.articletext
+                    }
+
+                } else if (this.$route.query.editor == "idea") {
+                    this.setbook('flog')
+
+                }
+                // this.articletext[this.pageIndex - 1] = this.editor.getContent()
+                //   if( this.articletext[this.pageIndex-1]!==arr[this.pageIndex-1]){
+                //           this.ArticleRest()
+                //      }
+                //重新获取articleList
+
+                this.pageIndex--;
+                if (this.articleList[this.pageIndex - 1]) {
+
+                    this.initUeditor(this.articleList[this.pageIndex - 1]);
+                } else {
+                    this.initUeditor('');
+                }
+                UE.getEditor('container').focus();
+
+            },
+            setsort() {
+                this.unitAjax('post', 'v1/article/type/edit', {
+                    id: Number(this.tabActive),
+                    type: this.sortValue,
+                    isDefault: this.defaultType
+                }, res => {
+                    if (res.code == 200) {
+                        this.showidea = false
+                        this.ideaisShow = false
+                        this.gettypeList()
+                    }
+                })
+            },
+            settabactive(item) {
+                this.tabActive = item.id;
+                this.ideaisShow = false;
+                this.sortValue = item.type;
+                this.defaultType = item.defaultType
+            },
+            // 修改类别
+            setidea(value) {
+                this.ideaisShow = true;
+                this.showcreat = false;
+
+            },
+            //发表文章
+            publishArticle(flog) {
+                this.articletext[this.pageIndex - 1] = this.editor.getContent()
+                    // this.articletext=JSON.stringify(this.articletext).replace(/\"/g,"'")
+                if (flog) {
+                    this.tabActive = 1
+                }
+                let params = {
+                    title: this.titile,
+                    text: this.articletext,
+                    open: this.opentab == 1,
+                    typeId: Number(this.tabActive),
+                    abstractText: this.importantText,
+                }
+                this.unitAjax('post', 'v1/article/add', params, res => {
+                    if (res.code == 200) {
+                        this.showset = false;
+                        if (flog) {
+                            this.$message('已保存至草稿')
+                        } else {
+                            this.$message({
+                                type: 'success',
+                                message: '发表成功!'
+                            })
+                        }
+
+                    }
+                })
+            },
+
+            //分类列表
+            gettypeList() {
+                this.unitAjax('get', 'v1/article/type/list', {}, res => {
+                    if (res.code == 200) {
+                        this.typeList = res.data;
+                        let flag = true
+                        for (let key in res.data) {
+                            if (res.data[key].type == '默认分类') {
+                                flag = false
+                            }
+                        }
+                        if (flag) {
+                            this.creatdefaultType()
+                        }
+                    }
+                })
+            },
+            //创建类别
+            creatType() {
+                if (this.typeText) {
+                    this.unitAjax('post', 'v1/article/type/add', {
+                        type: this.typeText,
+                        isDefault: false
+                    }, res => {
+                        if (res.code == 200) {
+                            this.showcreat = "";
+                            this.typeText = '';
+                            //调用
+                            this.gettypeList()
+                        }
+                    })
+                } else {
+                    this.$message('类别内容不能为空')
+                }
+
+            },
+            creatdefaultType() {
+                this.unitAjax('post', 'v1/article/type/add', {
+                    type: "默认分类",
+                    isDefault: true
+                }, res => {
+                    if (res.code == 200) {
+                        this.typeText = '';
+                        //调用
+                        this.gettypeList()
+                    }
+                })
+            },
+
+            getkeydown() {
+                // this.initUeditor(UE.getEditor('container').getContent())
+                let params = {
+                    bookId: Number(this.booksid),
+                    editId: Number(this.navid),
+                    title: this.titile,
+                }
+                this.unitAjax('post', 'v1/book/editCatalogue', params, res => {
+                    if (res.code == 200) {
+                        //重新获取目录
+                        this.getnav()
+                    }
+                })
+                UE.getEditor('container').focus();
+
+
+            },
+            settitile(value, id, e) {
+                this.getkeydown()
+                this.setbook()
+                this.pageIndex = 1;
+                //   this.articleList=[];
+                this.titile = value;
+                // this.initUeditor(value);
+                //保存上次目录内容
+                this.navid = id;
+                if (this.showTree = true) {
+                    let arr = document.querySelectorAll('.navtab')
+                    for (let i = 0; i < arr.length; i++) {
+                        arr[i].className = 'navtab';
+                    }
+                    if (this.utstyle == 'white') {
+                        e.target.className = 'nav-treeWhite navtab'
+                    } else {
+                        e.target.className = 'nav-treeBlack navtab'
+                    }
+
+                }
+
+                //获取点击目录的内容
+                this.getbooksContent()
+                this.articletext = []
+                this.articleList = []
+            },
+            //添加章节
+            addnav(value, index, parentid) {
+                var id = index == 0 ? "" : value[index].id
+
+                this.setCatalogue(id, parentid, "新加章名", "addnav")
+                    //   for(let i=0;i<2;i++){
+                    // this.setCatalogue(id, this.oldid)
+                    //   }
+
+                // value.splice(index + 1, 0, {
+                //     id: 'a' + value[index].id++,
+                //     name: "第" + (index + 1) + "章",
+                //     children: [{
+                //         name: "第1篇",
+                //         id: 'ab' + value[index].id++,
+                //         children: [{
+                //             name: "第1节",
+                //             id: 'abc' + value[index].id++,
+                //         }]
+                //     }]
+                // });
+            },
+            addTitle(list, index, parentid) {
+                this.setCatalogue(list[index].id, parentid, "新加篇名", 'addTitle')
+
+                // list.splice(count + 1, 0, {
+                //     id: 'b' + list[count].id++,
+                //     name: "第" + (count + 2) + "篇",
+                //     children: [{
+                //         name: "第1节",
+                //         id: 'bc' + list[count].id++,
+
+                //     }]
+                // });
+            },
+            addidea(list, index, parentid) {
+                this.setCatalogue(list[index].id, parentid, "新加小节")
+
+                // list.splice(index + 1, 0, {
+                //     id: 'c' + list[index].id++,
+                //     name: "第" + (index + 2) + "节",
+                // })
+            },
+            //删除章节
+            removenav(list, index) {
+                this.deleteTree(list, index, list[index].id)
+            },
+            removeTitle(list, index) {
+                this.deleteTree(list, index, list[index].id)
             },
             removeidea(list, index) {
-                list.splice(index, 1)
+                this.deleteTree(list, index, list[index].id)
+
+            },
+            //删除章节
+            deleteTree(list, index, id) {
+                //删除想法的评论
+                this.$confirm('此操作将永久删除该章节, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.unitAjax('delete', 'v1/book/deleteCatalogue', {
+                        bookId: Number(this.booksid),
+                        deleteId: Number(id)
+                    }, res => {
+                        if (res.code == 200) {
+                            list.splice(index, 1)
+                            this.$message('删除成功')
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
             },
             // 创作背景
-            setcreatColor(value) {
+            setcreatColor(value, fontColor) {
                 this.$refs.idea.style.background = "url(" + value + ")";
+                this.$refs.idea.style.backgroundSize = "100%";
                 document.querySelector('.edui-editor').style.backgroundColor = 'unset';
                 document.querySelector('.edui-editor-iframeholder').style.backgroundColor = 'unset';
                 document.querySelector('.title').style.backgroundColor = 'unset';
                 this.$refs.navTree.style.backgroundColor = 'unset';
+                this.getreadercolor(fontColor);
+                //存储
+                this.setValue({
+                    name: 'background',
+                    value: value
+                })
+                this.setValue({
+                    name: 'color',
+                    value: fontColor
+                })
             },
             //是否公开
             openfun(value) {
@@ -532,18 +1038,18 @@
             getnvetree() {
                 // console.log( document.querySelector('.treeimg'))transform: rotate(90deg);
                 this.showTree = !this.showTree;
-                if(this.showTree){
-                     let arr= document.querySelectorAll('.navtab')
-                            for(let i=0;i<arr.length;i++){
-                                 if(this.utstyle=='white'){
-                                 arr[0].className='nav-treeWhite navtab'
-                            }else{
-                                  arr[0].className='nav-treeBlack navtab'
-                            }
-                            }
-                           
+                if (this.showTree) {
+                    let arr = document.querySelectorAll('.navtab')
+                    for (let i = 0; i < arr.length; i++) {
+                        if (this.utstyle == 'white') {
+                            arr[0].className = 'nav-treeWhite navtab'
+                        } else {
+                            arr[0].className = 'nav-treeBlack navtab'
+                        }
+                    }
+
                 }
-                
+
             },
 
             //更换背景色
@@ -571,20 +1077,27 @@
                 this.showpopel = true;
                 this.showbooksay = true;
             },
+            backindex(){
+                this.showpopel = false;
+                this.showbooksay=false
+            },
             //联合出版
             sendidea(value) {
-                this.sumActive = value;
-                if (value == 2) {
+                  if (value == 2) {
                     this.showpopel = true;
-                } else {
+                } else if(value == 1){
                     this.showpopel = false;
+                     this.sendbook()
                 }
+                this.sumActive = value;
+              
+                
             },
             back() {
                 this.$router.go(-1);
             },
-            ideaHandle() {
-                this.editor.setContent("<p>new text</p>", true);
+            ideaHandle(item) {
+                this.editor.setContent(item, true);
                 this.activeTools = "";
             },
             linkHandle() {
@@ -647,6 +1160,9 @@
                         if (file.size / 1024 / 1024 < 5) {
                             //图片小于5M
                             var url = this.getFileUrl(file);
+                            // this.getUrlBase64(url,'png',)
+                            // ext=
+                            console.log(url,file)
                             if (url) {
                                 var img = new Image();
                                 img.src = url;
@@ -684,35 +1200,26 @@
                         break;
                     case "justifyl":
                         this.editor.execCommand("justify", "left");
-                        this.$refs.text.style.textAlign = 'left';
+                        // this.$refs.text.style.textAlign = 'left';
                         break;
                     case "justifym":
-                        this.$refs.text.style.textAlign = 'center';
+                        // this.$refs.text.style.textAlign = 'center';
                         this.editor.execCommand("justify", "center");
                         break;
                     case "justifyr":
-                        this.$refs.text.style.textAlign = 'right';
+                        // this.$refs.text.style.textAlign = 'right';
                         this.editor.execCommand("justify", "right");
                         break;
                     case "insertimage":
                         this.$refs.file.click();
                         break;
-                     case "issue":
-                     this.tabcreat=1;
-                     this.showset=true;
-                    //  let params={
-                    //      title:this.titile,
-                    //      text:this.editor.getContent(),
-                    //      open:JSON.stringify(this.opentab==1),
-                    //  }
-                    //     this.unitAjax('post','v1/article/add',params,res=>{
-                    //          if(res.code==200){
-                    //              this.$message({
-                    //                  type: 'success',
-                    //                  message: '发表成功!'
-                    //              })
-                    //          }   
-                    //     })
+                    case "issue":
+                        // if(){
+                        this.tabcreat = 1;
+                        this.showset = true;
+                        // }else{
+                        //     this.setbook()
+                        // }
                         break;
                 }
             },
@@ -725,7 +1232,28 @@
                     path: url
                 });
             },
-
+            //灵感
+            getinspration() {
+                this.unitAjax('get', 'v1/inspiration/list', {
+                    page: 1,
+                    pageSize: 50
+                }, res => {
+                    if (res.code == 200) {
+                        this.insparitionList = res.data.rows
+                    }
+                })
+            },
+            //想法
+            getideaList() {
+                this.unitAjax('get', 'v1/idea/list', {
+                    page: 1,
+                    pageSize: 50
+                }, res => {
+                    if (res.code == 200) {
+                        this.ideaList = res.data.rows
+                    }
+                })
+            }
         },
         watch: {
             "$store.state.utstyle": function(val) {
@@ -733,19 +1261,35 @@
             }
         },
         beforeDestroy() {
+            this.tabActive = 1;
+
+            if (this.editor.getContent()) {
+
+                if (this.$route.query.editor == "idea") {
+                    //保存书籍
+                    this.setbook()
+                } else if (this.$route.query.editor == "publish") {
+                    this.publishArticle(true)
+                }
+
+            }
             if (typeof(UE.getEditor("container")) != 'undefined') {
                 UE.getEditor("container").destroy();
+            }
+        },
+        computed: {
+            articleText() {
+                return this.$store.state.articleText;
             }
         },
         mounted() {
             var _this = this;
             this.height = window.innerHeight;
-
             window.onresize = function() {
                 _this.height = window.innerHeight;
             };
 
-            this.initUeditor('joajeowe');
+
         }
     };
 </script>
@@ -758,6 +1302,9 @@
         transition: background 0.3s ease;
         .activeset {
             border: 1px solid #e6e6e6;
+        }
+        .top {
+            margin-top: 15px;
         }
         .treel {
             position: absolute;
@@ -987,6 +1534,21 @@
                     width: 150px;
                     height: 180px;
                 }
+                .idea-content {
+                    position: relative;
+                    .cover {
+                        position: absolute;
+                        bottom: 15px;
+                        left: 0;
+                        width: 80%;
+                        height: 50px;
+                        text-align: left;
+                        color: #ababab;
+                        font-size: 12px;
+                        line-height: 20px;
+                        padding: 5px 0;
+                    }
+                }
                 .right {
                     width: 50%;
                     height: 217px;
@@ -996,7 +1558,7 @@
                     .creat {
                         width: 80%;
                         height: 54px;
-                        a {
+                        input {
                             display: inline-block;
                             width: 100%;
                             height: 100%;
@@ -1016,17 +1578,8 @@
                     }
                     .booksay {
                         height: 40px;
-                        bottom: 85px;
+                        bottom: 110px;
                         line-height: 40px;
-                    }
-                    .cover {
-                        width: 80%;
-                        height: 50px;
-                        text-align: left;
-                        color: #ababab;
-                        font-size: 12px;
-                        line-height: 20px;
-                        padding: 5px 0;
                     }
                 }
                 .idea {
@@ -1362,6 +1915,7 @@
                 height: 50px;
                 padding: 0 8px;
                 margin-right: 54px;
+                text-align: center;
             }
             .pageTools {
                 width: 880px;
@@ -1378,16 +1932,21 @@
                     margin: 0 auto;
                     @include copynone;
                     position: relative;
-                    &:after {
-                        content: '';
-                        display: block;
+                    .page {
                         position: absolute;
-                        left: 50%;
                         top: 0;
-                        width: 1px;
-                        height: 100%;
-                        background: #E6E6E6;
+                        right: 50%;
                     }
+                    // &:after {
+                    //     content: '';
+                    //     display: block;
+                    //     position: absolute;
+                    //     left: 50%;
+                    //     top: 0;
+                    //     width: 1px;
+                    //     height: 100%;
+                    //     background: #E6E6E6;
+                    // }
                 }
                 .pull-left,
                 .pull-right {

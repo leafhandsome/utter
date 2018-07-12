@@ -23,6 +23,7 @@
                 type: ""
             };
         },
+
         methods: {},
         components: {
             utheader,

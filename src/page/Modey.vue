@@ -3,12 +3,14 @@
       <!-- <div :class="rowcol=='col'?'col':'row'"> -->
     <div class="ing" ref='align' :class='!ingActive?"":rowcol=="row"?"active row":"active col"' v-show='!hiddenArrow'>
         
-      <div class="big" ref='titile'>
+      <div v-show="!showinput" class="big" ref='titile' @dblclick="showinput=true">
         UTTER - 你的独立出版
       </div>
-      <div class="sub" ref='content'>
+      <input class="big" type="text" v-model="siteName" v-show="showinput" @keydown.enter="setting(siteName)">
+      <div class="sub" ref='content' v-show="!showinputText"  @dblclick="showinputText=true">
         发声，致自己、或者给世界
       </div>
+      <input class="sub" v-model="siteInfoDetail" type="text" v-show="showinputText"  @keydown.enter="setting(siteInfoDetail)">
     <!-- </div> -->
     </div>
     <!-- //设置 -->
@@ -65,12 +67,12 @@
       <!-- 右边壁纸 -->
     <!-- <img :src="imgurl" alt=""> -->
       <div class="rihgtimgs" :class='stylecolor=="white"?"active-white":"active-black"' v-show='rightimgshow'>
-        <span class="initcolor" @click='setbackgroundimg("none")'></span>
-        <img src="../../static/img/3.jpg" alt="" @click='setbackgroundimg("../../static/img/3.jpg")'>
-        <img src="../../static/img/2.jpg" alt="" @click='setbackgroundimg("../../static/img/2.jpg")'>
-        <img src="../../static/img/4.jpg" alt="" @click='setbackgroundimg("../../static/img/4.jpg")'>
-        <img src="../../static/img/5.jpg" alt="" @click='setbackgroundimg("../../static/img/5.jpg")'>
-        <img src="../../static/img/1.jpg" alt="" @click='setbackgroundimg("../../static/img/1.jpg")'>
+        <!-- <span class="initcolor" @click='setbackgroundimg("none")'></span> -->
+        <img src="../../static/img/1.jpg" alt="" @click='setbackgroundimg("../../static/img/1.jpg","white")'>
+        <img src="../../static/img/2.jpg" alt="" @click='setbackgroundimg("../../static/img/2.jpg","white")'>
+        <img src="../../static/img/3.jpg" alt="" @click='setbackgroundimg("../../static/img/3.jpg","black")'>
+        <img src="../../static/img/4.jpg" alt="" @click='setbackgroundimg("../../static/img/4.jpg","black")'>
+       
       </div>
     <div class="module" :class='{"active":showAll}' @click.stop='show'>
       <!-- 返回海报设置 -->
@@ -236,6 +238,10 @@
                 styleindex: 0,
                 imgindex: 0,
                 point: [],
+                showinput: false,
+                showinputText: false,
+                siteInfoDetail:'',
+                siteName:'',
             };
         },
         watch: {
@@ -251,6 +257,15 @@
         },
         created() {
             this.stylecolor = this.$route.query.type;
+            //读取
+            window.onload = () => {
+                if (this.getValue('background')) {
+                    this.$refs.modey.style.background = "url(" + this.getValue('background') + ")";
+                    this.$refs.modey.style.backgroundSize = "100%";
+                    // this.stylecolor = this.getValue('color');
+                }
+            }
+
         },
         methods: {
             changeImg(e) {
@@ -329,8 +344,8 @@
                 }
             },
             //切换皮肤
-            setbackgroundimg(value) {
-                // this.imgurl='/static/img/6.jpg'
+            setbackgroundimg(value, fontColor) {
+                //  this.stylecolor=fontColor
                 if (value == "none") {
                     if (this.$route.query.type == "white") {
                         this.$refs.modey.style.background = "#efefef";
@@ -341,6 +356,15 @@
                     this.$refs.modey.style.backgroundImage = "url(" + value + ")";
                     this.$refs.modey.style.backgroundSize = "100%";
                 }
+                //存储
+                this.setValue({
+                    name: 'background',
+                    value: value
+                })
+                this.setValue({
+                    name: 'color',
+                    value: fontColor
+                })
             },
             gettitleactiveimg(num) {
                 this.settitleimgshow = false;
@@ -354,19 +378,28 @@
                 this.settitleimgshow = true;
                 this.rightimgshow = true;
             },
-            setting() {
-               this.point= JSON.stringify(this.point).replace(/\"/g,"'")
+            setting(value) {
+                this.point = JSON.stringify(this.point).replace(/\"/g, "'")
+                if(value){
+                    this.showinputText=false;
+                    this.showinput=false;
+                }
                 let params = {
-                    siteName: "独立出版",
-                    siteInfoDetail: "签名",
+                    siteName: this.siteName||"独立出版",
+                    siteInfoDetail:this.siteInfoDetail|| "签名",
                     siteInfoShowMode: this.point,
                     siteInfoXPoint: this.fontvalue,
-                    siteInfoYPoint:this.fontvalue2,
+                    siteInfoYPoint: this.fontvalue2,
                     siteNameSize: Number(this.titlevalue),
                     siteDetailSize: Number(this.contentvalue),
                 }
                 this.unitAjax('post', 'v1/me/siteInfoSetting', params, res => {
                     if (res.code == 200) {
+                        if(value){
+                            this.siteName="";
+                            this.siteInfoDetail="";
+                            //重新调用
+                        }
                         this.$message({
                             message: '设置成功',
                             type: 'success'

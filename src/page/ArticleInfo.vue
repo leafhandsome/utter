@@ -4,33 +4,36 @@
     <div class="article">
       <div class="titleBox clearfix">
         <div class="pull-left">
-          写下你的一生
+         {{infolist.title}}
         </div>
         <div class="pull-right">
-          <div class="time">2017-11-19 / 23:59</div>
+          <div class="time">{{infolist.lastUpdateTime}}</div>
           <div class="nickName">UTTER</div>
         </div>
       </div>
-      <div class="desc">
-        心的角落，没有垃圾桶能容下她的尘。<br>
-        而写作，有时可以清洁内心。<br>
-        UTTER/发声，至自己，或者给世界。<br><br><br>
-
-        我们以简驭繁，只为深度创作<br>
-        在UTTER，你可以创作并发表你的作品，也可以自由出版你的作品。<br>
-        如果有人想要了解你，也许可以给他一个你的UTTER。
+      <div class="desc" v-html="infolist.text">
+      
       </div>
 
       <div class="tools clearfix">
         <div class="pull-left">
           <div class="tool">
-            <img src="../assets/images/article/see.png" alt="关注"> <span>99</span>
+            <img src="../assets/images/article/see.png" alt="关注"> <span>{{message.viewCount}}</span>
           </div>
           <div class="tool">
-            <img src="../assets/images/article/keep.png" alt="收藏"> <span>03</span>
+              <a href='javascript:;'>
+            <img src="../assets/images/article/keep.png" alt="收藏"> 
+            </a>
+            <span>{{message.commentCount}}</span>
           </div>
           <div class="tool">
-            <img src="../assets/images/article/good.png" alt="点赞"> <span>28</span>
+              <a href='javascript:;'>
+              <img v-if="!message.like&&!showgood" src="../assets/images/publish/110 赞扬.png" alt="点赞" @click="setgood(message.id,message.likeCount)"> 
+                <img v-if="$route.query.type=='white'&&(message.like||showgood)" src="../assets/images/article/good.png" alt="点赞">
+                <img v-if="$route.query.type=='black'&&(message.like||showgood)" src="../assets/images/publish/120 赞扬-白.png" alt="点赞">
+            </a>
+            <span v-show="!showgood">{{message.likeCount}}</span>
+            <span v-show="showgood">{{likeCount}}</span>
           </div>
         </div>
         <div class="pull-right">
@@ -43,7 +46,7 @@
                         <img v-if="tabactive!=1" src="../assets/images/article/87 分享.png" alt="分享">
                     </el-tooltip>
                   </a>
-                  <a href="javaScript:;" class="tools utBorder"  @click="gettools(2)">
+                  <a href="javaScript:;" class="tools utBorder"  @click="gettools(2,message)">
                     <el-tooltip effect="dark" content="编辑" placement="top">
                         <img  v-if="pagecolor=='white'&&tabactive==2" src="../assets/images/article/edit.png" alt="编辑">
                         <img v-if="pagecolor=='black'&&tabactive==2" src="../assets/images/article/104 编辑-白.png" alt="编辑">
@@ -66,17 +69,25 @@
                   </a>
                 </div>
             <div class="innerbox clearfix">
-              <div class="pull-left">
-                <span>0</span><img src="../assets/images/article/prev.png" alt="上一页">
-              </div>
+               <div class="pull-left">
+                <span>{{ideapage}}</span>
+                <img v-show="ideapage==1" src="../assets/images/article/prev.png" alt="上一页">
+                <img v-show="$route.query.type=='white'&&ideapage!=1" src="../assets/images/article/prev-black.png" alt="上一页" @click="prepage">
+                <img  v-show="$route.query.type=='black'&&ideapage!=1" src="../assets/images/article/prev-w.png" alt="上一页" @click="prepage">
+                </div>
               <a href='javaScript:;'>
                 <img v-show="!showmore" class="more" src="../assets/images/article/more-w.png" alt="" @click.stop="showmore=true">
               <img v-show="$route.query.type=='white'&&showmore" class="more" src="../assets/images/article/more.png" alt="" @click.stop="showmore=true">
               <img v-show="$route.query.type=='black'&&showmore" class="more" src="../assets/images/article/135 书架-更多-白.png" alt="" @click.stop="showmore=true">
               </a>
-              <div class="pull-right">
-                <img src="../assets/images/article/next.png" alt="下一页"><span>1</span>
-              </div>
+                <div class="pull-right">
+                <a href='javascript:;' v-if="message.details">
+                <img v-show="ideapage ==message.details.length" src="../assets/images/article/next-a.png" alt="">
+            <img v-show="$route.query.type=='white'&&ideapage !=message.details.length" src="../assets/images/article/next.png" alt=""  @click="nextpage">
+            <img v-show="$route.query.type=='black'&&ideapage !=message.details.length" src="../assets/images/article/next-w.png" alt="下一页" @click="nextpage">
+            <span>{{message.details.length}}</span>
+            </a>
+            </div>
             </div>
           </div>
         </div>
@@ -95,30 +106,30 @@
         <div class="cover pull-left"></div>
         <div class="info pull-left">
           <div class="nickName">用户名</div>
-          <textarea name="name" placeholder="请发表你的见解或欣赏"></textarea>
+          <textarea name="name" placeholder="请发表你的见解或欣赏" v-model="commentText"></textarea>
         </div>
         <div  @click="submitactive=true">
-        <img v-show="!submitactive" src="../assets/images/userinfo/112 提交.png" class='submit'>
+        <img v-show="!submitactive" src="../assets/images/userinfo/112 提交.png" class='submit' @click="sendsayInfo">
         <img v-show="submitactive&&pagecolor=='white'" src="../assets/images/editor/issueb.png" class='submit'>
         <img v-show="submitactive&&pagecolor=='black'" src="../assets/images/editor/issuew.png" class='submit'>
        </div>
       </div>
 
-      <div class="item clearfix">
-        <img src="../assets/images/article/del.png" class='del' alt="删除">
+      <div class="item clearfix" v-for="(item, index) in saylist" :key="index">
+        <img src="../assets/images/article/del.png" class='del' alt="删除" @click="removeArticle(item.id)">
 
         <div class="clearfix">
           <div class="cover pull-left"></div>
           <div class="info pull-left">
-            <div class="nickName">用户名</div>
+            <div class="nickName">{{item.penName}}</div>
             <div class="content">
-              请发表你的见解或欣赏
+              {{item.comment}}
             </div>
           </div>
         </div>
 
         <div class="commentBottom clearfix">
-          <div class="time pull-left">2017-11-19 / 23:59</div>
+          <div class="time pull-left">{{item.createTime}}</div>
 
           <div class="tools pull-right">
             <!-- <div class="tool">
@@ -138,27 +149,182 @@
 </template>
 <script>
     export default {
+        props: ["message"],
         data() {
             return {
                 pagecolor: this.$route.query.type,
                 showmore: false,
                 tabactive: 0,
                 submitactive: false,
+                ideapage: 1,
+                ideaTotal: '',
+                infolist: [],
+                commentText: "",
+                pageinspriation: 50,
+                saylist: [],
+                showgood: false,
+                likeCount: ''
             };
         },
+        created() {
+
+        },
+        watch: {
+            'message': function() {
+                this.infolist = this.message.details[0]
+                this.getsaylist()
+            }
+        },
         methods: {
+            setgood(id, count) {
+                this.unitAjax('post', 'v1/article/like/add', {
+                    articleId: Number(id)
+                }, res => {
+                    if (res.code == 200) {
+                        this.showgood = true;
+                        this.likeCount = count++
+                    }
+                })
+            },
+            removeArticle(id) {
+                this.$confirm('此操作将永久删除该评论, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.unitAjax('delete', 'v1/article/comment/delete', {
+                        commentId: id
+                    }, res => {
+                        if (res.code == 200) {
+                            if (res.code == 200) {
+
+                                this.$message({
+                                    type: 'success',
+                                    message: '删除成功!'
+                                });
+                                this.getsaylist()
+                            }
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+            },
+            //获取评论列表
+            getsaylist() {
+                let params = {
+                    page: "1",
+                    pageSize: "50",
+                    articleId: this.message.id
+                }
+                this.unitAjax('get', 'v1/article/comment/list', params, res => {
+                    if (res.code == 200) {
+                        this.saylist = res.data.rows
+                    } else {
+
+                    }
+                })
+            },
+            // ·发表评论
+            sendsayInfo() {
+                if (this.commentText) {
+                    let params = {
+                        articleId: Number(this.message.id),
+                        replyUserId: '',
+                        commentText: this.commentText
+                    }
+                    this.submitactive = true
+                    this.unitAjax('post', 'v1/article/comment/add', params, res => {
+                        this.submitactive = false;
+                        if (res.code == 200) {
+                            this.commentText = "";
+
+                            this.getsaylist()
+                        } else {
+                            this.$message.error(res.msg)
+                        }
+                    })
+
+                }
+            },
+            // 翻页
+            nextpage() {
+                if (this.ideapage == this.ideaTotal) {
+                    this.ideapage = this.ideaTotal
+                } else {
+                    this.ideapage++;
+                    this.infolist = this.message.details[this.ideapage - 1]
+                }
+
+            },
+            prepage() {
+                if (this.ideapage > 1) {
+                    this.ideapage--;
+                    this.infolist = this.message.details[this.ideapage - 1]
+                } else {
+                    this.ideapage = 1
+                }
+
+            },
             // 工具栏
-            gettools(value) {
+            gettools(value, item) {
                 this.tabactive = value;
                 if (value == 2) {
+                    this.$store.state.articleText = item
                     this.$router.push({
                         path: '/editor',
                         query: {
-                            editor: "idea",
-                            type: this.$route.query.type
+                            editor: 'publish',
+                            type: this.$route.query.type,
+                            id: item.identify,
+                            typeId: item.typeId
                         }
                     })
                 }
+                if (value == 4) {
+                    console.log(44)
+                        //删除文章
+                    this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.unitAjax('delete', 'v1/article/delete', {
+                            articleId: this.message.id
+                        }, res => {
+                            if (res.code == 200) {
+                                if (res.code == 200) {
+
+                                    this.$message({
+                                        type: 'success',
+                                        message: '删除成功!'
+                                    });
+                                    history.go(0)
+                                        // this.$router.push({
+                                        //     path: '/whiterow/myarticle',
+                                        //     query: {
+                                        //         type: this.$route.query.type
+                                        //     }
+                                        // })
+                                }
+                            }
+                        })
+
+                    }).catch(() => {
+                        this.showmore = false;
+                        this.tabactive = 0;
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
+                }
+
             },
             tourl(url, query) {
                 tools.router.push({

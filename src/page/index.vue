@@ -3,7 +3,10 @@
     <utheader :type='type' v-show='showHeader'></utheader>
     <!-- {{$store.state.prevModule}}123 -->
     <transition name="fade" mode="out-in">
-        <router-view></router-view>
+        <keep-alive>
+                <router-view></router-view>
+        </keep-alive>
+        
     </transition>
 
     <utfooter v-show='showFooter'></utfooter>

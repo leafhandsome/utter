@@ -1,42 +1,53 @@
 <template lang="html">
-    <div class="bookinfo">
+    <div class="bookinfo" v-if="bookInfo">
         <div class="book">
             <div class="book__img">
-                <img src="" alt="">
+                <!-- <a href='javascript:;' v-if="bookInfo.cover">
+                <img :src="bookInfo.cover" alt="">
+            </a> -->
             </div>
             <div class="book__msg">
-                <div class="book__name">不问远征 无关朝夕</div>
-                <div class="book__author">独立出版：余甘</div>
-                <div class="book__price">23.00￥</div>
+                <div class="book__name" v-if="bookInfo.bookName">{{bookInfo.bookName}}</div>
+                <div class="book__author">独立出版{{bookInfo.publishUserId}}：{{bookInfo.authorName}}</div>
+                <div class="book__price">{{Number(bookInfo.price).toFixed(2)}}￥</div>
                 <div class="book__feedback">
                     <strong>
                         <img src="../../assets/images/publish/108 浏览.png" alt="">
                     </strong>
-                    <span>39</span>
+                    <span>{{Number(bookInfo.viewCount)}}</span>
                     <strong>
                         <img src="../../assets/images/publish/109 收藏.png" alt="">
                     </strong>
-                    <span>39</span>
+                    <span>{{Number(bookInfo.favorityCount)}}</span>
                     <strong>
                         <img src="../../assets/images/publish/111 评论回复.png" alt="">
                     </strong>
-                    <span>39</span>
+                    <span>{{Number(bookInfo.commentCount)}}</span>
                 </div>
                 <div class="book__intro">
-                    <span>介绍：</span>不问远征 无关朝夕</div>
-                <div class="book__time">出版日期：2017.09.26 无修订<img class="editimg" src="../../assets/images/editor/88 编辑.png" alt=""></div>
+                    <span>介绍：</span>{{bookInfo.introduce}}</div>
+                <div class="book__time">出版日期：{{bookInfo.createTime}} {{bookInfo.lastUpdateTime==bookInfo.createTime?'无修订':'修订日期'+bookInfo.lastUpdateTime}}
+                    <a href='javascript:;' v-if="!$route.query.userId">
+                    <img class="editimg" src="../../assets/images/editor/88 编辑.png" alt="" @click="linkto(bookInfo.id)">
+                </a>
+                    </div>
             </div>
-            <div class="book__btn">
-                <router-link :to="{path:'/read',query:{type:$route.query.type}}">
+            <div class="book__btn" v-if="$route.query.userId">
+                <router-link :to="{path:'/read',query:{type:$route.query.type,bookId:bookInfo.id}}">
                 <button class="book__trybtn">试读</button>
                 </router-link>
-                <button class="book__collectbtn">收藏</button>
+                <button class="book__collectbtn" @click="addfavority(bookInfo.id)">{{bookInfo.favority?"已收藏":"收藏"}}</button>
                
                 <br>
-                <button class="book__addbtn">加入书单</button>
+                <button class="book__addbtn" @click="addbuyBooks(bookInfo.id)">加入书单</button>
                 <br>
                 <button class="book__buybtn">立即购买</button>
                 <br>
+            </div>
+              <div class="book__btn" v-if="!$route.query.userId">
+                <router-link :to="{path:'/read',query:{type:$route.query.type,bookId:bookInfo.id}}">
+                <button class="book__trybtn">阅读</button>
+                </router-link>
             </div>
         </div>
         <div class="show clearfix">
@@ -45,24 +56,24 @@
                     <div class="show__more">
                         <img src="../../assets/images/publish/131 书架-更多-黑.png" alt="">
                     </div>
-                    <div class="show__total">总字数：555554545</div>
+                    <div class="show__total">总字数：{{Number(bookInfo.totalCountOfWords)}}</div>
                 </div>
                 <div class="show__cataloglist">
                     <div class="titile" :class="$route.query.type=='white'?'ut-white1':'ut-black1'" ref="navTree">
                         <div class="line" :class="$route.query.type=='white'?'navBorder-b pagecolr-black-after':'navBorder-w pagecolr-white-after'"></div>
                         
-                         <ul v-for="(item, index) in datalist" :key="index">
-                              <li class='bor' :class="navid==item.id?'active-nav':''">
-                                  <a href='javascript:;' :class="$route.query.type=='white'?'nav-treeWhite':'nav-treeBlack'" @click="settitile(item.label,item.id)">{{item.label}}
+                         <ul v-for="(item, index) in bookInfo.catalogues" :key="index">
+                              <li class='bor' >
+                                  <a href='javascript:;' :class="$route.query.type=='white'?'nav-treeWhite':'nav-treeBlack'">{{item.name}}
                                      </a></li>
                               <label  v-for="(i, idx) in item.children" :key="idx">
-                              <li class="big-titile" :class="navid==i.id?'active-nav':''">
-                                  <a href='javascript:;' @click="settitile(i.label,i.id)" :class="$route.query.type=='white'?'nav-treeWhite':'nav-treeBlack'">{{i.label}}
+                              <li class="big-titile" >
+                                  <a href='javascript:;'  :class="$route.query.type=='white'?'nav-treeWhite':'nav-treeBlack'">{{i.name}}
                                        </a> 
                                  
                               </li>
-                              <li class="small-titile" :class="navid==count.id?'active-nav':''" v-for="(count,num) in i.children" :key="num">
-                                  <a href='javascript:;' @click="settitile(count.label,count.id)" :class="$route.query.type=='white'?'nav-treeWhite':'nav-treeBlack'">{{count.label}}
+                              <li class="small-titile"  v-for="(count,num) in i.children" :key="num">
+                                  <a href='javascript:;'  :class="$route.query.type=='white'?'nav-treeWhite':'nav-treeBlack'">{{count.name}}
                                   </a> </li>
                               </label>
                          </ul>
@@ -81,15 +92,15 @@
                     </div>
                     <div class="clearfix">
                             <div class="mainItem utBorder">
-                                    <textarea :class="$route.query.type=='white'?'ut-white1':'ut-black1 '"  name="name" rows="8" cols="100" placeholder='写下你的评论吧...'></textarea>
+                                    <textarea :class="$route.query.type=='white'?'ut-white1':'ut-black1 '" v-model="commentText" name="name" rows="8" cols="100" placeholder='写下你的评论吧...'></textarea>
                                     <el-tooltip effect="dark" content="发表" placement="bottom">
-                                            <img v-if="!submitactive" src="../../assets/images/userinfo/112 提交.png" class='submit' @click="sendsub">
+                                            <img v-if="!submitactive" src="../../assets/images/userinfo/112 提交.png" class='submit' @click="sendsub(bookInfo.id)">
                                             <img v-if="submitactive&&$route.query.type=='white'" src="../../assets/images/editor/issueb.png" class='submit'  @click.stop="submitactive=true">
                                             <img v-if="submitactive&&$route.query.type=='black'" src="../../assets/images/editor/issuew.png" class='submit'  @click.stop="submitactive=true">
                                     </el-tooltip>
                                   </div>
                     </div>
-                    <div class="comment__item utBorder">
+                    <div class="comment__item utBorder" v-for="(item, index) in commentList" :key="index">
                         <div class="tool">
                             <a href='javascript:;' class="maxTop">
                                 <img src="../../assets/images/article/top-a.png" alt="">
@@ -97,7 +108,7 @@
                                 <img src="../../assets/images/article/top-w.png" alt=""> -->
                             </a>
                             <a href='javascript:;'>
-                            <img src="../../assets/images/article/90 删除.png" alt="">
+                            <img src="../../assets/images/article/90 删除.png" alt="" @click="delcommont(item.id,bookInfo.id)">
                             <!-- <img src="../../assets/images/article/105 删除-白.png" alt="">
                             <img src="../../assets/images/article/del.png" alt=""> -->
                         </a>
@@ -106,8 +117,8 @@
                         <div class="clearfix">
                             <div class="comment__userimg"></div>
                             <div class="comment__text">
-                                <div class="comment__username">路人甲</div>
-                                <div class="comment__content">发表你的见解或欣赏</div>
+                                <div class="comment__username">{{item.penName}}</div>
+                                <div class="comment__content">{{item.comment}}</div>
                             </div>
                             <div class="comment__btn">
                                 <span class="comment__up">
@@ -120,14 +131,14 @@
                         </div>
 
 
-                        <div class="comment__s clearfix">
-                            <div class="comment__time">2017 11 18 / 23:59</div>
+                        <!-- <div class="comment__s clearfix">
+                            <div class="comment__time">{{item.createTime}}</div>
                             <div class="comment__feedback">
-                                <!-- <strong>
+                                <strong>
                                     <img src="../../assets/images/publish/108 浏览.png" alt="">
                                 </strong>
                                 <span>39</span>
-                                <strong> -->
+                                <strong>
                                     <img src="../../assets/images/publish/111 评论回复.png" alt="">
                                 </strong>
                                 <span>39</span>
@@ -136,7 +147,7 @@
                                 </strong>
                                 <span>39</span>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -145,49 +156,104 @@
 </template>
 <script>
     export default {
-
+        props: ['book'],
         data() {
             return {
-                datalist: [{
-                    label: '一级 1',
-                    children: [{
-                        label: '二级 1-1',
-                        children: [{
-                            label: '三级 1-1-1'
-                        }]
-                    }]
-                }, {
-                    label: '一级 2',
-                    children: [{
-                        label: '二级 2-1',
-                        children: [{
-                            label: '三级 2-1-1'
-                        }]
-                    }, {
-                        label: '二级 2-2',
-                        children: [{
-                            label: '三级 2-2-1'
-                        }]
-                    }]
-                }, {
-                    label: '结语',
-
-                }],
                 defaultProps: {
                     children: 'children',
                     label: 'label'
                 },
                 navid: 0,
                 submitactive: false,
+                commentText:'',
             }
         },
         created() {
-
+            console.log(this.$store.state.commentList)
+        },
+        computed: {
+            bookInfo() {
+                return this.$store.state.bookInfo;
+            },
+            commentList(){
+                return this.$store.state.commentList
+            }
         },
         methods: {
+            //加入书单
+            addbuyBooks(id){
+                this.unitAjax('post','v1/book/booklist/add',{bookId:Number(id)},res=>{
+                    if(res.code==200){
+                        this.$message('已加入书单')
+                    }
+                })
+            },
+            //收藏
+            addfavority(id) {
+                this.unitAjax('post', "v1/book/favority/add", {
+                    bookId: Number(id)
+                }, res => {
+                    if (res.code == 200) {
+                        this.$message('收藏成功')
+                    }
+                })
+            },
+            //跳转编辑
+            linkto(id) {
+                this.$router.push({
+                    path: "/editor",
+                    query: {
+                        editor: 'idea',
+                        type: this.$route.query.type,
+                        id: id
+                    }
+                })
+            },
             //发表评论
-            sendsub() {
-                this.submitactive = true
+            sendsub(id) {
+                if(this.commentText){
+                       let params={
+                    bookId:Number(id),//	string	是	想法ID		
+                    replyUserId:"",//	string	是	被回复的人ID(若对原想法评论，则为空)		
+                    commentText:this.commentText,//	string	是	评论内容
+                }
+                 this.submitactive = true
+                this.unitAjax('post','v1/book/comment/add',params,res=>{
+                      this.submitactive = false
+                    if(res.code==200){
+                        this.commentText=""
+                        this.$store.commit('getlist',id)
+                      this.$message('发表成功')
+                    }else{
+                        this.$message(res.msg)
+                    }
+                })
+                }else{
+                    this.$message('评论内容不能为空')
+                }
+             
+            },
+            //删除评论
+            delcommont(id,bookId){
+                   this.$confirm('此操作将永久删除该评论, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                       this.unitAjax('delete','v1/book/comment/delete',{commentId:id},res=>{
+                    if(res.code==200){
+                        this.$store.commit('getlist',bookId)
+                         this.$message('删除成功')   
+                    }
+                })
+
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
+             
             },
             tourl(url, query) {
                 tools.router.push({
@@ -238,6 +304,10 @@
         height: 510px;
         background: #eeeeee;
         float: left;
+        img {
+            width: 100%;
+            height: 100%;
+        }
     }
     
     .book__msg {
@@ -509,19 +579,20 @@
             }
         }
     }
+    
     .mainItem {
-                position: relative;
-                border-bottom: 1px solid;
-                textarea {
-                    border: none;
-                    resize: none;
-                    outline: none;
-                }
-                .submit {
-                    position: absolute;
-                    bottom: 20px;
-                    right: 19px;
-                    @include hand;
-                }
-            }
+        position: relative;
+        border-bottom: 1px solid;
+        textarea {
+            border: none;
+            resize: none;
+            outline: none;
+        }
+        .submit {
+            position: absolute;
+            bottom: 20px;
+            right: 19px;
+            @include hand;
+        }
+    }
 </style>
