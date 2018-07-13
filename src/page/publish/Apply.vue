@@ -58,7 +58,7 @@
                 Idcard: 0,
                 imgcard1: '',
                 imgcard2: '',
-                agreement: '协议',
+                agreement: this.$store.state.arguments,
                 err: {
                     name: '',
                     mobile: '',
@@ -71,6 +71,11 @@
                 publishBookInfo: '',
                 publishArticle: '',
                 check: "",
+            }
+        },
+        computed: {
+            arguments() {
+                return this.$store.state.arguments
             }
         },
         methods: {
@@ -103,7 +108,7 @@
                         }
                         this.unitAjax('post', "v1/book/publish/applyForAuthor", params, res => {
                             if (res.code == 200) {
-                                this.$message('提交成功')
+                                this.$message('提交成功,请耐心等待审核')
                                 this.$store.commit('showbox', false)
                                 window.scrollTo(0, 0);
                             }

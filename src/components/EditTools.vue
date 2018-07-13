@@ -182,14 +182,15 @@
             </div>
             <!-- 协议 -->
             <div class="note" v-show="shownote">
-                <ul v-html="agreement">
-                  <li>作者可获得80%的作品销售收益(联合出版同上);</li>
+                <ul>
+                    <li>{{$store.state.arguments}}</li>
+                  <!-- <li>作者可获得80%的作品销售收益(联合出版同上);</li>
                   <li>每条销售数据实时展示，上个月收益结算后可随时体现。</li>
                   <li>作者必须保证其作品的原创性;</li>
                   <li>作者出版免费书籍时作品中部能出现插图;</li>
                   <li>联合出版的图书请提前确定好每位联合作者的收益占比;</li>
                   <li>联合出版的图书在上架后会自动在每位联合作者的站点同时上架;</li>
-                  <li>正式出版的图书暂时不可随意下架，作者可进行图书修订。</li>
+                  <li>正式出版的图书暂时不可随意下架，作者可进行图书修订。</li> -->
                 </ul>
                 <p><a href="javaScript:;"><img src="../assets/images/article/see.png" alt="" @click="shownote=false"></a></p>
             </div>
@@ -418,13 +419,13 @@
                 parentId: '',
                 oldid: "",
                 friendlist: [],
-                introduce:'',//书籍介绍
-                autherId:'',
-                bookname:'',
-                cover:'',
-                money:'',
-               check:false,
-               agreement:"作者可获得80%的作品销售收益(联合出版同上);每条销售数据实时展示，上个月收益结算后可随时体现。作者必须保证其作品的原创性;作者出版免费书籍时作品中部能出现插图; 联合出版的图书请提前确定好每位联合作者的收益占比; 联合出版的图书在上架后会自动在每位联合作者的站点同时上架;正式出版的图书暂时不可随意下架，作者可进行图书修订。",
+                introduce: '', //书籍介绍
+                autherId: '',
+                bookname: '',
+                cover: '',
+                money: '',
+                check: false,
+                agreement: "作者可获得80%的作品销售收益(联合出版同上);每条销售数据实时展示，上个月收益结算后可随时体现。作者必须保证其作品的原创性;作者出版免费书籍时作品中部能出现插图; 联合出版的图书请提前确定好每位联合作者的收益占比; 联合出版的图书在上架后会自动在每位联合作者的站点同时上架;正式出版的图书暂时不可随意下架，作者可进行图书修订。",
             };
         },
         beforeCreate() {
@@ -496,30 +497,30 @@
         },
         methods: {
             //出版书籍
-            sendbook(){
-                if(this.bookname){
-                    if(this.check){
-                      let params={
-                    id:Number(this.booksid),//	string	是			
-                    bookName:this.bookname,//	string	是			
-                    introduce:this.introduce,//	string	是			
-                    cover:this.cover,//	string	是			
-                    price:this.money,//	string	是			
-                    agreement:this.agreement,//
-                }
-                this.unitAjax('post','v1/book/publishBook',params,res=>{
-                    if(res.code==200){
-                        this.showset=false
-                        this.$message('出版成功')
+            sendbook() {
+                if (this.bookname) {
+                    if (this.check) {
+                        let params = {
+                            id: Number(this.booksid), //	string	是			
+                            bookName: this.bookname, //	string	是			
+                            introduce: this.introduce, //	string	是			
+                            cover: this.cover, //	string	是			
+                            price: this.money, //	string	是			
+                            agreement: this.agreement, //
+                        }
+                        this.unitAjax('post', 'v1/book/publishBook', params, res => {
+                            if (res.code == 200) {
+                                this.showset = false
+                                this.$message('出版成功')
+                            }
+                        })
+                    } else {
+                        this.$message('请先阅读协议')
                     }
-                })
-                }else{
-                    this.$message('请先阅读协议')
-                }
-                }else if(this.bookname==''){
+                } else if (this.bookname == '') {
                     this.$message('请填写书名')
                 }
-              
+
             },
             //获取好友
             getfriend() {
@@ -1068,6 +1069,7 @@
             },
             //协议
             readyNote() {
+                this.$store.commit('getagreement', 2)
                 this.showpopel = false;
                 this.showbooksay = false;
                 this.shownote = true;
@@ -1077,21 +1079,21 @@
                 this.showpopel = true;
                 this.showbooksay = true;
             },
-            backindex(){
+            backindex() {
                 this.showpopel = false;
-                this.showbooksay=false
+                this.showbooksay = false
             },
             //联合出版
             sendidea(value) {
-                  if (value == 2) {
+                if (value == 2) {
                     this.showpopel = true;
-                } else if(value == 1){
+                } else if (value == 1) {
                     this.showpopel = false;
-                     this.sendbook()
+                    this.sendbook()
                 }
                 this.sumActive = value;
-              
-                
+
+
             },
             back() {
                 this.$router.go(-1);
@@ -1162,7 +1164,7 @@
                             var url = this.getFileUrl(file);
                             // this.getUrlBase64(url,'png',)
                             // ext=
-                            console.log(url,file)
+                            console.log(url, file)
                             if (url) {
                                 var img = new Image();
                                 img.src = url;
@@ -1310,6 +1312,7 @@
             position: absolute;
             top: 100px;
             left: 35px;
+            z-index: 10000;
             .active-nav {
                 .nav-treeBlack {
                     color: white;

@@ -41,56 +41,61 @@
 
     <!-- 书 -->
     <div v-show="middleType == 3" class="books clearfix">
-      <div class="item pull-left" v-for='item in hotlist'>
+      <div class="item pull-left" v-for='(item,index) in hotlist' :key="index">
 
-        <div class="forBook" v-if='item.type==1' @click='bookspage'>
+        <div class="forBook" v-if='item.type==1' @click='bookspage(item.userId,item.userName)'>
           <div class="title">
            {{item.name}}
           </div>
-          <div class="desc">{{item.cover}}
+          <div class="desc" v-html="item.cover">
           </div>
         </div>
         <div class="isBook" v-if="item.type==2">
           <img :src="item.cover" alt="">
         </div>
 
-        <div class="user clearfix">
-        <router-link :to="'/whiterow/userinfo'+'?type=white&userId='+item.userId">
+        <div class="user clearfix"  v-if="tools.length>0">
+        <router-link :to="'/whiterow/userinfo'+'?type=white&userId='+item.userId+'&'+item.userName">
           <div class="cover pull-left">
               <img :src="item.userAvatar" alt="">
           </div>
           
           <div class="nickName pull-left">{{item.userName}}</div>
         </router-link>
-          <div class="good pull-right">
+          <div class="good pull-right"  @click="addgoodbook(item.id,item.type,index)" >
             <!-- <img src="../assets/images/utter/good.png" alt="点赞">  -->
             <img src="../assets/images/publish/110 赞扬.png" alt="点赞"> 
-           {{item.favorityCount}}
+                <!-- <img v-if="$route.query.type=='white'" src="../assets/images/article/good.png" alt="点赞">
+                <img v-if="$route.query.type=='black'" src="../assets/images/publish/120 赞扬-白.png" alt="点赞"> -->
+           {{tools[index].save? Number(item.likeCount)+1:item.likeCount}}
           </div>
 
           <div class="like pull-right">
-            <img src="../assets/images/utter/like.png" alt="收藏"> {{item.favorityCount}}
+              <!-- <img v-show="$route.query.type=='white'&&(tools.save||item.favority)" src="../../assets/images/publish/130 书架-收藏-黑.png" alt="">
+               <img  v-show="$route.query.type=='black'&&(tools.save||item.favority)" src="../../assets/images/publish/134 书架-收藏-白.png" alt=""> -->
+            <img src="../assets/images/publish/109 收藏.png" alt="收藏" @click="addfavority(item.id,item.type,index)"> 
+            {{tools[index].favority?Number(item.favorityCount)+1:item.favorityCount}}
           </div>
         </div>
       </div>
     </div>
     <!-- 书 -->
     <div v-show="middleType == 2" class="books clearfix">
-            <div class="item pull-left" v-for='item in newslist'>
+            <div class="item pull-left" v-for='(item,index) in newslist' :key="index">
       
-              <div class="forBook" v-if='item.type==1' @click='bookspage'>
+              <div class="forBook" v-if='item.type==1' @click='bookspage(item.userId,item.userName)'>
                 <div class="title">
                  {{item.name}}
                 </div>
-                <div class="desc">{{item.cover}}
+                <div class="desc" v-html="item.cover">
                 </div>
               </div>
               <div class="isBook" v-if="item.type==2">
                 <img :src="item.cover" alt="">
               </div>
       
-              <div class="user clearfix">
-              <router-link :to="'/whiterow/userinfo'+'?type=white&userId='+item.userId">
+              <div class="user clearfix" v-if="tools.length>0">
+              <router-link :to="'/whiterow/userinfo'+'?type=white&userId='+item.userId+'&'+item.userName">
                 <div class="cover pull-left">
                     <img :src="item.userAvatar" alt="">
                 </div>
@@ -99,12 +104,13 @@
               </router-link>
                 <div class="good pull-right">
                   <!-- <img src="../assets/images/utter/good.png" alt="点赞">  -->
-                  <img src="../assets/images/publish/110 赞扬.png" alt="点赞"> 
-                 {{item.favorityCount}}
+                  <img src="../assets/images/publish/110 赞扬.png" alt="点赞" @click="addgoodbook(item.id,item.type,index)"> 
+                {{tools[index].save? Number(item.likeCount)+1:item.likeCount}}
                 </div>
       
                 <div class="like pull-right">
-                  <img src="../assets/images/utter/like.png" alt="收藏"> {{item.favorityCount}}
+                  <img src="../assets/images/publish/109 收藏.png" alt="收藏" @click="addfavority(item.id,item.type,index)"> 
+                  {{tools[index].favority?Number(item.favorityCount)+1:item.favorityCount}}
                 </div>
               </div>
             </div>
@@ -119,6 +125,8 @@
                 middleType: 3,
                 hotlist: [],
                 newslist: [],
+                tools:[],
+                newstools:[]
             }
         },
 
@@ -134,32 +142,99 @@
 
         },
         methods: {
-            getnewsbook(num) {
-                this.middleType = num;
-                if (this.middleType == 2) {
-                    this.unitAjax('get', 'v1/index/new', {}, res => {
+                 //点赞
+            addgoodbook(id,type,index) {
+                if(type==2){
+                       this.unitAjax('post', "v1/book/like/add", {
+                    bookId: Number(id)
+                }, res => {
+                    if (res.code == 200) {
+                        this.tools[index].save = true;
+                        // this.$message('成功')
+                       this.getnewsbook(this.middleType)
+                    } else {
+                        this.$message(res.msg)
+                    }
+                })
+                }else if(type==1){
+                         this.unitAjax('post', "v1/article/like/add", {
+                    articleId: Number(id)
+                }, res => {
+                    if (res.code == 200) {
+                        this.tools[index].save = true;
+                        // this.$message('成功')
+                    //    this.getnewsbook(this.middleType)
+                    } else {
+                        this.$message(res.msg)
+                    }
+                })
+                }
+             
+            },
+              //收藏
+            addfavority(id,type,index) {
+                if(type==2){
+                       this.unitAjax('post', "v1/book/favority/add", {
+                    bookId: Number(id)
+                }, res => {
+                    if (res.code == 200) {
+                        this.tools[index].favority = true;
+                        // this.
+                        // this.$message('收藏成功')
+                        // this.getnewsbook(this.middleType)
+                    } else {
+                        this.$message(res.msg)
+                    }
+                })
+                }else if(type==1){
+                           this.unitAjax('post', "v1/article/favority/add", {
+                        articleId: Number(id)
+                    }, res => {
                         if (res.code == 200) {
-                            this.newslist = res.data
+                              this.tools[index].favority = true;
+                            // this.
+                            // this.$message('收藏成功')
+                            // this.getnewsbook(this.middleType)
+                        } else {
+                            this.$message(res.msg)
                         }
                     })
                 }
-                //    else if(this.middleType ==3){
-                //        this.getbooks()
-                //    }
+             
+            },
+            getnewsbook(num) {
+                this.middleType = num;
+                 this.tools=[];
+                if (this.middleType == 2) {
+                    this.unitAjax('get', 'v1/index/new', {}, res => {
+                        if (res.code == 200) {
+                            this.newslist = res.data;
+                            for(let i=0;i<res.data.length;i++){
+                                this.tools.push({"save":false,"favority":false})
+                            }
+                        }
+                    })
+                } else if(this.middleType ==3){
+                       this.getbooks()
+                   }
             },
             getbooks() {
                 this.unitAjax('get', 'v1/index/hot', {}, res => {
                     if (res.code == 200) {
                         this.hotlist = res.data;
+                          for(let i=0;i<res.data.length;i++){
+                                this.tools.push({"save":false,"favority":false})
+                            }
                     }
                 })
             },
-            bookspage() {
+            bookspage(userId,userName) {
                 this.$router.push({
                     path: '/whiterow/publish',
                     query: {
                         type: "white",
-                        userId: '1'
+                        userId:userId,
+                        userName:userName,
                     }
                 })
             },

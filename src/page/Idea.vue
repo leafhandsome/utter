@@ -71,9 +71,13 @@
                 <span>{{item.commentCount}}</span>
               </div>
               <div class="tool">
-                  <img v-if="!showgood" src="../assets/images/publish/110 赞扬.png" alt="点赞" @click="setgood(item.id)"> 
-                <img v-if="$route.query.type=='white'&&showgood" src="../assets/images/article/good.png" alt="点赞">
-                <img v-if="$route.query.type=='black'&&showgood" src="../assets/images/publish/120 赞扬-白.png" alt="点赞">
+                  <a href='javascript:;' v-show="!item.like">
+                  <img src="../assets/images/publish/110 赞扬.png" alt="点赞" @click="setgood(item.id)">
+                </a> 
+                <a href='javascript:;' v-show="item.like">
+                <img v-if="$route.query.type=='white'" src="../assets/images/article/good.png" alt="点赞">
+                <img v-if="$route.query.type=='black'" src="../assets/images/publish/120 赞扬-白.png" alt="点赞">
+            </a>
                  <span>{{item.likeCount}}</span>
               </div>
             </div>

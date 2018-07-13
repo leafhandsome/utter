@@ -439,6 +439,15 @@
                                 name: 'userId',
                                 value: res.data.uid
                             })
+                            this.setValue({
+                                name: 'userName',
+                                value: res.data.penName
+                            })
+                            this.setValue({
+                                name: 'avatar',
+                                value: res.data.avatar
+                            })
+
                             this.$router.push({
                                 path: '/whiterow/modey',
                                 query: {

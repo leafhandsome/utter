@@ -3,10 +3,10 @@
           <!-- 私信   -->
           <div class="msg" v-show='showmsg'>
               <div class="mainItem">
-        <textarea name="name" rows="8" cols="80" placeholder='写下你的私信...'></textarea>
+        <textarea name="name" rows="8" cols="80" placeholder='写下你的私信...' v-model="msg"></textarea>
 
         <el-tooltip effect="dark" content="发送" placement="bottom">
-          <img src="../../assets/images/article/submit.png" class='submit' alt="发送">
+          <img src="../../assets/images/article/submit.png" class='submit' alt="发送" @click="sendMsg(user.userId)">
         </el-tooltip>
         <el-tooltip effect="dark" content="删除" placement="bottom">
             <a class='del' href="javaScript:;">
@@ -32,7 +32,7 @@
                 <div class="msg__btn">
                     <div class="btn__line1" v-show="$route.query.userId">
                         <div class="btn__visited">
-                            <a href='javascript:;' v-if="showsee"  @click="addFollow(1)">
+                            <a href='javascript:;' v-if="!showsee"  @click="addFollow(1)">
                             <img  src="../../assets/images/userinfo/108 浏览.png" alt="">
                             </a>
                             <a href='javascript:;' v-else>
@@ -146,12 +146,23 @@
                 imageUrl: '',
                 showsee: true, //是否关注
                 userInfo: {},
+                msg:'',
             };
         },
         created() {
             this.getuserInfo()
         },
         methods: {
+             //发送消息
+            sendMsg(userId){
+                this.unitAjax('post','v1/me/alert/message/send',{userId:Number(userId),msg:this.msg},res=>{
+                    if(res.code==200){
+                        this.showmsg=false;
+                        this.msg="";
+                        this.$message('消息发送成功')
+                    }
+                })
+            },
             // 取消关注
             removeFollow(id) {
                 this.unitAjax('delete', 'v1/me/deleteFollow', {
@@ -170,6 +181,8 @@
                 }, res => {
                     if (res.code == 200) {
                         this.showsee = false;
+                    }else{
+                        this.$message(res.msg)
                     }
                 })
             },
@@ -190,7 +203,8 @@
                 }, res => {
                     if (res.code == 200) {
                         this.user = res.data;
-                        this.userInfo = res.data.writtenRecord
+                        this.userInfo = res.data.writtenRecord;
+                        this.showsee=res.data.follow;
                     }
                 })
             },
@@ -225,7 +239,7 @@
             //保存用户信息
             setusermsg() {
                 let params = {
-                    siteName: this.user.userSiteName, //string	是	站名		
+                    personalitySignature: this.user.userSiteName, //string	是	站名		
                     penName: this.user.penName, //	string	是	笔名		
                     job: this.user.job, //	string	是	职业		
                     area: this.user.area, //	string	是	区域  

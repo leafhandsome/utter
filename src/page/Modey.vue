@@ -58,7 +58,7 @@
             </a>
           </div>
     </div>
-    <div class="set" @click.stop='settingfun'>
+    <div class="set" @click.stop='settingfun' v-if="!$route.query.userId">
       <a href='javaScript:;'>
       <img v-if='stylecolor=="white"' src="../assets//images/module//49 个人首页-首页设置-黑.png" alt="">
       <img v-if='stylecolor=="black"' src="../assets//images/module/59 个人首页-首页设置-白.png" alt="">
@@ -240,8 +240,8 @@
                 point: [],
                 showinput: false,
                 showinputText: false,
-                siteInfoDetail:'',
-                siteName:'',
+                siteInfoDetail: '',
+                siteName: '',
             };
         },
         watch: {
@@ -380,13 +380,13 @@
             },
             setting(value) {
                 this.point = JSON.stringify(this.point).replace(/\"/g, "'")
-                if(value){
-                    this.showinputText=false;
-                    this.showinput=false;
+                if (value) {
+                    this.showinputText = false;
+                    this.showinput = false;
                 }
                 let params = {
-                    siteName: this.siteName||"独立出版",
-                    siteInfoDetail:this.siteInfoDetail|| "签名",
+                    siteName: this.siteName || "独立出版",
+                    siteInfoDetail: this.siteInfoDetail || "签名",
                     siteInfoShowMode: this.point,
                     siteInfoXPoint: this.fontvalue,
                     siteInfoYPoint: this.fontvalue2,
@@ -395,9 +395,9 @@
                 }
                 this.unitAjax('post', 'v1/me/siteInfoSetting', params, res => {
                     if (res.code == 200) {
-                        if(value){
-                            this.siteName="";
-                            this.siteInfoDetail="";
+                        if (value) {
+                            this.siteName = "";
+                            this.siteInfoDetail = "";
                             //重新调用
                         }
                         this.$message({

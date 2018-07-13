@@ -19,8 +19,8 @@
         
       </div>
        <div class="sendmsg utBorder" :class="$route.query.type=='white'?'ut-input-white':'ut-input-black'">
-          <input type="text" placeholder="请输入您的消息">
-          <a href="javaScript:;">
+          <input type="text" placeholder="请输入您的消息" v-model="msg">
+          <a href="javaScript:;" @click="sendMsg">
           <img v-show="stylecolor=='white'" src="../assets/images/article/submit.png" alt="">
           <img v-show="stylecolor=='black'" src="../assets/images/editor/issuew.png" alt="">
           </a>
@@ -45,7 +45,9 @@
             
             <a href='javascript:;' v-for="(item, index) in msglist" :key="index">
           <li  class="utBorder" @click="getMsgDetail(item.id)">
-            <span class="imgbox"><img src="../assets/images/utter/userw.png" alt=""></span><span class="name">咖啡</span>
+            <span class="imgbox"><img v-show="!item.sendAvatar" src="../assets/images/utter/userw.png" alt="">
+            <img v-show="item.sendAvatar" :src="item.sendAvatar" alt="">
+            </span><span class="name">{{item.sendPenName}}</span>
             <a href="javascript:;" v-if="item.type==2" class="fr istrue" @click="setfriend(item.id)" > 
               <img v-show="stylecolor=='white'" src="../assets/images/article/submit.png" alt="">
           <img v-show="stylecolor=='black'" src="../assets/images/editor/issuew.png" alt="">
@@ -64,9 +66,9 @@
       </div>
       <div class="msglist">
         <ul>
-          <li v-for="(item, index) in noticeDetail" :key="index">
-            <p class="title"><span class="user-name">{{item.sendPenName}}</span><span class="time">{{item.createTime}}</span></p>
-            <p>{{item.message}}</p>
+          <li  >
+            <p class="title"><span class="user-name">{{noticeDetail.sendPenName}}</span><span class="time">{{noticeDetail.createTime}}</span></p>
+            <p>{{noticeDetail.msg}}</p>
           </li>
         </ul>
        
@@ -81,12 +83,14 @@
           <img  v-show="(!showmsg||checkTab==1)&&stylecolor=='white'" src="../assets/images/personal/158 消息-对话信息-黑.png" alt="">
           <img v-show="(!showmsg||checkTab==1)&&stylecolor=='black'" src="../assets/images/personal/166 消息-对话信息-白.png" alt="">
           <p :class="checkTab==1?'activecolor':''">消息</p>
+           <i v-show="friendMsglist.length>0"></i>
         </div>
         <div class="pull-right userInfo" @click="checkinfo(2)">
             <img v-show="showinfo" src="../assets/images/personal/151 消息-打开喇叭.png" alt="">
             <img v-show="(!showinfo||checkTab==2)&&stylecolor=='white'" src="../assets/images/personal/159 消息-打开喇叭-黑.png" alt="">
             <img  v-show="(!showinfo||checkTab==2)&&stylecolor=='black'"  src="../assets/images/personal/167 消息-打开喇叭-白.png" alt="">
             <p :class="checkTab==2?'activecolor':''">通知</p>
+            <i v-show="msglist.length>0"></i>
         </div>
       </div>
   </div>
@@ -105,6 +109,8 @@
                 msgDetail: [],
                 showMsgDetail:false,//通知详情显示
                 noticeDetail:{},
+                msg:'',
+                sendUserId:'',
             };
         },
         created() {
@@ -117,6 +123,16 @@
             this.getmsg();
         },
         methods: {
+                //发送消息
+            sendMsg(){
+                this.unitAjax('post','v1/me/alert/message/send',{userId:Number(this.sendUserId),msg:this.msg},res=>{
+                    if(res.code==200){
+                         this.getfriendMsg();
+                        this.msg="";
+                        this.$message('消息发送成功')
+                    }
+                })
+            },
             getMsgDetail(id){
                 this.showMsgDetail=true
                 this.unitAjax('get','v1/me/alert/notice/detail',{id:Number(id)},res=>{
@@ -142,6 +158,7 @@
                             res => {
                                 if (res.code == 200) {
                                     //   this.$message('添加成功')
+                                
                                 }
                             }
                         );
@@ -166,12 +183,13 @@
             // 消息对话
             friendMsgInfo(id) {
                 this.showfirend = false;
+                this.sendUserId=id;
                 this.unitAjax(
                     "get",
                     "v1/me/alert/message/detail", {
                         userId: id,
                         page: 1,
-                        pageSize: 50
+                        pageSize: 10
                     },
                     res => {
                         if (res.code == 200) {
@@ -185,7 +203,7 @@
                     "get",
                     "v1/me/alert/messages", {
                         page: 1,
-                        pageSize: 10
+                        pageSize: 20
                     },
                     res => {
                         if (res.code == 200) {
@@ -200,7 +218,7 @@
                     "get",
                     "v1/me/alert/notices", {
                         page: 1,
-                        pageSize: 10
+                        pageSize: 20
                     },
                     res => {
                         if (res.code == 200) {
@@ -215,12 +233,14 @@
                 this.showmsg = false;
                 this.showinfo = true;
                 this.showfirend = true;
+                 this.getfriendMsg();
             },
             checkinfo(value) {
                 this.checkTab = value;
                 this.showmsg = true;
                 this.showinfo = false;
                 this.showfirend = false;
+                 this.getmsg();
             }
         }
     };
@@ -282,6 +302,8 @@
                 }
             }
         .Info {
+            height: 900px;
+            overflow-y: auto;
             li {
                 // height: 80px;
                 padding: 10px;
@@ -342,6 +364,16 @@
                 text-align: center;
                 padding-top: 15px;
                 cursor: pointer;
+                position: relative;
+                i{
+                    position: absolute;
+                     top: 10px;
+                     right: 61px;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background-color: red;
+                }
             }
         }
     }

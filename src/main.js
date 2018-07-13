@@ -34,6 +34,7 @@ const store = new Vuex.Store({
         bookInfo: null,
         bookbuylist: [],
         commentList: [],
+        arguments: '',
     },
     mutations: {
         changeStyle(state, data) {
@@ -76,6 +77,14 @@ const store = new Vuex.Store({
             }, res => {
                 if (res.code == 200) {
                     state.bookbuylist = res.data
+                }
+            })
+        },
+        //获取协议
+        getagreement(state, data) {
+            methods.unitAjax('get', 'v1/agreement', { type: data }, res => {
+                if (res.code == 200) {
+                    state.arguments = res.data
                 }
             })
         },

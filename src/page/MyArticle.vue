@@ -5,7 +5,7 @@
       <div class="cateList utBorder">
         <div class="utBorder" :class="tab==index?'cate '+active:'cate '" @click='gettype(index,item.id)' v-for="(item, index) in typeList" :key="index">
           {{item.type}}
-          <i class="fr delete" @click.stop="removetype(item.id)">+</i>
+          <i class="fr delete" @click.stop="removetype(item.id)" v-show="!$route.query.userId"><img src="../assets/images/article/90 删除.png" alt="" ></i>
         </div>
         <!-- <div class="utBorder" :class="tab==2?'cate '+active:'cate '" @click='tab=2'>
           我的草稿
@@ -13,7 +13,7 @@
         <div class="utBorder" :class="tab==3?'cate '+active:'cate '" @click='tab=3'>
           我的收藏
         </div> -->
-        <div class="tools utBorder clearfix">
+        <div class="tools utBorder clearfix" v-show="!$route.query.userId">
           <div class="pull-left utBorder"  @click='openfun(1)'>
             <el-tooltip effect="dark" content="公开" placement="bottom">
                  <img v-if='showopen' src="../assets/images/article/open-c.png" alt="公开">
@@ -390,8 +390,13 @@
                     right: 0;
                     width: 30px;
                     font-size: 30px;
-                    transform: rotate(45deg);
-                    display: none
+                    // transform: rotate(45deg);
+                    height: 80px;
+                    line-height: 70px;
+                    display: none;
+                   img{
+                        vertical-align: middle;
+                   }
                 }
                 .cate:hover i {
                     display: inline;
@@ -403,6 +408,7 @@
                     text-align: center;
                     font-size: 15px;
                     color: #a0a0a0;
+                    vertical-align: middle;
                     @include hand;
                     @include trans;
                     /* &:hover {

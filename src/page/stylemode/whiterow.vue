@@ -6,29 +6,29 @@
     <img @click='change' v-else class='logo' src="../../assets/images/utter/logow.png" alt="UTTER">
 
     <div class="middleTab clearfix">
-      <router-link :to="{path:'/whiterow/modey',query:{type:pagecolr,userId:$route.query.userId}}" :class="$route.path=='/whiterow/modey'?'active':''">
+      <router-link :to="{path:'/whiterow/modey',query:{type:pagecolr,userId:$route.query.userId,userName:$route.query.userName}}" :class="$route.path=='/whiterow/modey'?'active':''">
       <div class="pull-left"  @mouseover="moveEle(0)" @mouseout="moveoOut(0)" @mousedown="moveEle(0,'none')" @click="moveoOut(0,'block')">
         <div :class="pagecolr=='white'?'tab':'tab tab-black'">首页<i></i></div>
       </div>
       </router-link>
-        <router-link :to="{path:'/whiterow/myarticle',query:{type:pagecolr,userId:$route.query.userId}}" :class="$route.path=='/whiterow/myarticle'?'active':''">
+        <router-link :to="{path:'/whiterow/myarticle',query:{type:pagecolr,userId:$route.query.userId,userName:$route.query.userName}}" :class="$route.path=='/whiterow/myarticle'?'active':''">
       <div class="pull-left"  @mouseover="moveEle(1)" @mouseout="moveoOut(1)"  @mousedown="moveEle(1,'none')" @mouseup="moveoOut(1,'block')">
         <div :class="pagecolr=='white'?'tab':'tab tab-black'">文章<i></i></div>
       </div>
        </router-link>
-        <router-link :to="{path:'/whiterow/idea',query:{type:pagecolr,userId:$route.query.userId}}" :class="$route.path=='/whiterow/idea'?'active':''">
+        <router-link :to="{path:'/whiterow/idea',query:{type:pagecolr,userId:$route.query.userId,userName:$route.query.userName}}" :class="$route.path=='/whiterow/idea'?'active':''">
       <div class="pull-left" @mouseover="moveEle(2)"  @mouseout="moveoOut(2)"  @mousedown="moveEle(2,'none')" @mouseup="moveoOut(2,'block')">
         <div :class="pagecolr=='white'?'tab':'tab tab-black'">想法<i></i></div>
       </div>
        </router-link>
-        <router-link  :to="{path:'/whiterow/publish',query:{type:pagecolr,userId:$route.query.userId}}" :class="$route.path=='/whiterow/publish'?'active':''">
+        <router-link  :to="{path:'/whiterow/publish',query:{type:pagecolr,userId:$route.query.userId,userName:$route.query.userName}}" :class="$route.path=='/whiterow/publish'?'active':''">
       <div class="pull-left" @mouseover="moveEle(3)" @mouseout="moveoOut(3)"  @mousedown="moveEle(3,'none')" @mouseup="moveoOut(3,'block')">
         <div :class="pagecolr=='white'?'tab':'tab tab-black'" >书籍<i></i></div>
       </div>
        </router-link>
-        <router-link  :to="{path:'/whiterow/userinfo',query:{type:pagecolr,userId:$route.query.userId}}" :class="$route.path=='/whiterow/userinfo'?'active':''">
+        <router-link  :to="{path:'/whiterow/userinfo',query:{type:pagecolr,userId:$route.query.userId,userName:$route.query.userName}}" :class="$route.path=='/whiterow/userinfo'?'active':''">
       <div class="pull-left"  @mouseover="moveEle(4)" @mouseout="moveoOut(4)"  @mousedown="moveEle(4,'none')" @mouseup="moveoOut(4,'block')">
-        <div :class="pagecolr=='white'?'tab':'tab tab-black'">用户名<i></i></div>
+        <div :class="pagecolr=='white'?'tab':'tab tab-black'">{{$route.query.userName||getValue('userName')}}<i></i></div>
       </div>
        </router-link>
     </div>

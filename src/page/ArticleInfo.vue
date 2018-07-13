@@ -75,7 +75,7 @@
                 <img v-show="$route.query.type=='white'&&ideapage!=1" src="../assets/images/article/prev-black.png" alt="上一页" @click="prepage">
                 <img  v-show="$route.query.type=='black'&&ideapage!=1" src="../assets/images/article/prev-w.png" alt="上一页" @click="prepage">
                 </div>
-              <a href='javaScript:;'>
+              <a href='javaScript:;' v-if="!$route.query.userId">
                 <img v-show="!showmore" class="more" src="../assets/images/article/more-w.png" alt="" @click.stop="showmore=true">
               <img v-show="$route.query.type=='white'&&showmore" class="more" src="../assets/images/article/more.png" alt="" @click.stop="showmore=true">
               <img v-show="$route.query.type=='black'&&showmore" class="more" src="../assets/images/article/135 书架-更多-白.png" alt="" @click.stop="showmore=true">

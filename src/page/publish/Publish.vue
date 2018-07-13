@@ -7,11 +7,11 @@
             <a href='javaScript:;' class="tab__item lastitem"  :class="tabIndex==2?($route.query.type=='white'?'tab__item--active':'tab__item--active-w'):''" @click="changeTab(2)">收藏</a>
         </div>
         <div class="mywriting" v-show="tabIndex==0">
-            <a href="javaScript:;" class="mywriting__btn" :class="$route.query.type=='white'?'ut-black1':'ut-white1'" v-if="isApplyBtn=true" @click='setshowtab(true)'>
+            <a href="javaScript:;" class="mywriting__btn" :class="$route.query.type=='white'?'ut-black1':'ut-white1'" v-if="!isApplyBtn" @click='setshowtab(true)'>
                 申请独立出版
             </a>
             <div class="list clearfix">
-                <div class="list__item" v-for="(item,idx) in mywritingBooks">
+                <div class="list__item" v-if="mywritingBooks.length>0" v-for="(item,idx) in mywritingBooks">
                     <div class="list__img cursor" @click="toBookInfo(item.id)">
                         <img src="" alt="">
                         <div class="comment">
@@ -72,11 +72,12 @@
                         </div>
                     </div>
                 </div>
+                <div v-show="mywritingBooks.length==0" style="height: 500px; width: 500px;text-align: center;margin: 273px auto;">暂无数据</div>
             </div>
 
         </div>
         <div class="purchased" v-show="tabIndex==1">
-            <div class="list">
+            <div class="list" v-show="false">
                 <div class="list__item" v-for="(item,idx) in purchasedBooks">
                     <div class="list__img">
                         <img src="" alt="">
@@ -109,10 +110,10 @@
                     </div>
                 </div>
             </div>
-
+            <div style="height: 500px; width: 500px;text-align: center;margin: 273px auto;">暂无数据</div>
         </div>
         <div class="collection" v-show="tabIndex==2">
-            <div class="list">
+            <div class="list" v-show="collectionBooks.length>0">
                 <div class="list__item" v-for="(item,idx) in collectionBooks">
                     <div class="list__img">
                         <img src="" alt="">
@@ -152,6 +153,7 @@
                     </div>
                 </div>
             </div>
+             <div v-show="collectionBooks.length==0" style="height: 500px; width: 500px;text-align: center;margin: 273px auto;">暂无数据</div>
         </div>
     </div>
     <bookinfo v-show='showboks' :book="bookId"></bookinfo>
@@ -166,7 +168,7 @@
         data() {
             return {
                 tabIndex: 0,
-                isApplyBtn: false,
+                isApplyBtn: this.getValue('avatar'),
                 mywritingBooks: [],
                 purchasedBooks: 5,
                 collectionBooks: [],
@@ -179,6 +181,7 @@
                     car: false,
                 },
                 bookId: '',
+                pageIndex:1,
             }
         },
         // watch: {
@@ -191,7 +194,21 @@
             this.getbooklist()
             this.getfavority()
         },
+        mounted(){
+           
+               window.addEventListener('scroll',()=>{
+                // 判断是否滚动到底部
+                  console.log(255);
+                if(document.body.scrollTop + window.innerHeight >= document.body.offsetHeight) {
+                    console.log(255);
+                  this.pageIndex++;
+                   this.getbooklist()
+                }
+            });
+
+        },
         methods: {
+            
             //收藏
             addfavority(id) {
                 this.unitAjax('post', "v1/book/favority/add", {
@@ -255,7 +272,7 @@
             getfavority() {
                 this.unitAjax('get', 'v1/book/favority/list', {
                     page: 1,
-                    pageSize: 20,
+                    pageSize: 10,
                     userId: this.getValue('userId')
                 }, res => {
                     if (res.code == 200) {
@@ -276,8 +293,8 @@
             },
             getbooklist() {
                 this.unitAjax('get', 'v1/book/list', {
-                    page: 5,
-                    pageSize: 20
+                    page: this.pageIndex,
+                    pageSize: 10
                 }, res => {
                     if (res.code == 200) {
                         this.mywritingBooks = res.data.rows
@@ -303,6 +320,7 @@
             setshowtab(flog) {
                 window.scrollTo(0, 0);
                 this.$store.commit('showbox', flog)
+                this.$store.commit('getagreement',1)
 
             },
             tourl(url, query) {
