@@ -4,11 +4,11 @@
     <div class="ing" ref='align' :class='!ingActive?"":rowcol=="row"?"active row":"active col"' v-show='!hiddenArrow'>
         
       <div v-show="!showinput" class="big" ref='titile' @dblclick="showinput=true">
-        UTTER - 你的独立出版
+       {{userInfo.siteName}}
       </div>
       <input class="big" type="text" v-model="siteName" v-show="showinput" @keydown.enter="setting(siteName)">
       <div class="sub" ref='content' v-show="!showinputText"  @dblclick="showinputText=true">
-        发声，致自己、或者给世界
+       {{userInfo.siteInfoDetail||'个性签名'}}
       </div>
       <input class="sub" v-model="siteInfoDetail" type="text" v-show="showinputText"  @keydown.enter="setting(siteInfoDetail)">
     <!-- </div> -->
@@ -237,11 +237,12 @@
                 imageUrl: {},
                 styleindex: 0,
                 imgindex: 0,
-                point: [],
+                point: "",
                 showinput: false,
                 showinputText: false,
                 siteInfoDetail: '',
                 siteName: '',
+                userInfo: {},
             };
         },
         watch: {
@@ -256,6 +257,7 @@
             }
         },
         created() {
+            this.getuserInfo()
             this.stylecolor = this.$route.query.type;
             //读取
             window.onload = () => {
@@ -268,6 +270,35 @@
 
         },
         methods: {
+            getuserInfo() {
+                this.unitAjax('get', 'v1/me/index', {
+                    userId: this.$route.query.userId || this.getValue('userId')
+                }, res => {
+                    if (res.code == 200) {
+                        this.userInfo = res.data;
+                        this.$refs.titile.style.fontSize = res.data.siteNameSize + "px";
+                        this.$refs.content.style.fontSize = res.data.siteDetailSize + "px";
+                        this.titlevalue = res.data.siteNameSize || "32";
+                        this.contentvalue = res.data.siteDetailSize || "16";
+                        if (res.data.siteInfoShowMode) {
+                            let list = res.data.siteInfoShowMode.split(',');
+                            this.setrowalign(list[0], list[1])
+                        }
+
+                        this.fontvalue = res.data.siteInfoXPoint || 50;
+                        this.fontvalue2 = res.data.siteInfoYPoint || 40;
+                        this.setValue({
+                                name: 'userName',
+                                value: res.data.userName
+                            })
+                            //海报  this.userInfo.posterInfo
+                            //               {
+                            //     "poster": "http://www.baidu.com/images/1.jpg",
+                            //     "url": "http://www.baidu.com"
+                            // },
+                    }
+                })
+            },
             changeImg(e) {
                 //图片change回调
                 var file = e.target.files[0];
@@ -379,7 +410,6 @@
                 this.rightimgshow = true;
             },
             setting(value) {
-                this.point = JSON.stringify(this.point).replace(/\"/g, "'")
                 if (value) {
                     this.showinputText = false;
                     this.showinput = false;
@@ -399,6 +429,7 @@
                             this.siteName = "";
                             this.siteInfoDetail = "";
                             //重新调用
+                            this.getuserInfo()
                         }
                         this.$message({
                             message: '设置成功',
@@ -411,9 +442,9 @@
             },
             //设置横排对齐方式
             setrowalign(align, col) {
-                this.point[0] = align;
-                this.point[1] = col;
-                if (col) {
+                this.point = align + ',' + col;
+
+                if (col && col != "undefined") {
                     this.rowcol = "col";
                     this.$refs.titile.style.transform = "translateY(0)";
                     this.$refs.titile.style.marginBottom = "0px";

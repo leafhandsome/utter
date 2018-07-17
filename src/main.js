@@ -73,7 +73,8 @@ const store = new Vuex.Store({
             state.bookid = data
             methods.unitAjax('get', 'v1/book/booklist/list', {
                 page: 1,
-                pageSize: 10
+                pageSize: 10,
+                userId: methods.getValue('userId')
             }, res => {
                 if (res.code == 200) {
                     state.bookbuylist = res.data

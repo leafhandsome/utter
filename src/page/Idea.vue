@@ -387,7 +387,8 @@
             getinspiration() {
                 this.unitAjax('get', 'v1/inspiration/list', {
                     page: this.pageinspriation,
-                    pageSize: '2'
+                    pageSize: '2',
+                    userId: this.$route.query.userId || this.getValue('userId')
                 }, res => {
                     if (res.code == 200) {
                         this.inspirationList = res.data.rows;
@@ -400,13 +401,17 @@
                 this.unitAjax('get', 'v1/idea/list', {
                     page: this.ideapage,
                     pageSize: '1',
-
+                    userId: this.$route.query.userId || this.getValue('userId')
                 }, res => {
                     if (res.code == 200) {
                         this.ideaList = res.data.rows;
-                        this.ideaId = res.data.rows[0].id;
+                        if (res.data.rows.length > 0) {
+                            this.ideaId = res.data.rows[0].id;
+                            this.getsaylist()
+                        }
+
                         this.ideaTotal = res.data.total
-                        this.getsaylist()
+
                     } else {
                         this.$message.error(res.msg)
                     }

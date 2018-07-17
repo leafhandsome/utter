@@ -21,7 +21,7 @@
       <img class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
       <div class="say">写下你的一生</div>
       <div class="message">
-      <input type="text" placeholder='请输入邮箱…' maxlength="24" v-model="login.email"  @focus="loginFs">
+      <input type="text" placeholder='请输入电话号码…' maxlength="24" v-model="login.email"  @focus="loginFs">
       <p class="err" v-text="err.login">*错误提示</p>
         </div> 
       <div class="message">
@@ -46,7 +46,7 @@
       <img class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
       <div class="say">写下你的一生</div>
         <div class="mobile">
-      <input type="text" placeholder='请输入常用邮箱…' maxlength="24" v-model="register.email"  @focus="regFs" @blur="$refs.msg1.style.top='0px'">
+      <input type="text" placeholder='请输入常用电话号码…' maxlength="24" v-model="register.email"  @focus="regFs" @blur="$refs.msg1.style.top='0px'">
       <a href='javascript:;' class="msg" ref="msg1" >
       <span  @click="sendMsg" v-show="showkuaijie" class="getcode">发送验证</span>
       <span v-show="!showkuaijie" :class="{success:!showkuaijie}" class="getcode">{{countkuaijie}}s</span>
@@ -108,7 +108,7 @@
             </div>
     
             <div class="mobile">
-                    <input type="text" placeholder='输入注册邮箱…' maxlength="24" v-model="fond.email" @focus="fondpwdFs" @blur="$refs.msg2.style.top='0px'">
+                    <input type="text" placeholder='输入注册电话号码…' maxlength="24" v-model="fond.email" @focus="fondpwdFs" @blur="$refs.msg2.style.top='0px'">
                     <a href='javascript:;' class="msg" ref="msg2">
                             <span  @click="sendMsgPass" v-show="showtime" class="getcode">发送验证</span>
                             <span v-show="!showtime" :class="{success:!showtime}" class="getcode">{{count}}s</span>
@@ -189,13 +189,14 @@
                 loading: false,
             }
         },
+        watch: {},
         created() {
             document.querySelector("body").style.background = 'white';
-            if (this.$route.query.penName) {
-                if (this.$route.query.penName == 'false') {
-                    this.type = 4
-                }
+            // if (this.$route.query.penName) {
+            if (this.$route.query.penName == false) {
+                this.type = 4
             }
+            // }
 
         },
         methods: {
@@ -214,6 +215,10 @@
                 if (this.username && this.nickname) {
                     this.unitAjax('post', 'v1/me/userNameSetting', parms, res => {
                         if (res.code == 200) {
+                            this.setValue({
+                                name: 'userName',
+                                value: this.username
+                            })
                             this.tourl("/createtemplate")
                         } else {
                             this.err.siteName = res.msg
@@ -233,7 +238,7 @@
             //设置新密码
             setnewsPwd() {
                 let parms = {
-                    email: this.fond.email,
+                    mobile: this.fond.email,
                     code: this.fond.code,
                     confirmPassword: this.password.newsconfirm,
                     password: this.password.newspwd,
@@ -258,11 +263,11 @@
             // 找回密码
             fondpassword() {
                 let parms = {
-                    email: this.fond.email,
+                    mobile: this.fond.email,
                     code: this.fond.code
                 }
 
-                if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.fond.email) && this.fond.code) {
+                if (/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(this.fond.email) && this.fond.code) {
                     this.unitAjax('post', 'v1/verify/verifyCode', parms, res => {
                         if (res.code == 200) {
                             this.type = 6;
@@ -273,8 +278,8 @@
                 } else {
                     if (this.fond.code == "") {
                         this.err.fondCode = '验证码不能为空'
-                    } else if (!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.fond.email)) {
-                        this.err.fondEmail = "请输入正确的邮箱地址"
+                    } else if (!/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(this.fond.email)) {
+                        this.err.fondEmail = "请输入正确的电话号码"
                     } else if (this.fond.email == '') {
                         this.err.fondEmail = "邮箱不能为空"
                     }
@@ -283,9 +288,9 @@
             // 找回密码发送验证码
             sendMsgPass() {
                 let parms = {
-                    email: this.fond.email
+                    mobile: this.fond.email
                 }
-                if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.fond.email)) {
+                if (/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(this.fond.email)) {
                     this.unitAjax('post', 'v1/verify/registerSendCode', parms, res => {
                         if (res.code == 200) {
                             if (!this.timer) {
@@ -306,8 +311,8 @@
                         }
                     })
                 } else {
-                    if (!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.fond.email)) {
-                        this.err.fondEmail = "请输入正确的邮箱地址"
+                    if (!/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(this.fond.email)) {
+                        this.err.fondEmail = "请输入正确的电话号码"
                     } else if (this.fond.email == '') {
                         this.err.fondEmail = "邮箱不能为空"
                     }
@@ -326,7 +331,7 @@
 
                 if (/^[a-zA-Z0-9]{6,20}$/.test(this.password.pwd) && this.password.confirm == this.password.pwd) {
                     let params = {
-                        email: this.register.email,
+                        mobile: this.register.email,
                         password: this.password.pwd,
                         confirmPassword: this.password.confirm,
                         verifyCode: this.register.msgCode
@@ -350,9 +355,9 @@
             //注册验证
             nextmsg() {
 
-                if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.register.email) && this.register.msgCode) {
+                if (/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(this.register.email) && this.register.msgCode) {
                     this.unitAjax('post', "v1/verify/verifyCode", {
-                        email: this.register.email,
+                        mobile: this.register.email,
                         code: this.register.msgCode
                     }, res => {
 
@@ -365,8 +370,8 @@
                 } else {
                     if (this.register.msgCode == "") {
                         this.err.msfCode = '验证码不能为空'
-                    } else if (!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.register.email)) {
-                        this.err.regEmail = "请输入正确的邮箱地址"
+                    } else if (!/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(this.register.email)) {
+                        this.err.regEmail = "请输入正确的电话号码"
                     } else if (this.register.email == '') {
                         this.err.regEmail = "邮箱不能为空"
                     }
@@ -375,9 +380,9 @@
             //发送注册验证码
             sendMsg() {
 
-                if (/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.register.email)) {
+                if (/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(this.register.email)) {
                     this.unitAjax("post", "v1/user/verifyUserExists", {
-                        email: this.register.email
+                        mobile: this.register.email
                     }, (res) => {
                         if (res.code == 404) {
                             this.sendemail()
@@ -393,14 +398,14 @@
                     })
 
                 } else {
-                    this.err.regEmail = '请输入正确的邮箱地址'
+                    this.err.regEmail = '请输入正确的电话号码'
                 }
             },
             //发到邮箱code
             sendemail() {
 
                 this.unitAjax('post', "v1/verify/registerSendCode", {
-                    email: this.register.email
+                    mobile: this.register.email
                 }, (res) => {
                     if (res.code == 200) {
                         if (!this.timerkuaijie) {
@@ -427,10 +432,10 @@
             //登录
             getlogin() {
 
-                if (/^[a-zA-Z0-9]{6,21}$/.test(this.login.password) && /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.login.email)) {
+                if (/^[a-zA-Z0-9]{6,21}$/.test(this.login.password) && /^1[3|4|5|7|8][0-9]\d{4,8}$/.test(this.login.email)) {
                     this.loading = true;
                     this.unitAjax('post', "v1/user/login", {
-                        email: this.login.email,
+                        mobile: this.login.email,
                         password: this.login.password
                     }, res => {
                         this.loading = false;
@@ -462,8 +467,8 @@
                     if (!(/^[a-zA-Z0-9]{6,21}$/.test(this.login.password))) {
                         this.err.loginpwd = '请输入6-20位字母和数字'
                     }
-                    if (!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.login.email)) {
-                        this.err.login = '请输入正确的邮箱地址'
+                    if (!/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(this.login.email)) {
+                        this.err.login = '请输入正确的电话号码'
                     }
 
                 }

@@ -1238,7 +1238,8 @@
             getinspration() {
                 this.unitAjax('get', 'v1/inspiration/list', {
                     page: 1,
-                    pageSize: 50
+                    pageSize: 50,
+                    userId: this.$route.query.userId || this.getValue('userId')
                 }, res => {
                     if (res.code == 200) {
                         this.insparitionList = res.data.rows
@@ -1249,7 +1250,8 @@
             getideaList() {
                 this.unitAjax('get', 'v1/idea/list', {
                     page: 1,
-                    pageSize: 50
+                    pageSize: 50,
+                    userId: this.$route.query.userId || this.getValue('userId')
                 }, res => {
                     if (res.code == 200) {
                         this.ideaList = res.data.rows

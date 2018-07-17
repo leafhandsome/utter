@@ -66,9 +66,9 @@
                
                    <input class="msg__adress" type="text" v-model="user.job" placeholder='' :readonly='showidea'></div>
                    <div class="msg__occupation" v-show="showidea">
-                       <span>{{user.area}}</span>
+                       <span>{{user.area||"地点"}}</span>
                         <i class='adress1'></i> 
-                        <span>{{user.job}}</span>
+                        <span>{{user.job||'职业'}}</span>
                    </div>
                 <div class="msg__identifier"></div>
                 <div class="msg__publish">  <input class="" type="text" v-model="user.userSiteName" placeholder='' :readonly='showidea'></div>
@@ -146,19 +146,22 @@
                 imageUrl: '',
                 showsee: true, //是否关注
                 userInfo: {},
-                msg:'',
+                msg: '',
             };
         },
         created() {
             this.getuserInfo()
         },
         methods: {
-             //发送消息
-            sendMsg(userId){
-                this.unitAjax('post','v1/me/alert/message/send',{userId:Number(userId),msg:this.msg},res=>{
-                    if(res.code==200){
-                        this.showmsg=false;
-                        this.msg="";
+            //发送消息
+            sendMsg(userId) {
+                this.unitAjax('post', 'v1/me/alert/message/send', {
+                    userId: Number(userId),
+                    msg: this.msg
+                }, res => {
+                    if (res.code == 200) {
+                        this.showmsg = false;
+                        this.msg = "";
                         this.$message('消息发送成功')
                     }
                 })
@@ -181,7 +184,7 @@
                 }, res => {
                     if (res.code == 200) {
                         this.showsee = false;
-                    }else{
+                    } else {
                         this.$message(res.msg)
                     }
                 })
@@ -199,12 +202,12 @@
             // 用户信息
             getuserInfo() {
                 this.unitAjax('get', 'v1/user/info', {
-                    userId:this.$route.query.userId|| this.getValue('userId')
+                    userId: this.$route.query.userId || this.getValue('userId')
                 }, res => {
                     if (res.code == 200) {
                         this.user = res.data;
                         this.userInfo = res.data.writtenRecord;
-                        this.showsee=res.data.follow;
+                        this.showsee = res.data.follow;
                     }
                 })
             },

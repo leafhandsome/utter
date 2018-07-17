@@ -48,7 +48,7 @@
             <span class="imgbox"><img v-show="!item.sendAvatar" src="../assets/images/utter/userw.png" alt="">
             <img v-show="item.sendAvatar" :src="item.sendAvatar" alt="">
             </span><span class="name">{{item.sendPenName}}</span>
-            <a href="javascript:;" v-if="item.type==2" class="fr istrue" @click="setfriend(item.id)" > 
+            <a href="javascript:;" v-if="item.type==9" class="fr istrue" @click="setfriend(item.id)" > 
               <img v-show="stylecolor=='white'" src="../assets/images/article/submit.png" alt="">
           <img v-show="stylecolor=='black'" src="../assets/images/editor/issuew.png" alt="">
           </a>
@@ -69,6 +69,10 @@
           <li  >
             <p class="title"><span class="user-name">{{noticeDetail.sendPenName}}</span><span class="time">{{noticeDetail.createTime}}</span></p>
             <p>{{noticeDetail.msg}}</p>
+            <a href="javascript:;" v-if="noticeDetail.type==9" class="fr target istrue" @click="setfriend(noticeDetail.id)" > 
+                <img v-show="stylecolor=='white'" src="../assets/images/article/submit.png" alt="">
+            <img v-show="stylecolor=='black'" src="../assets/images/editor/issuew.png" alt="">
+            </a>
           </li>
         </ul>
        
@@ -107,10 +111,10 @@
                 msglist: [],
                 friendMsglist: [],
                 msgDetail: [],
-                showMsgDetail:false,//通知详情显示
-                noticeDetail:{},
-                msg:'',
-                sendUserId:'',
+                showMsgDetail: false, //通知详情显示
+                noticeDetail: {},
+                msg: '',
+                sendUserId: '',
             };
         },
         created() {
@@ -123,21 +127,27 @@
             this.getmsg();
         },
         methods: {
-                //发送消息
-            sendMsg(){
-                this.unitAjax('post','v1/me/alert/message/send',{userId:Number(this.sendUserId),msg:this.msg},res=>{
-                    if(res.code==200){
-                         this.getfriendMsg();
-                        this.msg="";
+            //发送消息
+            sendMsg() {
+                this.unitAjax('post', 'v1/me/alert/message/send', {
+                    userId: Number(this.sendUserId),
+                    msg: this.msg
+                }, res => {
+                    if (res.code == 200) {
+                        this.getfriendMsg();
+                        this.msg = "";
                         this.$message('消息发送成功')
                     }
                 })
             },
-            getMsgDetail(id){
-                this.showMsgDetail=true
-                this.unitAjax('get','v1/me/alert/notice/detail',{id:Number(id)},res=>{
-                    if(res.code==200){
-                       this.noticeDetail=res.data     
+            getMsgDetail(id) {
+                this.showMsgDetail = true
+                this.unitAjax('get', 'v1/me/alert/notice/detail', {
+                    id: Number(id),
+                    userId: this.getValue('userId')
+                }, res => {
+                    if (res.code == 200) {
+                        this.noticeDetail = res.data
                     }
                 })
             },
@@ -152,13 +162,13 @@
                         this.unitAjax(
                             "post",
                             "v1/user/friend/confirmFriend", {
-                                id: id,
+                                id: Number(id),
                                 confirm: true
                             },
                             res => {
                                 if (res.code == 200) {
                                     //   this.$message('添加成功')
-                                
+
                                 }
                             }
                         );
@@ -167,7 +177,7 @@
                         this.unitAjax(
                             "post",
                             "v1/user/friend/confirmFriend", {
-                                id: id,
+                                id: Number(id),
                                 confirm: false
                             },
                             res => {
@@ -183,7 +193,7 @@
             // 消息对话
             friendMsgInfo(id) {
                 this.showfirend = false;
-                this.sendUserId=id;
+                this.sendUserId = id;
                 this.unitAjax(
                     "get",
                     "v1/me/alert/message/detail", {
@@ -203,7 +213,8 @@
                     "get",
                     "v1/me/alert/messages", {
                         page: 1,
-                        pageSize: 20
+                        pageSize: 20,
+                        userId: this.getValue('userId')
                     },
                     res => {
                         if (res.code == 200) {
@@ -218,7 +229,8 @@
                     "get",
                     "v1/me/alert/notices", {
                         page: 1,
-                        pageSize: 20
+                        pageSize: 20,
+                        userId: this.getValue('userId')
                     },
                     res => {
                         if (res.code == 200) {
@@ -233,14 +245,14 @@
                 this.showmsg = false;
                 this.showinfo = true;
                 this.showfirend = true;
-                 this.getfriendMsg();
+                this.getfriendMsg();
             },
             checkinfo(value) {
                 this.checkTab = value;
                 this.showmsg = true;
                 this.showinfo = false;
                 this.showfirend = false;
-                 this.getmsg();
+                this.getmsg();
             }
         }
     };
@@ -258,49 +270,48 @@
         }
         .msg {
             height: 100%;
-          
         }
-          .header {
-                height: 50px;
-                line-height: 50px;
-                text-align: center;
-                border-bottom: 1px solid #dcdddd;
-                img {
-                    vertical-align: middle;
-                }
+        .header {
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            border-bottom: 1px solid #dcdddd;
+            img {
+                vertical-align: middle;
             }
-            .msglist {
-                padding: 0 10px;
-                li {
-                    margin: 20px 0;
-                    line-height: 25px;
-                    .title {
-                        color: #a0a0a0;
-                        .time {
-                            margin-left: 15px;
-                        }
-                    }
-                     :nth-child(2) {
-                        word-wrap: break-word;
+        }
+        .msglist {
+            padding: 0 10px;
+            li {
+                margin: 20px 0;
+                line-height: 25px;
+                .title {
+                    color: #a0a0a0;
+                    .time {
+                        margin-left: 15px;
                     }
                 }
-            }
-            .sendmsg {
-                width: 100%;
-                height: 50px;
-                position: absolute;
-                bottom: 65px;
-                left: 0;
-                border-top: 1px solid #dcdddd;
-                input {
-                    width: 80%;
-                    height: 100%;
-                    padding-left: 5px;
-                }
-                img {
-                    vertical-align: middle;
+                 :nth-child(2) {
+                    word-wrap: break-word;
                 }
             }
+        }
+        .sendmsg {
+            width: 100%;
+            height: 50px;
+            position: absolute;
+            bottom: 65px;
+            left: 0;
+            border-top: 1px solid #dcdddd;
+            input {
+                width: 80%;
+                height: 100%;
+                padding-left: 5px;
+            }
+            img {
+                vertical-align: middle;
+            }
+        }
         .Info {
             height: 900px;
             overflow-y: auto;
@@ -308,6 +319,7 @@
                 // height: 80px;
                 padding: 10px;
                 border-bottom: 1px solid #dcdddd;
+                position: relative;
                 .imgbox {
                     display: inline-block;
                     width: 30px;
@@ -332,6 +344,11 @@
                 .istrue {
                     line-height: 30px;
                     padding-left: 10px;
+                }
+                .target {
+                    position: absolute;
+                    top: 10px;
+                    right: 0;
                 }
                 .msgcontent {
                     width: 150px;
@@ -365,10 +382,10 @@
                 padding-top: 15px;
                 cursor: pointer;
                 position: relative;
-                i{
+                i {
                     position: absolute;
-                     top: 10px;
-                     right: 61px;
+                    top: 10px;
+                    right: 61px;
                     width: 10px;
                     height: 10px;
                     border-radius: 50%;

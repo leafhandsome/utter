@@ -62,18 +62,17 @@
           
           <div class="nickName pull-left">{{item.userName}}</div>
         </router-link>
-          <div class="good pull-right"  @click="addgoodbook(item.id,item.type,index)" >
+          <div class="good pull-right"  >
             <!-- <img src="../assets/images/utter/good.png" alt="点赞">  -->
-            <img src="../assets/images/publish/110 赞扬.png" alt="点赞"> 
-                <!-- <img v-if="$route.query.type=='white'" src="../assets/images/article/good.png" alt="点赞">
-                <img v-if="$route.query.type=='black'" src="../assets/images/publish/120 赞扬-白.png" alt="点赞"> -->
+            <img v-if="!item.like&&!tools[index].save" src="../assets/images/publish/110 赞扬.png" alt="点赞"  @click="addgoodbook(item.id,item.type,index)"> 
+                <img v-if="item.like||tools[index].save" src="../assets/images/article/good.png" alt="点赞">
            {{tools[index].save? Number(item.likeCount)+1:item.likeCount}}
           </div>
 
           <div class="like pull-right">
-              <!-- <img v-show="$route.query.type=='white'&&(tools.save||item.favority)" src="../../assets/images/publish/130 书架-收藏-黑.png" alt="">
-               <img  v-show="$route.query.type=='black'&&(tools.save||item.favority)" src="../../assets/images/publish/134 书架-收藏-白.png" alt=""> -->
-            <img src="../assets/images/publish/109 收藏.png" alt="收藏" @click="addfavority(item.id,item.type,index)"> 
+             <img v-show="tools[index].favority||item.favority" src="../assets/images/publish/130 书架-收藏-黑.png" alt="">
+               <!-- <img  v-show="$route.query.type=='black'&&(tools.save||item.favority)" src="../../assets/images/publish/134 书架-收藏-白.png" alt=""> -->
+            <img v-show="!tools[index].favority&&!item.favority" src="../assets/images/publish/109 收藏.png" alt="收藏" @click="addfavority(item.id,item.type,index)"> 
             {{tools[index].favority?Number(item.favorityCount)+1:item.favorityCount}}
           </div>
         </div>
@@ -104,12 +103,14 @@
               </router-link>
                 <div class="good pull-right">
                   <!-- <img src="../assets/images/utter/good.png" alt="点赞">  -->
-                  <img src="../assets/images/publish/110 赞扬.png" alt="点赞" @click="addgoodbook(item.id,item.type,index)"> 
+                  <img v-if="!item.like&&!tools[index].save" src="../assets/images/publish/110 赞扬.png" alt="点赞" @click="addgoodbook(item.id,item.type,index)"> 
+                   <img v-if="item.like||tools[index].save" src="../assets/images/article/good.png" alt="点赞">
                 {{tools[index].save? Number(item.likeCount)+1:item.likeCount}}
                 </div>
       
                 <div class="like pull-right">
-                  <img src="../assets/images/publish/109 收藏.png" alt="收藏" @click="addfavority(item.id,item.type,index)"> 
+                     <img v-show="tools[index].favority||item.favority" src="../assets/images/publish/130 书架-收藏-黑.png" alt="">
+                  <img v-show="!tools[index].favority&&!item.favority" src="../assets/images/publish/109 收藏.png" alt="收藏" @click="addfavority(item.id,item.type,index)"> 
                   {{tools[index].favority?Number(item.favorityCount)+1:item.favorityCount}}
                 </div>
               </div>

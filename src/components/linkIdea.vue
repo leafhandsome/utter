@@ -1,6 +1,6 @@
 <template>
   <div class="linkIdea" :class="$route.query.type=='white'?'ut-white1':'ut-black'">
-      <div class="pull-left leftlink">
+      <div class="pull-left leftlink" @click="gotoIdea">
         <router-link :to="{path:'/editor',query:{editor:'publish',type:$route.query.type}}">
         <img v-show="$route.query.type=='black'" src="../assets/images/module/47 导航栏-创作文章-白.png" alt="">
         <img v-show="$route.query.type=='white'" src="../assets/images/module/45 导航栏-创作文章-黑.png" alt="">
@@ -23,6 +23,11 @@
 
             }
         },
+        methods: {
+            gotoIdea() {
+
+            }
+        }
 
     }
 </script>

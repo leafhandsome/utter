@@ -162,7 +162,7 @@
         methods: {
             // 文章翻页
             nextpage() {
-                console.log(this.ideapage,this.ideaTotal)
+                console.log(this.ideapage, this.ideaTotal)
                 this.ideapage++
                     this.getarticle()
 
@@ -208,7 +208,9 @@
             },
             //分类列表
             gettypeList() {
-                this.unitAjax('get', 'v1/article/type/list', {}, res => {
+                this.unitAjax('get', 'v1/article/type/list', {
+                    userId: this.$route.query.userId || this.getValue('userId')
+                }, res => {
                     if (res.code == 200) {
                         this.typeList = res.data;
                         this.typeid = res.data[0].id;
@@ -245,7 +247,7 @@
                     page: this.ideapage,
                     pageSize: 3,
                     typeId: this.typeid,
-                    // userId: '',
+                    userId: this.$route.query.userId || this.getValue('userId'),
                 }
                 this.unitAjax('get', 'v1/article/list', params, res => {
                     if (res.code == 200) {
@@ -394,9 +396,9 @@
                     height: 80px;
                     line-height: 70px;
                     display: none;
-                   img{
+                    img {
                         vertical-align: middle;
-                   }
+                    }
                 }
                 .cate:hover i {
                     display: inline;

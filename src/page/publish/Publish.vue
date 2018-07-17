@@ -46,7 +46,7 @@
                                 <img  v-show="$route.query.type=='black'&&(tools.save||item.favority)" src="../../assets/images/publish/134 书架-收藏-白.png" alt="">
                             </span>
                             </strong>
-                           <span v-show="!tools.save" :class="!(tools.save||item.favority)?'fontColor':$route.query.type=='white'?'ut-white1':'ut-black1'">{{item.favorityCount}}</span>
+                           <span v-show="!tools.save" :class="!(tools.save||item.favority)?'fontColor':$route.query.type=='white'?'ut-white1':'ut-black1'">{{Number(item.favorityCount)}}</span>
                            <span v-show="tools.save" :class="!(tools.save||item.favority)?'fontColor':$route.query.type=='white'?'ut-white1':'ut-black1'">{{Number(item.favorityCount)+1}}</span>
                         </a>
                         </div>
@@ -136,7 +136,7 @@
                             <strong>
                                 <img src="../../assets/images/publish/130 书架-收藏-黑.png" alt="">
                             </strong>
-                            <span>{{item.favorityCount}}</span>
+                            <span>{{Number(item.favorityCount)}}</span>
                         </div>
                         <div class="list__icon"  @click="gettools3(item.id)">
                             <strong>
@@ -181,7 +181,7 @@
                     car: false,
                 },
                 bookId: '',
-                pageIndex:1,
+                pageIndex: 1,
             }
         },
         // watch: {
@@ -194,21 +194,21 @@
             this.getbooklist()
             this.getfavority()
         },
-        mounted(){
-           
-               window.addEventListener('scroll',()=>{
+        mounted() {
+
+            window.addEventListener('scroll', () => {
                 // 判断是否滚动到底部
-                  console.log(255);
-                if(document.body.scrollTop + window.innerHeight >= document.body.offsetHeight) {
+                console.log(255);
+                if (document.body.scrollTop + window.innerHeight >= document.body.offsetHeight) {
                     console.log(255);
-                  this.pageIndex++;
-                   this.getbooklist()
+                    this.pageIndex++;
+                    this.getbooklist()
                 }
             });
 
         },
         methods: {
-            
+
             //收藏
             addfavority(id) {
                 this.unitAjax('post', "v1/book/favority/add", {
@@ -273,7 +273,7 @@
                 this.unitAjax('get', 'v1/book/favority/list', {
                     page: 1,
                     pageSize: 10,
-                    userId: this.getValue('userId')
+                    userId: this.$route.query.userId || this.getValue('userId')
                 }, res => {
                     if (res.code == 200) {
                         this.collectionBooks = res.data.rows
@@ -294,7 +294,8 @@
             getbooklist() {
                 this.unitAjax('get', 'v1/book/list', {
                     page: this.pageIndex,
-                    pageSize: 10
+                    pageSize: 10,
+                    userId: this.$route.query.userId || this.getValue('userId')
                 }, res => {
                     if (res.code == 200) {
                         this.mywritingBooks = res.data.rows
@@ -320,7 +321,7 @@
             setshowtab(flog) {
                 window.scrollTo(0, 0);
                 this.$store.commit('showbox', flog)
-                this.$store.commit('getagreement',1)
+                this.$store.commit('getagreement', 1)
 
             },
             tourl(url, query) {
