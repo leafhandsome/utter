@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-show="mywritingBooks.length==0" style="height: 500px; width: 500px;text-align: center;margin: 273px auto;">暂无数据</div>
+                <div v-show="mywritingBooks.length==0" style="height: 500px; width: 500px;text-align: center;margin: 273px auto;">暂无作品</div>
             </div>
 
         </div>
@@ -110,7 +110,7 @@
                     </div>
                 </div>
             </div>
-            <div style="height: 500px; width: 500px;text-align: center;margin: 273px auto;">暂无数据</div>
+            <div style="height: 500px; width: 500px;text-align: center;margin: 273px auto;">暂无购买</div>
         </div>
         <div class="collection" v-show="tabIndex==2">
             <div class="list" v-show="collectionBooks.length>0">
@@ -153,7 +153,7 @@
                     </div>
                 </div>
             </div>
-             <div v-show="collectionBooks.length==0" style="height: 500px; width: 500px;text-align: center;margin: 273px auto;">暂无数据</div>
+             <div v-show="collectionBooks.length==0" style="height: 500px; width: 500px;text-align: center;margin: 273px auto;">暂无收藏</div>
         </div>
     </div>
     <bookinfo v-show='showboks' :book="bookId"></bookinfo>
@@ -224,7 +224,7 @@
             },
             //删除收藏
             deletefavority(id) {
-                this.$confirm('此操作将永久删除该书籍, 是否继续?', '提示', {
+                this.$confirm('此操作将删除该书籍, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -247,7 +247,7 @@
             },
             // 删除书籍
             deletebook(id) {
-                this.$confirm('此操作将永久删除该书籍, 是否继续?', '提示', {
+                this.$confirm('此操作将删除该书籍, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'

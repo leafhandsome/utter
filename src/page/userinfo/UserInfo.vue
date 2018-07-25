@@ -20,7 +20,7 @@
             <div class="user__photo">
                     <el-upload
                     class="avatar-uploader"
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    action="v1/upload/uploadFile"
                     :show-file-list="false"
                     :on-success="handleAvatarSuccess"
                     :before-upload="beforeAvatarUpload">
@@ -61,17 +61,17 @@
                     </div>
                 </div>
                 <div :class='showidea?"usermsg":"bordermsg"' ref="usermsg">
-                <div class="msg__name"> <input class="msg__name" type="text" v-model="user.penName" placeholder='' :readonly='showidea'></div>
-                <div class="msg__occupation" v-show="!showidea"> <input class="msg__adress" type="text" v-model="user.area" placeholder='' :readonly='showidea'>
+                <div class="msg__name"> <input class="msg__name" type="text" v-model="user.penName" placeholder='请输入笔名' :readonly='showidea'></div>
+                <div class="msg__occupation" v-show="!showidea"> <input class="msg__adress"  type="text" v-model="user.area" placeholder='地点' :readonly='showidea'>
                
-                   <input class="msg__adress" type="text" v-model="user.job" placeholder='' :readonly='showidea'></div>
+                   <input class="msg__adress" type="text" v-model="user.job" placeholder='职业' :readonly='showidea'></div>
                    <div class="msg__occupation" v-show="showidea">
                        <span>{{user.area||"地点"}}</span>
                         <i class='adress1'></i> 
                         <span>{{user.job||'职业'}}</span>
                    </div>
                 <div class="msg__identifier"></div>
-                <div class="msg__publish">  <input class="" type="text" v-model="user.userSiteName" placeholder='' :readonly='showidea'></div>
+                <div class="msg__publish">  <input class="" type="text" v-model="user.userSiteName" placeholder='个性签名' :readonly='showidea'></div>
                 </div>
             </div>
             <div class="user__correlation">
@@ -214,7 +214,7 @@
             //上传头像
             handleAvatarSuccess(res, file) {
                 this.imageUrl = URL.createObjectURL(file.raw);
-                console.log(this.imageUrl)
+                console.log(file)
             },
             beforeAvatarUpload(file) {
 
@@ -241,19 +241,32 @@
             },
             //保存用户信息
             setusermsg() {
-                let params = {
-                    personalitySignature: this.user.userSiteName, //string	是	站名		
-                    penName: this.user.penName, //	string	是	笔名		
-                    job: this.user.job, //	string	是	职业		
-                    area: this.user.area, //	string	是	区域  
-                }
-                this.unitAjax('post', 'v1/me/userInfoSetting', params, res => {
-                    if (res.code == 200) {
-                        this.showidea = true;
-                    } else {
-                        this.$message(res.msg)
+                if (this.user.userSiteName && this.user.penName && this.user.job && this.user.area) {
+                    let params = {
+                        personalitySignature: this.user.userSiteName, //string	是	站名		
+                        penName: this.user.penName, //	string	是	笔名		
+                        job: this.user.job, //	string	是	职业		
+                        area: this.user.area, //	string	是	区域  
                     }
-                })
+                    this.unitAjax('post', 'v1/me/userInfoSetting', params, res => {
+                        if (res.code == 200) {
+                            this.showidea = true;
+                        } else {
+                            this.$message(res.msg)
+                        }
+                    })
+                } else {
+                    if (this.user.penName == "") {
+                        this.$message('笔名不能为空')
+                    } else if (this.user.area == "") {
+                        this.$message('职业不能为空')
+                    } else if (this.user.area == "") {
+                        this.$message('地名不能为空')
+                    } else if (this.user.userSiteName == "") {
+                        this.$message('个性签名不能为空')
+                    }
+                }
+
 
             },
             tourl(url, query) {
@@ -395,8 +408,7 @@
             width: 100px;
         }
         .msg__name {
-            font-weight: bold;
-            font-size: 30px;
+            font-size: 24px;
         }
         .msg__occupation {
             margin-top: 5px;
@@ -413,7 +425,7 @@
         .msg__publish {
             margin-top: 20px;
             input {
-                font-size: 20px;
+                font-size: 15px;
                 // font-weight: bold;
             }
         }
@@ -421,7 +433,7 @@
     
     .user__correlation {
         float: left;
-        margin-top: 40px;
+        margin-top: 50px;
         margin-left: 72px;
         .correlation__item {
             width: 220px;
@@ -435,11 +447,12 @@
                 display: block;
             }
             strong {
+                font-weight: 400;
                 font-size: 28px;
             }
             span {
                 font-size: 14px;
-                padding-top: 6px;
+                // padding-top: 6px;
             }
         }
         .correlation__item:last-child {
@@ -514,7 +527,7 @@
             font-weight: bold;
         }
         strong {
-            font-size: 36px;
+            font-size: 28px;
             font-weight: normal;
         }
     }

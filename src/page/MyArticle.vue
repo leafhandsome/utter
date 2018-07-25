@@ -15,7 +15,7 @@
         </div> -->
         <div class="tools utBorder clearfix" v-show="!$route.query.userId">
           <div class="pull-left utBorder"  @click='openfun(1)'>
-            <el-tooltip effect="dark" content="公开" placement="bottom">
+            <el-tooltip effect="dark" content="公开" placement="bottom" :offsetHeight="58">
                  <img v-if='showopen' src="../assets/images/article/open-c.png" alt="公开">
               <img v-if='(!showopen||opentab==1)&&$route.query.type=="white"'  src="../assets/images/article/open.png" alt="公开">
               <img v-if='(!showopen||opentab==1)&&$route.query.type=="black"'  src="../assets/images/article/open-w.png" alt="公开">
@@ -23,7 +23,7 @@
 
           </div>
           <div class="pull-right"  @click='closefun(2)'>
-            <el-tooltip effect="dark" content="保密" placement="bottom">
+            <el-tooltip effect="dark" content="保密" placement="bottom" :offset=1>
              <img  v-if='showclose' src="../assets/images/article/close-c.png" alt="保密">
               <img  v-if='(!showclose||opentab==2)&&$route.query.type=="white"'  src="../assets/images/article/close.png" alt="保密">
               <img  v-if='(!showclose||opentab==2)&&$route.query.type=="black"'  src="../assets/images/article/close-w.png" alt="保密">
@@ -177,7 +177,7 @@
 
             },
             removetype(id) {
-                this.$confirm('此操作将永久删除该分类, 是否继续?', '提示', {
+                this.$confirm('此操作将删除该分类, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -274,7 +274,7 @@
                 }
                 if (value == 4) {
                     //删除文章
-                    this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
+                    this.$confirm('此操作将删除该文章, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -348,7 +348,7 @@
             this.$store.commit("changeFooter", false);
             this.$store.commit("changeHeader", true);
             this.$store.commit("changeType", "user");
-
+           
             this.height.height = window.innerHeight - 155 + "px";
             this.height2.height = window.innerHeight - 155 - 50 + "px";
         },
@@ -397,6 +397,7 @@
                     line-height: 70px;
                     display: none;
                     img {
+                        margin-top: 2px;
                         vertical-align: middle;
                     }
                 }
@@ -565,5 +566,7 @@
                 }
             }
         }
+      
     }
+
 </style>

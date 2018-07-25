@@ -4,7 +4,7 @@
     <div class="ing" ref='align' :class='!ingActive?"":rowcol=="row"?"active row":"active col"' v-show='!hiddenArrow'>
         
       <div v-show="!showinput" class="big" ref='titile' @dblclick="showinput=true">
-       {{userInfo.siteName}}
+       {{userInfo.siteName||'站名'}}
       </div>
       <input class="big" type="text" v-model="siteName" v-show="showinput" @keydown.enter="setting(siteName)">
       <div class="sub" ref='content' v-show="!showinputText"  @dblclick="showinputText=true">
@@ -48,13 +48,13 @@
           <div class="right">
             <a href='javaScript:;' @click="gettitleactiveimg(1)">
             <img v-show='settitleimgshow' src="../assets//images/module/50 个人首页-标题设置.png" alt="" >
-            <img v-show='(!settitleimgshow||settab==1)&&$route.query.type=="white"' src="../assets//images/module/60 个人首页-标题设置-黑.png" alt="" >
-            <img v-show='(!settitleimgshow||settab==1)&&$route.query.type=="black"' src="../assets//images/module/69 个人首页-标题设置-白.png" alt="">
+            <img v-show='(!settitleimgshow||settab==1)&&stylecolor=="white"' src="../assets//images/module/60 个人首页-标题设置-黑.png" alt="" >
+            <img v-show='(!settitleimgshow||settab==1)&&stylecolor=="black"' src="../assets//images/module/69 个人首页-标题设置-白.png" alt="">
             </a>
             <a href='javaScript:;' @click="getactiveimg(2)">
             <img v-show='setimgshow' src="../assets//images/module/51 个人首页-壁纸设置.png" alt="" >
-            <img  v-show='(!setimgshow||settab==2)&&$route.query.type=="white"' src="../assets//images/module/61 个人首页-壁纸设置-黑.png" alt="">
-            <img v-show='(!setimgshow||settab==2)&&$route.query.type=="black"'  src="../assets//images/module/70 个人首页-壁纸设置-白.png" alt="">
+            <img  v-show='(!setimgshow||settab==2)&&stylecolor=="white"' src="../assets//images/module/61 个人首页-壁纸设置-黑.png" alt="">
+            <img v-show='(!setimgshow||settab==2)&&stylecolor=="black"'  src="../assets//images/module/70 个人首页-壁纸设置-白.png" alt="">
             </a>
           </div>
     </div>
@@ -98,12 +98,12 @@
         <div class="moduleSelect">
 
           <div class="line">
-            <label v-if="$route.query.type=='white'">
+            <label v-if="stylecolor=='white'">
             <img src="../assets/images/module/m1.png" class='m1' @click='setstyle(1)'>
             <img src="../assets/images/module/m2.png" class='m2' @click='setstyle(2)'>
             <img src="../assets/images/module/m3.png" class='m3'  @click='setstyle(3)'>
           </label>
-          <label v-if="$route.query.type=='black'">
+          <label v-if="stylecolor=='black'">
             <img src="../assets/images/module/m-b1.png" class='m1' @click='setstyle(1)'>
             <img src="../assets/images/module/m-b2.png" class='m2' @click='setstyle(2)'>
             <img src="../assets/images/module/m-b3.png" class='m3'  @click='setstyle(3)'>
@@ -119,7 +119,7 @@
       </div>
     <input type='file' id='file' class="files" ref='file' @change='changeImg' style='width:0;height:0;position:fixed;top:-2000px;'>
       <!-- 海报图片设置 -->
-      <div  :class="$route.query.type=='white'?'ut-input-white':'ut-input-black'" v-show='!showbooks' class="outbooks utBorder" :ref="'styletwo'+index"  v-for='(item,index) in stylelist' :key='index'>
+      <div  :class="stylecolor=='white'?'ut-input-white':'ut-input-black'" v-show='!showbooks' class="outbooks utBorder" :ref="'styletwo'+index"  v-for='(item,index) in stylelist' :key='index'>
             <div class="images"  v-show='hiddenArrow&&styleindex!=0'>
                  <img v-if="styleindex==1&&imageUrl1"  :src='imageUrl1' class="avatar">
                  <img v-if="styleindex==2&&index==0&&imageUrl2"  :src='imageUrl2' class="avatar">
@@ -288,8 +288,12 @@
                         this.fontvalue = res.data.siteInfoXPoint || 50;
                         this.fontvalue2 = res.data.siteInfoYPoint || 40;
                         this.setValue({
-                                name: 'userName',
-                                value: res.data.userName
+                            name: 'userName',
+                            value: res.data.userName
+                        })
+                        this.setValue({
+                                name: 'userId',
+                                value: res.data.userId
                             })
                             //海报  this.userInfo.posterInfo
                             //               {
@@ -300,6 +304,7 @@
                 })
             },
             changeImg(e) {
+                 
                 //图片change回调
                 var file = e.target.files[0];
                 var _this = this;
@@ -309,8 +314,10 @@
                         //是图片文件
                         if (file.size / 1024 / 1024 < 5) {
                             //图片小于5M
-                            var url = this.getFileUrl(file);
-                            if (url) {
+                            this.upload(file,'v1/upload/uploadFile',{"userId":Number(this.getValue('userId'))},res=>{
+                                if(res.code==200){
+                                    var url=res.data;
+                                      if (url) {
                                 if (this.styleindex == 1) {
                                     this.imageUrl1 = url;
                                 } else if (this.styleindex == 2) {
@@ -328,6 +335,10 @@
                                 }
                             }
                             this.$refs.file.value = "";
+                                }
+                            })
+                            // var url = this.getFileUrl(file);
+                          
                         } else {
                             this.$message.error("图片大于5M,请更换一张");
                         }
@@ -335,7 +346,7 @@
                         this.$message.error("请选择图片文件");
                     }
                 } catch (e) {
-                    this.$message.error("请选择图片文件");
+                    // this.$message.error("请选择图片文件");
                 }
             },
             //控制字体
@@ -376,7 +387,15 @@
             },
             //切换皮肤
             setbackgroundimg(value, fontColor) {
-                //  this.stylecolor=fontColor
+
+                this.$router.push({
+                    path: '/whiterow/modey',
+                    query: {
+                        type: fontColor
+                    }
+                })
+                this.stylecolor = fontColor;
+                location.reload()
                 if (value == "none") {
                     if (this.$route.query.type == "white") {
                         this.$refs.modey.style.background = "#efefef";
@@ -396,6 +415,7 @@
                     name: 'color',
                     value: fontColor
                 })
+
             },
             gettitleactiveimg(num) {
                 this.settitleimgshow = false;
@@ -568,9 +588,9 @@
                 var _this = this;
                 this.showAll = true;
                 this.showPersonal = false;
-                setTimeout(function() {
-                    _this.hiddenArrow = true;
-                }, 1000);
+                // setTimeout(function() {
+                _this.hiddenArrow = true;
+                // }, 1000);
             }
         },
         mounted() {
@@ -696,11 +716,13 @@
                     ul {
                         width: 100%;
                         position: absolute;
-                        bottom: 26px;
+                        bottom: 25px;
                         left: 0;
                         border: 1px solid;
                         color: #999;
                         z-index: 10000;
+                        box-sizing: border-box;
+                        border-bottom: none;
                     }
                 }
                 .titilefont {

@@ -1,7 +1,7 @@
 <template>
-<div class="edit" ref="idea" :class='{black:utstyle != "white"}' :style='{height:height + "px"}' @click="showset=false">
+<div class="edit" ref="idea" :class='{black :utstyle != "white"}' :style='{height:height + "px"}' @click="showset=false;activeTools ='';toolindex=100 ">
 
-  <div class="header">
+  <div class="header" :class="utstyle=='white'?'borderblack':'borderwhite'">
     <img @click='change' v-if='utstyle == "white"' class='logo' src="../assets/images/utter/logo.png" alt="UTTER">
     <img @click='change' v-else class='logo' src="../assets/images/utter/logow.png" alt="UTTER">
 
@@ -14,29 +14,29 @@
         v-for='(i,index) in toolsList' :key="index">
 
         <div class="fontsizeTools utBorder" v-if='activeTools == "fontsize" && i.key == "fontsize"'>
-          <div class="item" @click='fontsizeHandle(7 + i)' v-for='i in 21' :key="i">{{7 + i}}</div>
+          <div class="item" @click.stop='fontsizeHandle(7 + i)' v-for='i in 21' :key="i">{{7 + i}}</div>
         </div>
 
         <div class="fontfamilyTools utBorder" v-if='activeTools == "fontfamily" && i.key == "fontfamily"'>
-          <div class="item" v-for='(item,index) in familyList' @click='fontfamilyHandle(item)' :key="index">{{item}}</div>
+          <div class="item" v-for='(item,index) in familyList' @click.stop='fontfamilyHandle(item)' :key="index">{{item}}</div>
         </div>
 
         <div class="forecolorTools utBorder" v-if='activeTools == "forecolor" && i.key == "forecolor"'>
-          <div class="item" v-for='i in colorList' @click='forecolorHandle(i)' :key="i">
+          <div class="item" v-for='i in colorList' @click.stop='forecolorHandle(i)' :key="i">
             <div class="color" :style='{"background-color":i}'></div>
           </div>
         </div>
         
         <div class="fontsizeTools utBorder" v-if='activeTools == "lineheight" && i.key == "lineheight"'>
-          <div class="item" v-for='i in 21' @click='lineheightHandle(7 + i)' :key="i">{{7 + i}}</div>
+          <div class="item" v-for='i in 21' @click.stop='lineheightHandle(7 + i)' :key="i">{{7 + i}}</div>
         </div>
 
         <div class="fontsizeTools utBorder" v-if='activeTools == "rowspacing" && i.key == "rowspacing"'>
-          <div class="item" v-for='i in 10' :key="i">{{i - 1}}</div>
+          <div class="item" v-for='i in 10' @click.stop="spacingHandle(i-1)" :key="i">{{i - 1}}</div>
         </div>
 
-        <div class="linkTools utBorder" v-if='activeTools == "link" && i.key == "link"'>
-          <input placeholder='请输入内容…' v-model='linkObj.textValue' @click.stop="activeTools = 'link'">
+        <div class="linkTools utBorder" v-if='activeTools == "link" && i.key == "link"'  @click.stop="activeTools = 'link'">
+          <input placeholder='请输入内容…' v-model='linkObj.textValue'>
           <input placeholder='输入超链接地址…' v-model='linkObj.url' @keydown.enter='linkHandle'>
         </div>
 
@@ -77,8 +77,8 @@
           <li v-show="$route.query.editor=='idea'" :class="tabcreat==1?utstyle=='white'?'font-activeb':'font-activew':''" @click="tabcreat=1">出版信息</li>
           <li :class="tabcreat==2?utstyle=='white'?'font-activeb':'font-activew':''" @click="tabcreat=2">创作背景</li>
           <label v-show="tabcreat==2">
-          <li class="creatColor"><span class="fl borderbox utBorder" @click="getreadercolor('white')"><img src="../assets/images/editor/173 创作区背景-白.png" alt=""></span>
-          <span class="fl"  @click="getreadercolor('black')"><img src="../assets/images/editor/174 创作区背景-黑.png" alt=""></span>
+          <li class="creatColor"><span class="fl borderbox utBorder" @click="getreadercolor('white',true)"><img src="../assets/images/editor/173 创作区背景-白.png" alt=""></span>
+          <span class="fl"  @click="getreadercolor('black',true)"><img src="../assets/images/editor/174 创作区背景-黑.png" alt=""></span>
           </li>
           <li class="creatimg"><img src="../../static/img/1.jpg" alt="" @click="setcreatColor('../../static/img/1.jpg','white')"></li>
           <li  class="creatimg"><img src="../../static/img/2.jpg" alt=""  @click="setcreatColor('../../static/img/2.jpg','white')"></li>
@@ -147,7 +147,7 @@
                <div class="poper-content">
                  <div class="poper-header">utter/墨海</div>
                  <div class="frend utBorder">
-                   <ul class="utBorder">
+                   <ul class="utBorder clearfix">
                      <li class="utBorder" :class="poperTab==index?'poperActive':''" @click="poperTab=index" v-for="(item,index) in friendlist" :key="index">
                        <p class="frend-left fl"><span class="imgbox">
                            <img v-if="!item.friendAvatar" src="../assets/images/utter/userw.png" alt="">
@@ -161,9 +161,13 @@
                  </div>
                  </div> 
             <div class="idea-btn">
-               <div class="btn-center">
+               <div class="btn-center clearfix">
                  <a href="javaScript:;" class="fl"  :class="sumActive==1?'ut-black1':'ut-white1'" @click="sendidea(1)">独立出版</a>
                  <a href="javaScript:;" class="fr" :class="sumActive==2?'ut-black1':'ut-white1'" @click="sendidea(2)">联合出版</a>
+                 </div>
+                 <div class="btn-center clearfix">
+                        <a href="javaScript:;" class="ispublish"  :class="sumActive==1?'ut-black1':'ut-white1'" @click="sendbook">确认出版</a>
+                       
                  </div>
             </div>
             </div>
@@ -174,10 +178,10 @@
                     <a class="fr saysumbmit" href="javaScript:;" @click="backindex"> <img src="../assets/images/article/submit.png" alt="发表"></a>
                  </div> 
             <div class="idea-btn">
-               <div class="btn-center">
+               <!-- <div class="btn-center">
                  <a href="javaScript:;" class="fl"  :class="sumActive==1?'ut-black1':'ut-white1'">独立出版</a>
                  <a href="javaScript:;" class="fr" :class="sumActive==2?'ut-black1':'ut-white1'">联合出版</a>
-                 </div>
+                 </div> -->
             </div>
             </div>
             <!-- 协议 -->
@@ -197,14 +201,15 @@
             <!-- 独立出版 -->
           <div class="send "  v-show="!showpopel&&!shownote">
             <div class="clearfix idea-content utBorder">
-            <div class="left fl bookimg">
-               
+              <input type='file' id='file' ref='bookfile' @change='changeBookImg' style='width:0;height:0;position:fixed;top:-2000px;'>
+            <div class="left fl bookimg" @click="uploadImg" >
+               <img :src="imgUrl" alt="">
             </div>
           <div class="fl cover"><p>封面尺寸:w:880 h:1080</p>  <p>封面格式:jpg、png</p></div>
             <div class="right idea fr">
                 <div class="creat fr ut-white1" style="paddingLeft:10px" @click="showcreat=true"><input type="text" class="ut-white1" v-model="bookname" placeholder="请输入书名"></div>
                  <div class="istrue booksay ut-white1"><a href="javaScript:;" class="ut-white1" @click="setbooksay">书本介绍</a></div>
-                <div class="istrue money ut-white1"><input type="number" class="ut-white1" placeholder="请输入金额" v-model="money">￥</div>
+                <div class="istrue money ut-white1"><input type="number" class="ut-white1" placeholder="请输入金额" v-model="money"><span class="fr">￥</span></div>
                 <div class="istrue thiry"><input type="checkbox" v-model="check" @click="check=!check"><a href="javaScript:;" @click="readyNote">我已阅读接受此协议</a></div>
             </div>
             </div>
@@ -214,6 +219,9 @@
                  <a href="javaScript:;" class="fl"  :class="sumActive==1?'ut-black1':'ut-white1'" @click="sendidea(1)">独立出版</a>
                  <a href="javaScript:;" class="fr" :class="sumActive==2?'ut-black1':'ut-white1'" @click="sendidea(2)">联合出版</a>
                  </div>
+                 <div class="">
+                        <a href="javaScript:;" class="ispublish" @click="sendbook">确认出版</a>
+                     </div>
             </div>
         </div>
         
@@ -379,7 +387,7 @@
                 //set
                 tabActive: 0,
                 showcreat: false,
-                sumActive: 0,
+                sumActive: 1,
                 showpopel: false,
                 poperTab: "",
                 showbooksay: false,
@@ -426,6 +434,7 @@
                 money: '',
                 check: false,
                 agreement: "作者可获得80%的作品销售收益(联合出版同上);每条销售数据实时展示，上个月收益结算后可随时体现。作者必须保证其作品的原创性;作者出版免费书籍时作品中部能出现插图; 联合出版的图书请提前确定好每位联合作者的收益占比; 联合出版的图书在上架后会自动在每位联合作者的站点同时上架;正式出版的图书暂时不可随意下架，作者可进行图书修订。",
+                imgUrl: "",
             };
         },
         beforeCreate() {
@@ -496,6 +505,43 @@
             }
         },
         methods: {
+            changeBookImg(e) {
+                //图片change回调
+                var file = e.target.files[0];
+                var _this = this;
+                // debugger
+                try {
+                    if (file.type.indexOf("image") >= 0) {
+                        //是图片文件
+                        if (file.size / 1024 / 1024 < 5) {
+                            //图片小于5M
+                            //上传后台
+                            this.upload(file, 'v1/upload/uploadFile', {
+                                    "userId": Number(this.getValue('userId'))
+                                }, res => {
+                                    if (res.code == 200) {
+                                        this.imgUrl = res.data;
+
+
+                                    }
+                                })
+                                // var url = this.getFileUrl(file);
+                            this.$refs.file.value = "";
+                        } else {
+                            tools.toastWarn("图片大于5M,请更换一张");
+                        }
+                    } else {
+                        tools.toastWarn("请选择图片文件");
+                    }
+                } catch (e) {
+                    tools.toastWarn("请选择图片文件");
+                }
+
+            },
+            //上传封面
+            uploadImg() {
+                this.$refs.bookfile.click();
+            },
             //出版书籍
             sendbook() {
                 if (this.bookname) {
@@ -982,7 +1028,7 @@
             //删除章节
             deleteTree(list, index, id) {
                 //删除想法的评论
-                this.$confirm('此操作将永久删除该章节, 是否继续?', '提示', {
+                this.$confirm('此操作将删除该章节, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -1054,14 +1100,30 @@
             },
 
             //更换背景色
-            getreadercolor(color) {
+            getreadercolor(color, flag) {
                 this.utstyle = color;
+
+                if (flag) {
+                    this.removeValue({
+                        name: 'background'
+                    })
+                    this.removeValue({
+                        name: 'color'
+                    });
+                    this.$refs.idea.style.background = color
+                    if (color == "black") {
+
+                        document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "white";
+                    } else {
+
+                        document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "black";
+                    }
+                }
+
                 if (color == "black") {
                     this.forecolorHandle("#F7F7F7");
-                    document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "white";
                 } else {
                     this.forecolorHandle("#1b1b1b");
-                    document.querySelector('iframe').contentWindow.document.querySelector("body").style.color = "black";
                 }
             },
             handleNodeClick(data) {
@@ -1089,7 +1151,7 @@
                     this.showpopel = true;
                 } else if (value == 1) {
                     this.showpopel = false;
-                    this.sendbook()
+
                 }
                 this.sumActive = value;
 
@@ -1101,9 +1163,10 @@
             ideaHandle(item) {
                 this.editor.setContent(item, true);
                 this.activeTools = "";
+                this.toolindex = 100
             },
             linkHandle() {
-                console.log(this.linkObj);
+                this.toolindex = 100;
                 this.editor.execCommand("link", this.linkObj);
 
                 this.linkObj = {
@@ -1115,24 +1178,33 @@
                 this.activeTools = "";
             },
             lineheightHandle(data) {
-                console.log(data);
+                this.toolindex = 100
+                this.activeTools = "";
                 this.editor.execCommand("lineheight", data / 10);
             },
+            //字间距
+            spacingHandle(data) {
+                this.activeTools = "";
+                this.toolindex = 100
+                document.querySelector('iframe').contentWindow.document.querySelector("body").style.letterSpacing = data + "px";
+            },
             fontsizeHandle(data) {
-                console.log(data);
+
                 this.activeTools = "";
                 this.editor.execCommand("fontsize", data + "px");
+                this.toolindex = 100
             },
             fontfamilyHandle(data) {
-                console.log(data);
+                this.toolindex = 100
                 this.activeTools = "";
                 this.editor.execCommand("fontfamily", data);
             },
             forecolorHandle(data) {
-                console.log(data);
+                this.toolindex = 100
                 this.activeTools = "";
                 this.editor.execCommand("forecolor", data);
             },
+
             getFileUrl(file) {
                 //获取文件临时路径
                 var url;
@@ -1161,23 +1233,28 @@
                         //是图片文件
                         if (file.size / 1024 / 1024 < 5) {
                             //图片小于5M
-                            var url = this.getFileUrl(file);
-                            // this.getUrlBase64(url,'png',)
-                            // ext=
-                            console.log(url, file)
-                            if (url) {
-                                var img = new Image();
-                                img.src = url;
-                                img.onload = function() {
-                                    _this.editor.focus();
-                                    _this.editor.execCommand(
-                                        "inserthtml",
-                                        '<p><img style="width:100px;height:100px;" src="' +
-                                        url +
-                                        '"></p>'
-                                    );
-                                };
-                            }
+                            //上传后台
+                            this.upload(file, 'v1/upload/uploadFile', {
+                                    "userId": Number(this.getValue('userId'))
+                                }, res => {
+                                    if (res.code == 200) {
+                                        // this.imgUrl=res.data;
+
+                                        var url = res.data;
+                                        var img = new Image();
+                                        img.src = url;
+                                        img.onload = function() {
+                                            _this.editor.focus();
+                                            _this.editor.execCommand(
+                                                "inserthtml",
+                                                '<p><img style="width:100px;height:100px;" src="' +
+                                                url +
+                                                '"></p>'
+                                            );
+                                        };
+                                    }
+                                })
+                                // var url = this.getFileUrl(file);
                             this.$refs.file.value = "";
                         } else {
                             tools.toastWarn("图片大于5M,请更换一张");
@@ -1202,14 +1279,14 @@
                         break;
                     case "justifyl":
                         this.editor.execCommand("justify", "left");
-                        // this.$refs.text.style.textAlign = 'left';
+                        this.$refs.text.style.textAlign = 'left';
                         break;
                     case "justifym":
-                        // this.$refs.text.style.textAlign = 'center';
+                        this.$refs.text.style.textAlign = 'center';
                         this.editor.execCommand("justify", "center");
                         break;
                     case "justifyr":
-                        // this.$refs.text.style.textAlign = 'right';
+                        this.$refs.text.style.textAlign = 'right';
                         this.editor.execCommand("justify", "right");
                         break;
                     case "insertimage":
@@ -1222,6 +1299,9 @@
                         // }else{
                         //     this.setbook()
                         // }
+                        break;
+                    case "ashcan":
+                        this.editor.setContent("");
                         break;
                 }
             },
@@ -1410,6 +1490,7 @@
                 height: 450px;
                 background-color: white;
                 padding: 30px 0 0 30px;
+                position: relative;
                 ul {
                     li {
                         line-height: 30px;
@@ -1424,6 +1505,10 @@
                 p {
                     text-align: center;
                     margin-top: 100px;
+                    position: absolute;
+                    bottom: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
                 }
             }
             .poper-content {
@@ -1443,9 +1528,9 @@
                     height: 60px;
                     line-height: 60px;
                     padding-left: 25px;
+                    border-bottom: 1px solid #dcdddd;
                 }
                 .frend {
-                    border-top: 1px solid #dcdddd;
                     position: relative;
                     ul {
                         &::after {
@@ -1497,7 +1582,11 @@
             .idea-btn {
                 text-align: center;
                 line-height: 50px;
-                margin-top: 55px;
+                margin-top: 30px;
+                .ispublish {
+                    margin-top: 20px;
+                    background: white;
+                }
                 .btn-center {
                     width: 372px;
                     margin: 0 auto;
@@ -1538,6 +1627,11 @@
                     background-color: #b5b5b5;
                     width: 150px;
                     height: 180px;
+                    cursor: pointer;
+                    img {
+                        width: 100%;
+                        height: 100%;
+                    }
                 }
                 .idea-content {
                     position: relative;
@@ -1599,8 +1693,14 @@
                     .money {
                         bottom: 35px;
                         input {
-                            width: 80%;
+                            width: 85%;
                             height: 100%;
+                        }
+                        span {
+                            position: absolute;
+                            top: 0;
+                            right: 10px;
+                            background-color: white;
                         }
                     }
                     .thiry {
@@ -1648,7 +1748,7 @@
             .forecolorTools,
             .linkTools input,
             .draftTools {
-                background: rgba(0, 0, 0, 0.5);
+                background: rgba(0, 0, 0, 0.7);
                 color: #fff;
             }
             .draftTools,
@@ -1692,7 +1792,7 @@
         }
         .rightTools {
             position: absolute;
-            right: 30px;
+            right: 20px;
             top: 0;
             height: 56px;
             div {
@@ -1778,7 +1878,7 @@
             position: absolute;
             top: 54px;
             left: -1px;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.8);
         }
         // 字号工具
         .fontsizeTools {
@@ -1920,17 +2020,18 @@
                 height: 50px;
                 padding: 0 8px;
                 margin-right: 54px;
-                text-align: center;
+                /* text-align: center; */
             }
             .pageTools {
                 width: 880px;
                 position: fixed;
+                left: 50%;
+                transform: translateX(-50%);
                 bottom: 0;
                 padding-bottom: 50px;
                 // background: #fff;
                 height: 25px;
                 line-height: 25px;
-                margin-left: 380px;
                 .innerbox {
                     width: 200px;
                     height: 25px;

@@ -38,6 +38,7 @@ module.exports = {
             // },
             '/v1': {
                 target: 'http://47.106.194.14:8989',
+                // target: 'http://10.0.0.3:8989',
                 changeOrigin: true,
                 // pathRewrite:{
                 //     '^/api':'/api'

@@ -519,7 +519,7 @@
                 }
                 //删除想法
                 if (value == 4) {
-                    this.$confirm('此操作将永久删除该想法, 是否继续?', '提示', {
+                    this.$confirm('此操作将删除该想法, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -547,7 +547,7 @@
             },
             removeSay(id) {
                 //删除想法的评论
-                this.$confirm('此操作将永久删除该评论, 是否继续?', '提示', {
+                this.$confirm('此操作将删除该评论, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'

@@ -187,7 +187,7 @@
                 })
             },
             removeArticle(id) {
-                this.$confirm('此操作将永久删除该评论, 是否继续?', '提示', {
+                this.$confirm('此操作将删除该评论, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -289,7 +289,7 @@
                 if (value == 4) {
                     console.log(44)
                         //删除文章
-                    this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
+                    this.$confirm('此操作将删除该文章, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'

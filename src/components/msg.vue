@@ -82,20 +82,24 @@
     </div>
     <!-- 底部 -->
     <div class="footer utBorder">
+          
         <div class="pull-left masgbox utBorder" @click="checkmsg(1)">
-          <img v-show="showmsg" src="../assets/images/personal/150 消息-对话信息.png" alt="">
-          <img  v-show="(!showmsg||checkTab==1)&&stylecolor=='white'" src="../assets/images/personal/158 消息-对话信息-黑.png" alt="">
-          <img v-show="(!showmsg||checkTab==1)&&stylecolor=='black'" src="../assets/images/personal/166 消息-对话信息-白.png" alt="">
-          <p :class="checkTab==1?'activecolor':''">消息</p>
+          <img v-if="showmsg" src="../assets/images/personal/150 消息-对话信息.png" alt="">
+          <img  v-if="(!showmsg||checkTab==1)&&stylecolor=='white'" src="../assets/images/personal/158 消息-对话信息-黑.png" alt="">
+          <img v-if="(!showmsg||checkTab==1)&&stylecolor=='black'" src="../assets/images/personal/166 消息-对话信息-白.png" alt="">
+          <p class="hovermsg" :class="checkTab==1?'activecolor':''">消息</p>
            <i v-show="friendMsglist.length>0"></i>
         </div>
+    
+   
         <div class="pull-right userInfo" @click="checkinfo(2)">
-            <img v-show="showinfo" src="../assets/images/personal/151 消息-打开喇叭.png" alt="">
-            <img v-show="(!showinfo||checkTab==2)&&stylecolor=='white'" src="../assets/images/personal/159 消息-打开喇叭-黑.png" alt="">
-            <img  v-show="(!showinfo||checkTab==2)&&stylecolor=='black'"  src="../assets/images/personal/167 消息-打开喇叭-白.png" alt="">
-            <p :class="checkTab==2?'activecolor':''">通知</p>
+            <img v-if="showinfo" src="../assets/images/personal/151 消息-打开喇叭.png" alt="">
+            <img v-if="(!showinfo||checkTab==2)&&stylecolor=='white'" src="../assets/images/personal/159 消息-打开喇叭-黑.png" alt="">
+            <img  v-if="(!showinfo||checkTab==2)&&stylecolor=='black'"  src="../assets/images/personal/167 消息-打开喇叭-白.png" alt="">
+            <p class="hoverpersonal" :class="checkTab==2?'activecolor':''">通知</p>
             <i v-show="msglist.length>0"></i>
         </div>
+     
       </div>
   </div>
 </template>
@@ -371,8 +375,23 @@
             right: 0;
             bottom: 0;
             border-top: 1px solid #dcdddd;
+            p{
+                display: none;
+            }
             .masgbox {
                 border-right: 1px solid #dcdddd;
+                &:hover{
+                    .hovermsg{
+                        display: block;
+                    }
+                }
+            }
+            .userInfo{
+                &:hover{
+                    .hoverpersonal{
+                        display: block;
+                    }
+                }
             }
             .masgbox,
             .userInfo {

@@ -4,7 +4,7 @@
       <div class="personal__quanzi" v-show="footTab == 0">
         <div class="quanzi__tab">
           <div class="tab__item" :class="{'tab__item--active':quanziTab==0}" @click="changeQuanziTab(0)">好友</div>
-          <div class="tab__item" :class="{'tab__item--active':quanziTab==1}" @click="changeQuanziTab(1)">群组</div>
+          <!-- <div class="tab__item" :class="{'tab__item--active':quanziTab==1}" @click="changeQuanziTab(1)">群组</div> -->
           <div class="tab__item" :class="{'tab__item--active':quanziTab==2}" @click="changeQuanziTab(2)">观者</div>
           <div class="tab__item" :class="{'tab__item--active':quanziTab==3}" @click="changeQuanziTab(3)">关注</div>
         </div>
@@ -153,14 +153,14 @@
             <div class="person__btnitem" :class="{'person__btnitem--active':personTab==2}" @click="changePersonTab(2)">我的账户</div>
             <div class="person__account" v-show="personTab == 2">
               <div class="account__money">
-                <div class="money__total">360.00￥</div>
+                <div class="money__total">20￥</div>
                 <div class="money__btn">
-                  <div class="money__recharge">充值</div>
+                  <!-- <div class="money__recharge">充值</div> -->
                   <div class="money__cash">提现</div>
                 </div>
               </div>
               <div class="account__buyrecord" @click="changeAccountTab(0)">购书记录
-                <span class="account__recordprice">20￥</span>
+                <span class="account__recordprice">200￥</span>
               </div>
               <div class="account__buylist" v-show="accountTab==0">
                 <div class="account__item">
@@ -208,12 +208,13 @@
                 <!-- <div class="pwdset__code">
                   <input type="text" placeholder="验证码" class="pwdset__input">
                 </div> -->
-                <div class="pwdset__btn" @click="setpassword">确认提交</div>
+                <div class="pwdset__btn" @click="setpassword"><a href='javascript:;'>确认提交</a></div>
               </div>
             </div>
             <div class="person__btnend">
               <!-- <div class="person__homepage" v-show="personTab == 4">返回我的主页</div>             -->
               <div class="person__btnitem" :class="{'person__btnitem--active':personTab==4}" @click="changePersonTab(4)">返回我的主页</div>
+             
 
 
               <div class="person__utstatus" v-show="personTab == 5">
@@ -233,6 +234,7 @@
                 </div>
               </div>
               <div class="person__btnitem" :class="{'person__btnitem--active':personTab==5}" @click="changePersonTab(5)">UTTER状态</div>
+              <div class="person__btnitem" :class="{'person__btnitem--active':personTab==6}" @click="changePersonTab(6)">退出登录</div>
             </div>
           </div>
         </div>
@@ -291,8 +293,8 @@
                 friendDiscover: [], //好友动态
                 followMe: [], //关注动态
                 open: [],
-                flag:false,
-                openUsers:[],
+                flag: false,
+                openUsers: [],
             };
         },
         props: ["UTstyle"],
@@ -367,7 +369,7 @@
                     res => {
                         if (res.code == 200) {
                             this.firendlist = res.data.rows;
-                           
+
                         }
                     }
                 );
@@ -476,16 +478,26 @@
                             }
                         }
                     );
-                }else if(idx==5){
-                   this.unitAjax('get','v1/me/status/info',{page:1,pageSize:20,userId:this.getValue('userId')},res=>{
-                       if(res.code==200){
-                           this.statusBtn =res.data.openStatus;
-                           this.openUsers=res.data.openUsers.rows;
-                            for(let i=0;i<res.data.openUsers.rows.length;i++){
-                                this.open.push({flag:true})
+                } else if (idx == 5) {
+                    this.unitAjax('get', 'v1/me/status/info', {
+                        page: 1,
+                        pageSize: 20,
+                        userId: this.getValue('userId')
+                    }, res => {
+                        if (res.code == 200) {
+                            this.statusBtn = res.data.openStatus;
+                            this.openUsers = res.data.openUsers.rows;
+                            for (let i = 0; i < res.data.openUsers.rows.length; i++) {
+                                this.open.push({
+                                    flag: true
+                                })
                             }
-                       }
-                   })
+                        }
+                    })
+                } else if (idx == 6) {
+                    //清除kookie
+                    this.clearAllCookie()
+                    this.$router.replace('/login')
                 }
             },
             changeLastVisitTab(idx) {
@@ -525,14 +537,14 @@
                 this.accountTab = idx;
             },
             changeStatus(idx) {
-                if(idx==1){
-                    window.scrollTo(1000,1000)
+                if (idx == 1) {
+                    window.scrollTo(1000, 1000)
                 }
                 this.statusBtn = idx;
-                let arr=[];
-                for(let key in this.openUsers){
-                    if(this.open[key].flag){
-                      arr.push(Number(this.openUsers[key].userId));
+                let arr = [];
+                for (let key in this.openUsers) {
+                    if (this.open[key].flag) {
+                        arr.push(Number(this.openUsers[key].userId));
                     }
                 }
                 this.unitAjax('post', 'v1/me/status/setting', {
@@ -558,6 +570,7 @@
     @import "../assets/scss/tool.scss";
     .personal {
         width: 320px;
+        height: 100%;
         border-width: 1px;
         border-style: solid;
         border-color: #e6e6ee;
@@ -675,6 +688,7 @@
         }
         .pwdset__btn {
             background: #fff;
+            cursor: pointer;
         }
         .utstatus__btn {
             cursor: pointer;
@@ -705,7 +719,7 @@
     .personal__happen,
     .personal__person {
         width: 338px;
-        height: 720px;
+        height: 920px;
         overflow-y: scroll;
     }
     
@@ -787,7 +801,7 @@
             border-bottom-color: #e6e6ee;
             color: #aaa;
             .tab__item {
-                width: 25%;
+                width: 33.3%;
                 float: left;
             }
             .tab__item--active {
@@ -820,19 +834,20 @@
     
     .personal__person {
         .person__index {
-            padding-top: 40px;
+            padding: 40px 0;
             height: 100%;
             position: relative;
             .person__btn {
                 overflow: hidden;
             }
             .person__btnend {
-                /* position: absolute;
-        bottom: 36px;
-        left: 0;
-        right: 0; */
+                position: absolute;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
                 margin: 0 auto;
                 margin-top: 264px;
+                margin-bottom: 40px;
             }
         }
         .person__btnitem {
@@ -983,7 +998,8 @@
                 }
                 .money__btn {
                     float: right;
-                    width: 114px;
+                    /* width: 114px; */
+                    width: 57px;
                     height: 48px;
                     line-height: 48px;
                     background: #000;
@@ -1011,7 +1027,7 @@
                 }
                 .money__cash {
                     float: left;
-                    width: 50%;
+                    width: 100%;
                     cursor: pointer;
                 }
             }
@@ -1121,6 +1137,8 @@
     .personal__footer {
         width: 100%;
         overflow: hidden;
+        position: absolute;
+        bottom: 0;
         .footer__tab {
             width: 33.33%;
             height: 70px;

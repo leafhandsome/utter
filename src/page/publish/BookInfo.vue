@@ -165,7 +165,7 @@
                 },
                 navid: 0,
                 submitactive: false,
-                commentText:'',
+                commentText: '',
             }
         },
         created() {
@@ -175,15 +175,17 @@
             bookInfo() {
                 return this.$store.state.bookInfo;
             },
-            commentList(){
+            commentList() {
                 return this.$store.state.commentList
             }
         },
         methods: {
             //加入书单
-            addbuyBooks(id){
-                this.unitAjax('post','v1/book/booklist/add',{bookId:Number(id)},res=>{
-                    if(res.code==200){
+            addbuyBooks(id) {
+                this.unitAjax('post', 'v1/book/booklist/add', {
+                    bookId: Number(id)
+                }, res => {
+                    if (res.code == 200) {
                         this.$message('已加入书单')
                     }
                 })
@@ -211,49 +213,51 @@
             },
             //发表评论
             sendsub(id) {
-                if(this.commentText){
-                       let params={
-                    bookId:Number(id),//	string	是	想法ID		
-                    replyUserId:"",//	string	是	被回复的人ID(若对原想法评论，则为空)		
-                    commentText:this.commentText,//	string	是	评论内容
-                }
-                 this.submitactive = true
-                this.unitAjax('post','v1/book/comment/add',params,res=>{
-                      this.submitactive = false
-                    if(res.code==200){
-                        this.commentText=""
-                        this.$store.commit('getlist',id)
-                      this.$message('发表成功')
-                    }else{
-                        this.$message(res.msg)
+                if (this.commentText) {
+                    let params = {
+                        bookId: Number(id), //	string	是	想法ID		
+                        replyUserId: "", //	string	是	被回复的人ID(若对原想法评论，则为空)		
+                        commentText: this.commentText, //	string	是	评论内容
                     }
-                })
-                }else{
+                    this.submitactive = true
+                    this.unitAjax('post', 'v1/book/comment/add', params, res => {
+                        this.submitactive = false
+                        if (res.code == 200) {
+                            this.commentText = ""
+                            this.$store.commit('getlist', id)
+                            this.$message('发表成功')
+                        } else {
+                            this.$message(res.msg)
+                        }
+                    })
+                } else {
                     this.$message('评论内容不能为空')
                 }
-             
+
             },
             //删除评论
-            delcommont(id,bookId){
-                   this.$confirm('此操作将永久删除该评论, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                       this.unitAjax('delete','v1/book/comment/delete',{commentId:id},res=>{
-                    if(res.code==200){
-                        this.$store.commit('getlist',bookId)
-                         this.$message('删除成功')   
-                    }
-                })
+            delcommont(id, bookId) {
+                this.$confirm('此操作将删除该评论, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.unitAjax('delete', 'v1/book/comment/delete', {
+                        commentId: id
+                    }, res => {
+                        if (res.code == 200) {
+                            this.$store.commit('getlist', bookId)
+                            this.$message('删除成功')
+                        }
+                    })
 
-                    }).catch(() => {
-                        this.$message({
-                            type: 'info',
-                            message: '已取消删除'
-                        });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
                     });
-             
+                });
+
             },
             tourl(url, query) {
                 tools.router.push({

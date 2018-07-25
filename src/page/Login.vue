@@ -450,7 +450,7 @@
                             })
                             this.setValue({
                                 name: 'avatar',
-                                value: res.data.avatar
+                                value: res.data.certifiedAuthor
                             })
 
                             this.$router.push({

@@ -301,3 +301,8 @@ tooltip__popper .popper__arrow,
     top: 0;
     right: 50%;
 }
+
+.el-tooltip__popper {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}

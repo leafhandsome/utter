@@ -17,6 +17,11 @@ export default new Router({
                 { path: '/index', component: resolve => require(['@/page/Utter'], resolve) },
 
             ]
+
+        },
+        {
+            path: '/oss',
+            component: resolve => require(['@/components/oss.vue'], resolve)
         },
         //登录后个人首页
         {
@@ -120,6 +125,7 @@ export default new Router({
             component: resolve => require(['../components/EditTools.vue'], resolve),
             name: '编辑器'
         },
+
         // {
         //     path: '/personal',
         //     component: resolve => require(['../components/Personal'], resolve)

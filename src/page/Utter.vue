@@ -2,31 +2,23 @@
   <div class="utter">
     <!-- 轮播 -->
     <el-carousel indicator-position="none" height='412px'>
-      <el-carousel-item>
-        <img src="../assets/images/demo/1.jpg" style="width:100%;cursor:pointer;">
-      </el-carousel-item>
-      <el-carousel-item>
-        <img src="../assets/images/demo/2.jpg" style="width:100%;cursor:pointer;">
-      </el-carousel-item>
-      <el-carousel-item>
-        <img src="../assets/images/demo/3.jpg" style="width:100%;cursor:pointer;">
+      <el-carousel-item v-for="(item, index) in centerBanner" :key="index">
+          <a :href='item.url'>
+        <img :src="item.poster" style="width:100%;cursor:pointer;">
+    </a>
       </el-carousel-item>
     </el-carousel>
     <!-- 轮播 -->
 
     <!-- 3个图 -->
     <div class="newActive clearfix">
-      <div class="item pull-left">
-        <img src="../assets/images/demo/1.jpg">
+      <div class="item pull-left" v-for="(item, index) in rotateBanner" :key="index">
+          <a :href='item.url'>
+        <img :src="item.poster">
+         </a>
       </div>
 
-      <div class="item pull-left">
-        <img src="../assets/images/demo/2.jpg">
-      </div>
-
-      <div class="item pull-left">
-        <img src="../assets/images/demo/3.jpg">
-      </div>
+     
     </div>
     <!-- 3个图 -->
 
@@ -126,14 +118,17 @@
                 middleType: 3,
                 hotlist: [],
                 newslist: [],
-                tools:[],
-                newstools:[]
+                tools: [],
+                newstools: [],
+                centerBanner: [],
+                rotateBanner: []
             }
         },
 
         created() {
             document.querySelector("body").style.background = 'white';
             this.getbooks()
+            this.getbanner()
         },
         mounted() {
             var _this = this;
@@ -143,56 +138,65 @@
 
         },
         methods: {
-                 //点赞
-            addgoodbook(id,type,index) {
-                if(type==2){
-                       this.unitAjax('post', "v1/book/like/add", {
-                    bookId: Number(id)
-                }, res => {
+            //banner
+            getbanner() {
+                this.unitAjax('get', 'v1/index/banner', {}, res => {
                     if (res.code == 200) {
-                        this.tools[index].save = true;
-                        // this.$message('成功')
-                       this.getnewsbook(this.middleType)
-                    } else {
-                        this.$message(res.msg)
+                        this.centerBanner = res.data.centreBannerList;
+                        this.rotateBanner = res.data.rotationBannerList
                     }
                 })
-                }else if(type==1){
-                         this.unitAjax('post', "v1/article/like/add", {
-                    articleId: Number(id)
-                }, res => {
-                    if (res.code == 200) {
-                        this.tools[index].save = true;
-                        // this.$message('成功')
-                    //    this.getnewsbook(this.middleType)
-                    } else {
-                        this.$message(res.msg)
-                    }
-                })
-                }
-             
             },
-              //收藏
-            addfavority(id,type,index) {
-                if(type==2){
-                       this.unitAjax('post', "v1/book/favority/add", {
-                    bookId: Number(id)
-                }, res => {
-                    if (res.code == 200) {
-                        this.tools[index].favority = true;
-                        // this.
-                        // this.$message('收藏成功')
-                        // this.getnewsbook(this.middleType)
-                    } else {
-                        this.$message(res.msg)
-                    }
-                })
-                }else if(type==1){
-                           this.unitAjax('post', "v1/article/favority/add", {
+            //点赞
+            addgoodbook(id, type, index) {
+                if (type == 2) {
+                    this.unitAjax('post', "v1/book/like/add", {
+                        bookId: Number(id)
+                    }, res => {
+                        if (res.code == 200) {
+                            this.tools[index].save = true;
+                            // this.$message('成功')
+                            this.getnewsbook(this.middleType)
+                        } else {
+                            this.$message(res.msg)
+                        }
+                    })
+                } else if (type == 1) {
+                    this.unitAjax('post', "v1/article/like/add", {
                         articleId: Number(id)
                     }, res => {
                         if (res.code == 200) {
-                              this.tools[index].favority = true;
+                            this.tools[index].save = true;
+                            // this.$message('成功')
+                            //    this.getnewsbook(this.middleType)
+                        } else {
+                            this.$message(res.msg)
+                        }
+                    })
+                }
+
+            },
+            //收藏
+            addfavority(id, type, index) {
+                if (type == 2) {
+                    this.unitAjax('post', "v1/book/favority/add", {
+                        bookId: Number(id)
+                    }, res => {
+                        if (res.code == 200) {
+                            this.tools[index].favority = true;
+                            // this.
+                            // this.$message('收藏成功')
+                            // this.getnewsbook(this.middleType)
+                        } else {
+                            this.$message(res.msg)
+                        }
+                    })
+                } else if (type == 1) {
+                    this.unitAjax('post', "v1/article/favority/add", {
+                        articleId: Number(id)
+                    }, res => {
+                        if (res.code == 200) {
+                            this.tools[index].favority = true;
                             // this.
                             // this.$message('收藏成功')
                             // this.getnewsbook(this.middleType)
@@ -201,41 +205,47 @@
                         }
                     })
                 }
-             
+
             },
             getnewsbook(num) {
                 this.middleType = num;
-                 this.tools=[];
+                this.tools = [];
                 if (this.middleType == 2) {
                     this.unitAjax('get', 'v1/index/new', {}, res => {
                         if (res.code == 200) {
                             this.newslist = res.data;
-                            for(let i=0;i<res.data.length;i++){
-                                this.tools.push({"save":false,"favority":false})
+                            for (let i = 0; i < res.data.length; i++) {
+                                this.tools.push({
+                                    "save": false,
+                                    "favority": false
+                                })
                             }
                         }
                     })
-                } else if(this.middleType ==3){
-                       this.getbooks()
-                   }
+                } else if (this.middleType == 3) {
+                    this.getbooks()
+                }
             },
             getbooks() {
                 this.unitAjax('get', 'v1/index/hot', {}, res => {
                     if (res.code == 200) {
                         this.hotlist = res.data;
-                          for(let i=0;i<res.data.length;i++){
-                                this.tools.push({"save":false,"favority":false})
-                            }
+                        for (let i = 0; i < res.data.length; i++) {
+                            this.tools.push({
+                                "save": false,
+                                "favority": false
+                            })
+                        }
                     }
                 })
             },
-            bookspage(userId,userName) {
+            bookspage(userId, userName) {
                 this.$router.push({
                     path: '/whiterow/publish',
                     query: {
                         type: "white",
-                        userId:userId,
-                        userName:userName,
+                        userId: userId,
+                        userName: userName,
                     }
                 })
             },
@@ -306,7 +316,8 @@
                     @include trans;
                     @include hand;
                     &:hover {
-                        @include bookAnimate;
+                        /* @include bookAnimate; */
+                        background-color:rgb(241, 238, 238);
                     }
                     width: 303px;
                     height: 372px;
