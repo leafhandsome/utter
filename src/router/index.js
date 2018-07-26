@@ -19,10 +19,10 @@ export default new Router({
             ]
 
         },
-        {
-            path: '/oss',
-            component: resolve => require(['@/components/oss.vue'], resolve)
-        },
+        // {
+        //     path: '/oss',
+        //     component: resolve => require(['@/components/oss.vue'], resolve)
+        // },
         //登录后个人首页
         {
             path: '/whiterow',

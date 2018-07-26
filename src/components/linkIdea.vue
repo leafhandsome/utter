@@ -1,18 +1,15 @@
 <template>
   <div class="linkIdea" :class="$route.query.type=='white'?'ut-white1':'ut-black'">
-      <div class="pull-left leftlink" @click="gotoIdea">
-        <router-link :to="{path:'/editor',query:{editor:'publish',type:$route.query.type}}">
+      <div class="pull-left leftlink" @click="gotopublish">
+        
         <img v-show="$route.query.type=='black'" src="../assets/images/module/47 导航栏-创作文章-白.png" alt="">
         <img v-show="$route.query.type=='white'" src="../assets/images/module/45 导航栏-创作文章-黑.png" alt="">
         <p>文章</p>
-        </router-link>
       </div>
-      <div class="pull-right rightlink">
-        <router-link :to="{path:'/editor',query:{editor:'idea',type:$route.query.type}}">
+      <div class="pull-right rightlink" @click="gotoIdea">
         <img  v-show="$route.query.type=='black'" src="../assets/images/module/48 导航栏-创作出版-白.png" alt="">
         <img  v-show="$route.query.type=='white'" src="../assets/images/module/46 导航栏-创作出版-黑.png" alt="">
         <p>书籍</p>
-        </router-link>
       </div>
   </div>
 </template>
@@ -24,8 +21,27 @@
             }
         },
         methods: {
+            gotopublish() {
+                this.$router.push({
+                    path: '/editor',
+                    query: {
+                        editor: 'publish',
+                        type: this.$route.query.type
+                    }
+                })
+            },
             gotoIdea() {
-
+                // if (this.getValue('avatar') == 'false') {
+                //     this.$message('请先成为书籍创作者')
+                // } else {
+                this.$router.push({
+                        path: '/editor',
+                        query: {
+                            editor: 'idea',
+                            type: this.$route.query.type
+                        }
+                    })
+                    // }
             }
         }
 

@@ -7,8 +7,8 @@
             <a href='javaScript:;' class="tab__item lastitem"  :class="tabIndex==2?($route.query.type=='white'?'tab__item--active':'tab__item--active-w'):''" @click="changeTab(2)">收藏</a>
         </div>
         <div class="mywriting" v-show="tabIndex==0">
-            <a href="javaScript:;" class="mywriting__btn" :class="$route.query.type=='white'?'ut-black1':'ut-white1'" v-if="!isApplyBtn" @click='setshowtab(true)'>
-                申请独立出版
+            <a href="javaScript:;" class="mywriting__btn" :class="$route.query.type=='white'?'ut-black1':'ut-white1'" v-if="isApplyBtn=='false'" @click='setshowtab(true)'>
+                申请成为书籍创作作者
             </a>
             <div class="list clearfix">
                 <div class="list__item" v-if="mywritingBooks.length>0" v-for="(item,idx) in mywritingBooks">

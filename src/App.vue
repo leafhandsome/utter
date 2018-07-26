@@ -9,7 +9,8 @@
     <!-- <utfooter v-show='showFooter'></utfooter> -->
   </div>
 </template>
-<script src="http://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js"></script>
+
+<!-- <script src="http://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js"></script> -->
 <script>
     import utheader from "./components/Header";
     import utfooter from "./components/Footer";

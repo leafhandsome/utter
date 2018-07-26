@@ -321,7 +321,7 @@
 
             },
             fondpwdFs() {
-                this.$refs.msg2.style.top = '-3px';
+                // this.$refs.msg2.style.top = '-3px';
                 this.err.fondEmail = ''
             },
             fondcodeFs() {
@@ -506,11 +506,11 @@
                 }
             },
             regCodeFs() {
-                this.$refs.msg.style.top = '-3px';
+                // this.$refs.msg.style.top = '-3px';
                 this.err.msfCode = "";
             },
             regFs() {
-                this.$refs.msg1.style.top = '-3px';
+                // this.$refs.msg1.style.top = '-3px';
                 this.err.regEmail = "";
             },
             loginFs() {
@@ -647,11 +647,11 @@
                 position: relative;
                 top: 0;
                 @include trans;
-                &:focus {
+                /* &:focus {
                     outline: none;
                     box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
                     top: -3px;
-                }
+                } */
             }
             .btns {
                 width: 100%;
@@ -727,11 +727,11 @@
                 position: relative;
                 top: 0;
                 @include trans;
-                &:focus {
+                /* &:focus {
                     outline: none;
                     box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
                     top: -3px;
-                }
+                } */
             }
             .create {
                 height: 60px;

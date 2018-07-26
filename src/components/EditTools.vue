@@ -94,7 +94,7 @@
           <input  @keydown.enter="getkeydown" ref="text" class="title" type="text" placeholder="请输入标题" v-model="titile"></h2>
     <div id="container" @click="showset=false"></div>
     <!-- page -->
-     <div class="pageTools">
+     <div class="pageTools" v-if="$route.query.editor=='idea'">
       <div class="innerbox clearfix">
         <div class="pull-left">
           <!-- <span>1</span> -->
@@ -145,15 +145,15 @@
              <!-- //邀请出版 -->
             <div class="" v-show="showpopel&&!showbooksay">
                <div class="poper-content">
-                 <div class="poper-header">utter/墨海</div>
+                 <div class="poper-header"><span v-for="(item, index) in earningsRatesList" :key="index">{{item.userName}}/</span></div>
                  <div class="frend utBorder">
                    <ul class="utBorder clearfix">
                      <li class="utBorder" :class="poperTab==index?'poperActive':''" @click="poperTab=index" v-for="(item,index) in friendlist" :key="index">
                        <p class="frend-left fl"><span class="imgbox">
                            <img v-if="!item.friendAvatar" src="../assets/images/utter/userw.png" alt="">
                            <img v-if="item.friendAvatar" :src="item.friendAvatar" alt=""></span><span>{{item.friendPenName}}</span></p>
-                        <p class="frend-right fl" v-show="poperTab==index"><span><input :autofocus="poperTab==index" type="text">%</span>
-                        <a class="fr" href="javaScript:;"><img src="../assets/images/userinfo/112 提交.png" alt=""></a></p>
+                        <p class="frend-right fl" v-show="poperTab==index"><span><input :autofocus="poperTab==index" v-model="earning" type="text">%</span>
+                        <a class="fr" href="javaScript:;"><img src="../assets/images/userinfo/112 提交.png" alt="" @click="commitList(item)"></a></p>
                    </li>
                    <i></i>
                    </ul>
@@ -435,6 +435,8 @@
                 check: false,
                 agreement: "作者可获得80%的作品销售收益(联合出版同上);每条销售数据实时展示，上个月收益结算后可随时体现。作者必须保证其作品的原创性;作者出版免费书籍时作品中部能出现插图; 联合出版的图书请提前确定好每位联合作者的收益占比; 联合出版的图书在上架后会自动在每位联合作者的站点同时上架;正式出版的图书暂时不可随意下架，作者可进行图书修订。",
                 imgUrl: "",
+                earningsRatesList: [],//[{"userId":1,"earningsRate":20,"userName":"utter"},{"userId":1,"earningsRate":80,"userName":"墨海"}],
+                earning:20,
             };
         },
         beforeCreate() {
@@ -542,17 +544,28 @@
             uploadImg() {
                 this.$refs.bookfile.click();
             },
+            //添加出版人
+            commitList(item){
+                this.earningsRatesList.push({"userId":item.userId,"earningsRate":this.earning,"userName":item.userName})
+            },
             //出版书籍
             sendbook() {
                 if (this.bookname) {
-                    if (this.check) {
+                    var sum=0
+                   for(let key in  this.earningsRatesList){
+                     sum+= this.earningsRatesList[key].earningsRate 
+                   }
+                    if (this.check&&sum==100) {
                         let params = {
                             id: Number(this.booksid), //	string	是			
                             bookName: this.bookname, //	string	是			
                             introduce: this.introduce, //	string	是			
                             cover: this.cover, //	string	是			
                             price: this.money, //	string	是			
-                            agreement: this.agreement, //
+                            // agreement: this.agreement, 
+                            earningsRates:this.earningsRatesList, //	array	是	出版人及收益分配		
+                            userId: Number(this.getValue('userId')), //	number	是	出版人		
+                            earningsRate:sum, //
                         }
                         this.unitAjax('post', 'v1/book/publishBook', params, res => {
                             if (res.code == 200) {
@@ -561,7 +574,12 @@
                             }
                         })
                     } else {
-                        this.$message('请先阅读协议')
+                        if(!this.check){
+                             this.$message('请先阅读协议')
+                        }else if(sum!=100){
+                             this.$message('收益分配所有人合起来必须100%')
+                        }
+                       
                     }
                 } else if (this.bookname == '') {
                     this.$message('请填写书名')
@@ -675,13 +693,11 @@
                 }, {
                     "children": [{
                         "children": [{
-                            "name": "小节"
-                        }, {
-                            "name": "小节"
+                            "name": "节"
                         }],
-                        "name": "篇名"
+                        "name": "篇"
                     }],
-                    "name": "章节"
+                    "name": "章"
                 }, {
                     "name": "结语"
                 }]
@@ -726,7 +742,7 @@
             },
             //获取文章详情
             getidea() {
-                // if (this.$route.query.id) {
+                if (this.$route.query.id) {
                 this.unitAjax('get', "v1/article/detail", {
                         identify: this.$route.query.id
                     }, res => {
@@ -735,23 +751,27 @@
                             arr = res.data.pages;
                             if (this.articleList) {
                                 this.titile = this.articleList[this.pageIndex - 1].title;
-                                this.initUeditor(this.articleList[this.pageIndex - 1].text);
+                                this.initUeditor(this.articleList[this.pageIndex - 1].text,false);
                             } else if (this.pageIndex > this.articleList.length) {
-                                this.initUeditor('');
+                                this.initUeditor('',false);
                             }
                         } else {
-                            this.initUeditor('');
+                            this.initUeditor('',false);
                         }
 
-                    })
+                    })}else{
+                        setTimeout(() => {
+                            this.initUeditor('',false); 
+                        }, 1000);
+                    }
                     // } else {
                     //     console.log(747)
-                    //         //  if (typeof(UE.getEditor("container")) != 'undefined') {
-                    //         // UE.getEditor("container").destroy();
+                    //          if (typeof(UE.getEditor("container")) != 'undefined') {
+                    //        UE.deleteEditor()
                     //     console.log(UE.getEditor("container"), 655)
-                    //         // this.initUeditor('');
-                    //         //  }
-                    //         //  location.reload()
+                    //         this.initUeditor('');
+                    //          }
+                    //          location.reload()
                     // }
 
             },
@@ -1380,6 +1400,19 @@
 
 <style scoped lang='scss'>
     @import "../assets/scss/tool.scss";
+   
+    .borderblack{
+        .iconBorder {
+            border: 1px solid;
+            background-color:rgba(0, 0, 0, 0.7)
+        }
+    }
+     .borderwhite{
+        .iconBorder {
+            border: 1px solid;
+            background-color:rgba(255, 255, 255, 0.8)
+        }
+    }
     .edit {
         width: 100%;
         height: 100%;
@@ -1396,11 +1429,14 @@
             left: 35px;
             z-index: 10000;
             .active-nav {
+                
                 .nav-treeBlack {
-                    color: white;
+                    // color: white;
+                    font-weight: 700;
                 }
                 .nav-treeWhite {
-                    color: black;
+                    // color: black;
+                    font-weight: 700;
                 }
             }
             .titile {
@@ -1410,7 +1446,7 @@
                     height: 700px;
                     position: absolute;
                     top: 13px;
-                    left: 5px;
+                    left: 5.5px;
                     border-left: 1px solid;
                     &::after {
                         content: '';
@@ -1436,7 +1472,7 @@
                             right: -50px;
                             width: 15px;
                             height: 15px;
-                            line-height: 13px;
+                            line-height: 14px;
                             border-radius: 50%;
                             border: 1px solid;
                             text-align: center;
@@ -1446,6 +1482,7 @@
                             }
                         }
                         .remove {
+                             line-height: 13px;
                             right: -80px;
                         }
                         /* &:hover {
@@ -1785,9 +1822,6 @@
                 &:hover {
                     border-color: #e6e6e6;
                 }
-            }
-            .iconBorder {
-                border: 1px solid;
             }
         }
         .rightTools {

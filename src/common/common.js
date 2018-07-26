@@ -220,7 +220,7 @@ var methods = {
             canvas = null;
         };
     },
-    initUeditor(dome) {
+    initUeditor(dome, flag) {
 
         this.editor = UE.getEditor("container", {
             toolbars: [],
@@ -231,7 +231,8 @@ var methods = {
             enableAutoSave: true,
             saveInterval: 5000,
             wordCount: false,
-            elementPathEnabled: false
+            elementPathEnabled: false,
+            scaleEnabled: flag
         });
         var editor = this.editor;
         this.editor.ready(function() {
