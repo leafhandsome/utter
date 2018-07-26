@@ -435,8 +435,8 @@
                 check: false,
                 agreement: "作者可获得80%的作品销售收益(联合出版同上);每条销售数据实时展示，上个月收益结算后可随时体现。作者必须保证其作品的原创性;作者出版免费书籍时作品中部能出现插图; 联合出版的图书请提前确定好每位联合作者的收益占比; 联合出版的图书在上架后会自动在每位联合作者的站点同时上架;正式出版的图书暂时不可随意下架，作者可进行图书修订。",
                 imgUrl: "",
-                earningsRatesList: [],//[{"userId":1,"earningsRate":20,"userName":"utter"},{"userId":1,"earningsRate":80,"userName":"墨海"}],
-                earning:20,
+                earningsRatesList: [], //[{"userId":1,"earningsRate":20,"userName":"utter"},{"userId":1,"earningsRate":80,"userName":"墨海"}],
+                earning: 20,
             };
         },
         beforeCreate() {
@@ -545,17 +545,21 @@
                 this.$refs.bookfile.click();
             },
             //添加出版人
-            commitList(item){
-                this.earningsRatesList.push({"userId":item.userId,"earningsRate":this.earning,"userName":item.userName})
+            commitList(item) {
+                this.earningsRatesList.push({
+                    "userId": item.userId,
+                    "earningsRate": this.earning,
+                    "userName": item.userName
+                })
             },
             //出版书籍
             sendbook() {
                 if (this.bookname) {
-                    var sum=0
-                   for(let key in  this.earningsRatesList){
-                     sum+= this.earningsRatesList[key].earningsRate 
-                   }
-                    if (this.check&&sum==100) {
+                    var sum = 0
+                    for (let key in this.earningsRatesList) {
+                        sum += this.earningsRatesList[key].earningsRate
+                    }
+                    if (this.check && sum == 100) {
                         let params = {
                             id: Number(this.booksid), //	string	是			
                             bookName: this.bookname, //	string	是			
@@ -563,9 +567,9 @@
                             cover: this.cover, //	string	是			
                             price: this.money, //	string	是			
                             // agreement: this.agreement, 
-                            earningsRates:this.earningsRatesList, //	array	是	出版人及收益分配		
+                            earningsRates: this.earningsRatesList, //	array	是	出版人及收益分配		
                             userId: Number(this.getValue('userId')), //	number	是	出版人		
-                            earningsRate:sum, //
+                            earningsRate: sum, //
                         }
                         this.unitAjax('post', 'v1/book/publishBook', params, res => {
                             if (res.code == 200) {
@@ -574,12 +578,12 @@
                             }
                         })
                     } else {
-                        if(!this.check){
-                             this.$message('请先阅读协议')
-                        }else if(sum!=100){
-                             this.$message('收益分配所有人合起来必须100%')
+                        if (!this.check) {
+                            this.$message('请先阅读协议')
+                        } else if (sum != 100) {
+                            this.$message('收益分配所有人合起来必须100%')
                         }
-                       
+
                     }
                 } else if (this.bookname == '') {
                     this.$message('请填写书名')
@@ -743,7 +747,7 @@
             //获取文章详情
             getidea() {
                 if (this.$route.query.id) {
-                this.unitAjax('get', "v1/article/detail", {
+                    this.unitAjax('get', "v1/article/detail", {
                         identify: this.$route.query.id
                     }, res => {
                         if (res.code == 200) {
@@ -751,28 +755,29 @@
                             arr = res.data.pages;
                             if (this.articleList) {
                                 this.titile = this.articleList[this.pageIndex - 1].title;
-                                this.initUeditor(this.articleList[this.pageIndex - 1].text,false);
+                                this.initUeditor(this.articleList[this.pageIndex - 1].text, false);
                             } else if (this.pageIndex > this.articleList.length) {
-                                this.initUeditor('',false);
+                                this.initUeditor('', false);
                             }
                         } else {
-                            this.initUeditor('',false);
+                            this.initUeditor('', false);
                         }
 
-                    })}else{
-                        setTimeout(() => {
-                            this.initUeditor('',false); 
-                        }, 1000);
-                    }
-                    // } else {
-                    //     console.log(747)
-                    //          if (typeof(UE.getEditor("container")) != 'undefined') {
-                    //        UE.deleteEditor()
-                    //     console.log(UE.getEditor("container"), 655)
-                    //         this.initUeditor('');
-                    //          }
-                    //          location.reload()
-                    // }
+                    })
+                } else {
+                    setTimeout(() => {
+                        this.initUeditor('', false);
+                    }, 1000);
+                }
+                // } else {
+                //     console.log(747)
+                //          if (typeof(UE.getEditor("container")) != 'undefined') {
+                //        UE.deleteEditor()
+                //     console.log(UE.getEditor("container"), 655)
+                //         this.initUeditor('');
+                //          }
+                //          location.reload()
+                // }
 
             },
             //添加文章page
@@ -1400,19 +1405,20 @@
 
 <style scoped lang='scss'>
     @import "../assets/scss/tool.scss";
-   
-    .borderblack{
+    .borderblack {
         .iconBorder {
             border: 1px solid;
-            background-color:rgba(0, 0, 0, 0.7)
+            background-color: rgba(0, 0, 0, 0.7)
         }
     }
-     .borderwhite{
+    
+    .borderwhite {
         .iconBorder {
             border: 1px solid;
-            background-color:rgba(255, 255, 255, 0.8)
+            background-color: rgba(255, 255, 255, 0.8)
         }
     }
+    
     .edit {
         width: 100%;
         height: 100%;
@@ -1428,8 +1434,9 @@
             top: 100px;
             left: 35px;
             z-index: 10000;
+            height: 800px;
+            overflow-y: auto;
             .active-nav {
-                
                 .nav-treeBlack {
                     // color: white;
                     font-weight: 700;
@@ -1443,7 +1450,7 @@
                 margin-top: 58px;
                 position: relative;
                 .line {
-                    height: 700px;
+                    height: 100%;
                     position: absolute;
                     top: 13px;
                     left: 5.5px;
@@ -1482,7 +1489,7 @@
                             }
                         }
                         .remove {
-                             line-height: 13px;
+                            line-height: 13px;
                             right: -80px;
                         }
                         /* &:hover {
